@@ -20,16 +20,16 @@ function wantsText(wants: Record<string, number>, lang: Lang): string[] {
   return [...best.values()].sort((a, b) => b[1] - a[1]).slice(0, TOP_WANTS).map(([text]) => text)
 }
 
-interface Props { lang: Lang; codex: CodexData; meta?: Meta; onBack?: () => void }
+interface Props { lang: Lang; codex: CodexData; meta?: Meta; day?: number; onBack?: () => void }
 
-export function Codex({ lang, codex, meta, onBack }: Props) {
+export function Codex({ lang, codex, meta, day, onBack }: Props) {
   const open = BUILDS.filter((b) => b.id in codex)
   return (
     <section className="panel codex">
       <h2>{t(lang, 'codex')} <span className="hint">{t(lang, 'codexProgress', open.length, BUILDS.length)}</span></h2>
       <p className="hint">{t(lang, 'codexNote')}</p>
       {open.map((b) => {
-        const tr = meta && trend(meta, b.id)
+        const tr = meta && day ? trend(meta, b.id, day) : null
         return (
           <details key={b.id}>
             <summary>

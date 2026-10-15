@@ -229,7 +229,7 @@ export interface Quote {
   baseResale: number
 }
 
-function buyers(item: Item, lang: Lang, meta?: Meta): Buyer[] {
+function buyers(item: Item, lang: Lang, day: number, meta?: Meta): Buyer[] {
   const base = BASES[item.base]
   const slot = slotOf(base.cls)
   const defences = baseKindKeys(item.base).defences
@@ -246,7 +246,7 @@ function buyers(item: Item, lang: Lang, meta?: Meta): Buyer[] {
     const t = BUILD_TIER[b.tier]
     return [{
       id: b.id, name: b.name[lang], budget: SLOT_BUDGET[slot] * t.budget, fit, wants: want.wants,
-      pop: popularity(meta, b.id) * saturation(meta, b.id, slot), maxTier: t.maxTier, build: true, stacks: STACKS.get(b.id)!,
+      pop: popularity(meta, b.id, day) * saturation(meta, b.id, slot), maxTier: t.maxTier, build: true, stacks: STACKS.get(b.id)!,
     }]
   })
   return [...builds, ...generic]
@@ -300,7 +300,7 @@ const effMods = new Map<string, number[]>()
 export function highEffCount(item: Item): number {
   const key = `${item.base}|${item.influences.join()}`
   let bs = effBuyers.get(key)
-  if (!bs) effBuyers.set(key, (bs = buyers(item, 'en').filter((b) => b.fit > 0)))
+  if (!bs) effBuyers.set(key, (bs = buyers(item, 'en', 1).filter((b) => b.fit > 0))) // any day: only fit and wants matter
   const counts = bs.map(() => 0)
   for (const m of item.explicits) {
     let who = effMods.get(`${key}|${m.id}`)
@@ -343,7 +343,7 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).
   const k = boom(day)
-  const judged = buyers(item, lang, meta).map((p) => {
+  const judged = buyers(item, lang, day, meta).map((p) => {
     const j = judge(item, p, lang)
     return { p, ...j, value: Math.round(j.value * k) }
   }).sort((a, b) => b.value - a.value)
@@ -354,7 +354,7 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
     price: Math.max(FLOOR, resale, finalPrice(cost, best.value, best.usefulCount)),
     optionValue: best.value,
     expectedCost: cost,
-    top: judged.slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id) : null })),
+    top: judged.slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id, day) : null })),
     best: best.usefulCount > 0
       ? { id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality, mods: best.mods }
       : undefined,

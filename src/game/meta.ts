@@ -82,14 +82,33 @@ export function advanceMeta(meta: Meta, day: number, rng: Rng): Meta {
   return { ...meta, m, notes, rumors, sat }
 }
 
+// League progression (user): starter builds rule the first STARTER_DAYS days; then players get rich and advanced and
+// uber builds slowly come up, reaching their late-league level on LATE_DAY. Early uber x0.1 makes an uber buyer
+// (10x budget) pay about what a starter does.
+export type BuildTier = BuildProfile['tier']
+export const STARTER_DAYS = 4
+export const LATE_DAY = 12
+export const TIER_EARLY: Record<BuildTier, number> = { starter: 1, advanced: 0.3, uber: 0.1 }
+export const TIER_LATE: Record<BuildTier, number> = { starter: 1, advanced: 1.3, uber: 1.5 }
+export function leaguePhase(tier: BuildTier, day: number): number {
+  const t = clamp((day - STARTER_DAYS) / (LATE_DAY - STARTER_DAYS), 0, 1)
+  return TIER_EARLY[tier] + (TIER_LATE[tier] - TIER_EARLY[tier]) * t
+}
+
 const MEAN_SHARE = 1 / BUILDS.length
 // Popular builds have more buyers and pay more; sqrt keeps the top build from drowning everything else.
-export const popularity = (meta: Meta | undefined, id: string) =>
-  Math.sqrt((BUILDS.find((b) => b.id === id)?.share ?? MEAN_SHARE) / MEAN_SHARE) * (meta?.m[id] ?? 1)
+export const popularity = (meta: Meta | undefined, id: string, day: number) => {
+  const b = BUILDS.find((x) => x.id === id)
+  return Math.sqrt((b?.share ?? MEAN_SHARE) / MEAN_SHARE) * (b ? leaguePhase(b.tier, day) : 1) * (meta?.m[id] ?? 1)
+}
 
-export const trend = (meta: Meta | undefined, id: string): 'rising' | 'falling' | null => {
+// This run's hot or cold builds first; otherwise builds the league is moving to are on the rise.
+export const trend = (meta: Meta | undefined, id: string, day: number): 'rising' | 'falling' | null => {
   const v = meta?.m[id] ?? 1
-  return v > 1.3 ? 'rising' : v < 0.7 ? 'falling' : null
+  if (v > 1.3) return 'rising'
+  if (v < 0.7) return 'falling'
+  const tier = BUILDS.find((b) => b.id === id)?.tier
+  return tier && leaguePhase(tier, day) > leaguePhase(tier, day - 1) ? 'rising' : null
 }
 
 export const buildName = (id: string, lang: 'ko' | 'en') => BUILDS.find((b) => b.id === id)?.name[lang] ?? id

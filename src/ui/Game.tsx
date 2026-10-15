@@ -7,7 +7,7 @@ import {
   doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
-import { boom, buildName, weekday, type Codex as CodexData } from '../game/meta.ts'
+import { boom, buildName, STARTER_DAYS, weekday, type Codex as CodexData } from '../game/meta.ts'
 import { compileSearch } from '../game/search.ts'
 import { fmtGold, t } from '../i18n.ts'
 import { exportFile, importFile, type Settings } from '../save.ts'
@@ -145,6 +145,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     }
     if (!next.finished && boom(next.day) > 1 && boom(state.day) === 1) lines.push(t(lang, 'boomStart', boomPct(next.day)))
     if (!next.finished && boom(next.day) === 1 && boom(state.day) > 1) lines.push(t(lang, 'boomEnd'))
+    if (!next.finished && state.day === STARTER_DAYS) lines.push(t(lang, 'leagueShift'))
     for (const r of (next.meta.rumors ?? []).slice(state.meta.rumors?.length ?? 0)) {
       lines.push(t(lang, 'rumorLine', r.day, buildName(r.note.build, lang), r.note.day, t(lang, r.note.factor > 1 ? 'patchBuff' : 'patchNerf')))
     }
@@ -226,7 +227,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           {view === 'board' && (
             <Board lang={lang} board={state.board ?? []} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
           )}
-          {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} />}
+          {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
           {view === 'faustus' && (
             <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} subtitle={subtitle}
               onSell={onSell} onBack={() => setView('bench')} />

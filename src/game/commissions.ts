@@ -47,7 +47,7 @@ export function canDeliver(item: Item, c: Commission): boolean {
 }
 
 function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rng: Rng): Commission | undefined {
-  const b = pickWeighted(rng, BUILDS, (x) => popularity(meta, x.id))!
+  const b = pickWeighted(rng, BUILDS, (x) => popularity(meta, x.id, day))!
   const slots = Object.keys(b.slots) as Slot[]
   const slot = slots[int(rng, 0, slots.length - 1)]
   const want = b.slots[slot]!

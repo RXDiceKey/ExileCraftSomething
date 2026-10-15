@@ -8,7 +8,7 @@ import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './de
 import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, premium } from './shop.ts'
-import { BUILDS, mergeCodex, weekday, WEEKEND_BOOM } from './meta.ts'
+import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
 import { quote, stackedAttributes, synergy } from './value.ts'
 
@@ -166,6 +166,28 @@ test('메타: 판마다 인기 추첨, 매일 변동, 패치 2회', () => {
   for (const v of Object.values(t.meta.m)) assert.ok(v > 0.1 && v < 5)
 })
 
+test('리그 진행: 4일차까지는 스타터가 가장 흥하고, 5일차부터 고급·우버가 슬슬 올라옴', () => {
+  const sum = (tier: string, day: number) => BUILDS.filter((b) => b.tier === tier).reduce((s, b) => s + popularity(undefined, b.id, day), 0)
+  const uber = BUILDS.find((b) => b.tier === 'uber')!.id
+  const starter = BUILDS.find((b) => b.tier === 'starter')!.id
+  for (let day = 1; day <= LAST_DAY; day++) {
+    const [s, a, u] = ['starter', 'advanced', 'uber'].map((tier) => sum(tier, day))
+    assert.equal(s, sum('starter', 1), '스타터는 그대로')
+    if (day <= STARTER_DAYS) {
+      assert.ok(s > 5 * (a + u), `${day}일차 스타터 ${s} vs 고급·우버 ${a + u}`)
+      assert.equal(u, sum('uber', 1))
+      assert.equal(trend(undefined, uber, day), null)
+    } else if (day <= LATE_DAY) {
+      assert.ok(a > sum('advanced', day - 1) && u > sum('uber', day - 1), `${day}일차에 고급·우버가 오름`)
+      assert.equal(trend(undefined, uber, day), 'rising')
+    } else {
+      assert.equal(u, sum('uber', LATE_DAY), '후반엔 더 오르지 않음')
+      assert.equal(trend(undefined, uber, day), null)
+    }
+    assert.equal(trend(undefined, starter, day), null)
+  }
+})
+
 test('빌드 구매자: 주문 젬 마법봉은 주문 빌드가 사고, 인기도가 가격을 움직임', () => {
   const wand = withMods(baseId('Convoking Wand'), ['SpellDamageAndManaOnWeapon6', 'GlobalSpellGemsLevel1', 'IncreasedCastSpeed5', 'SpellCriticalStrikeChance5'])
   const s = newGame(5)
@@ -205,6 +227,8 @@ test('우버 빌드는 1–2등급만 쳐 주지만 훨씬 비싸게 삼', () =>
   }
   const q = quote(withMods(RING, picked.slice(0, 6)), 'en', 8)
   assert.ok(['uber', 'advanced'].includes(starterId(q) ?? ''), `top buyer ${q.top[0].id}`)
+  const early = quote(withMods(RING, picked.slice(0, 6)), 'en', 2)
+  assert.ok(q.top[0].value > early.top[0].value * 5, `리그 초반엔 우버 구매자가 적음: 2일차 ${early.top[0].value}, 8일차 ${q.top[0].value}`)
 })
 
 test('베이스와 합산: 낮은 베이스의 1·1등급이 최상급 베이스의 2·2등급을 못 이김', () => {

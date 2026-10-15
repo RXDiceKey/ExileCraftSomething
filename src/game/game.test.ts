@@ -7,7 +7,7 @@ import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/it
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
 import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { compileSearch } from './search.ts'
-import { basePrice, baseResale, premium } from './shop.ts'
+import { basePrice, baseResale, lifeforcePrice, premium, priceOf } from './shop.ts'
 import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
 import { quote, stackedAttributes, synergy } from './value.ts'
@@ -59,6 +59,17 @@ test('고레벨 프리미엄은 7일차에 사라짐', () => {
   assert.equal(premium(1, 70), 1)
   assert.ok(basePrice(REGALIA, 86, 1)! > basePrice(REGALIA, 86, 8)!)
   assert.ok(basePrice(SIMPLEX, 85, 8)! > 1_000_000, 'Simplex is very expensive')
+})
+
+test('생기 가격: 7일차까지 세 색이 같고, 8일차부터 노란색(혈기)만 올라 11일차에 시세', () => {
+  for (let day = 1; day <= 7; day++) {
+    assert.equal(lifeforcePrice('vivid', day), lifeforcePrice('wild', day))
+    assert.equal(lifeforcePrice('primal', day), lifeforcePrice('wild', day))
+  }
+  for (let day = 8; day <= 11; day++) assert.ok(lifeforcePrice('vivid', day) > lifeforcePrice('vivid', day - 1), `${day}일차 혈기 상승`)
+  assert.equal(lifeforcePrice('vivid', 14), priceOf('Vivid Crystallised Lifeforce'))
+  assert.ok(lifeforcePrice('vivid', 11) > 5 * lifeforcePrice('wild', 11))
+  assert.equal(lifeforcePrice('wild', 14), lifeforcePrice('wild', 1), '야생·원시는 그대로')
 })
 
 test('파우스투스: 한 빌드에 몰린 옵션이 흩어진 같은 등급보다 비쌈', () => {

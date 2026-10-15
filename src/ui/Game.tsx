@@ -15,11 +15,12 @@ import { Bench } from './Bench.tsx'
 import { Board } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
-import { Shop } from './Shop.tsx'
+import { Shop, type ShopView } from './Shop.tsx'
 import { Rivals } from './Rivals.tsx'
 import { rivalNewsText } from './rivalText.ts'
 import { playerRank } from '../game/rivals.ts'
 import { Stash } from './Stash.tsx'
+import { TipLayer } from './Tip.tsx'
 
 interface Props {
   lang: Lang
@@ -38,6 +39,7 @@ const boomPct = (day: number) => Math.round((boom(day) - 1) * 100)
 export function Game({ lang, state, setState, settings, setSettings, onMenu, codex }: Props) {
   const [view, setView] = useState<View>(state.stash.length ? 'bench' : 'shop')
   const [selected, setSelected] = useState<number | null>(state.stash[0]?.uid ?? null)
+  const [shopView, setShopView] = useState<ShopView>({ cls: 'Body Armour', query: '', ilvl: 84, scroll: 0 })
   const [notice, setNotice] = useState<string | null>(null)
   const [subtitle, setSubtitle] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -161,6 +163,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
 
   return (
     <div className="game">
+      <TipLayer />
       <header className="topbar">
         <strong>{t(lang, 'day', state.day, LAST_DAY)} · {t(lang, 'weekdays').split(',')[weekday(state.day)]}</strong>
         {boom(state.day) > 1 && <span className="boom">{t(lang, 'boomBadge', boomPct(state.day))}</span>}
@@ -168,7 +171,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
         {state.pending > 0 && <span>{t(lang, 'pending')}: {fmtGold(state.pending)}</span>}
         <span>{t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}</span>
         <span>{t(lang, 'rank', playerRank(state.gold + state.pending, state.rivals), state.rivals.length + 1)}</span>
-        <button disabled={actionsLeft <= 0} title={t(lang, 'huntHint')} onClick={onHunt}>{t(lang, 'hunt')}</button>
+        <button disabled={actionsLeft <= 0} data-tip={t(lang, 'huntHint')} onClick={onHunt}>{t(lang, 'hunt')}</button>
         <button className="primary" onClick={onCloseDay}>{t(lang, state.day >= LAST_DAY ? 'closeLastDay' : 'closeDay')}</button>
         <div className="menu-wrap">
           <button onClick={() => setMenuOpen(!menuOpen)}>{t(lang, 'menu')}</button>
@@ -215,7 +218,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
             {tab('codex', t(lang, 'codex'))}
           </nav>
           {view === 'bench' && (
-            <Bench lang={lang} entry={entry} gold={state.gold} canSpam={!!match}
+            <Bench lang={lang} entry={entry} gold={state.gold} day={state.day} canSpam={!!match}
               onCurrency={onCurrency} onBench={onBench} onRemoveCrafted={onRemoveCrafted} onMatron={onMatron} onEssence={onEssence}
               onFossils={onFossils} onMirror={onMirror} onSpam={onSpam} onFaustus={openFaustus}
               stash={state.stash} onInfluenceExalt={onInfluenceExalt} onDominance={onDominance} onAwaken={onAwaken}
@@ -223,7 +226,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               onBeast={onBeast} onImprint={onImprint} onRestore={onRestore}
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
           )}
-          {view === 'shop' && <Shop lang={lang} state={state} onBuy={onBuy} />}
+          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} />}
           {view === 'board' && (
             <Board lang={lang} board={state.board ?? []} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
           )}

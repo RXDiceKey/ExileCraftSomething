@@ -8,7 +8,7 @@ import {
 import { beastRecipe, canImprint, canRestore, IMPRINT_BEAST, imprint, restore } from '../engine/beasts.ts'
 import { canRecombine, recombine, recombineCostChaos } from '../engine/recombinator.ts'
 import { tierOf } from './describe.ts'
-import { harvestCraft, LIFEFORCE, type Cost } from '../engine/harvest.ts'
+import { harvestCraft, type Cost, type Lifeforce } from '../engine/harvest.ts'
 import {
   applyVeiledChaos, applyVeiledExalt, canReveal, canUnveil, canVeiledChaos, canVeiledExalt, reveal, unveil, VEILED_CHAOS, VEILED_EXALT,
 } from '../engine/veiled.ts'
@@ -21,7 +21,7 @@ import { int, type Rng } from '../engine/rng.ts'
 import { canDeliver, refreshBoard, type Commission } from './commissions.ts'
 import { advanceMeta, rollMeta, saturate, type Meta } from './meta.ts'
 import { advanceRivals, newRivals, type Rival, type RivalNews } from './rivals.ts'
-import { basePrice, currencyPrice, GOLD_PER_CHAOS, MIRROR, priceOf } from './shop.ts'
+import { basePrice, currencyPrice, GOLD_PER_CHAOS, lifeforcePrice, MIRROR, priceOf } from './shop.ts'
 import { record, type StepInfo } from './history.ts'
 import { highEffCount, itemExpectedCost, quote, slotOf } from './value.ts'
 
@@ -161,12 +161,12 @@ export const ELDRITCH_ORBS: Record<string, { can: (i: Item) => boolean; apply: (
 export const doEldritchOrb = (s: GameState, uid: number, name: string) =>
   craft(s, uid, ELDRITCH_ORBS[name].can, () => priceOf(name), ELDRITCH_ORBS[name].apply, `eldorb:${name}`)
 
-// Harvest crafts, paid in Crystallised Lifeforce at market price.
-export const harvestCost = (cost: Cost) =>
-  Object.entries(cost).reduce((sum, [k, n]) => sum + n * priceOf(LIFEFORCE[k as keyof typeof LIFEFORCE]), 0)
+// Harvest crafts, paid in Crystallised Lifeforce at that day's price.
+export const harvestCost = (cost: Cost, day: number) =>
+  Math.round(Object.entries(cost).reduce((sum, [k, n]) => sum + n * lifeforcePrice(k as Lifeforce, day), 0))
 export function doHarvest(s: GameState, uid: number, id: string): Result {
   const c = harvestCraft(id)
-  return craft(s, uid, c.can, () => harvestCost(c.cost), c.apply, `harv:${id}`)
+  return craft(s, uid, c.can, () => harvestCost(c.cost, s.day), c.apply, `harv:${id}`)
 }
 
 // Beastcrafting: a recipe costs its named beasts.

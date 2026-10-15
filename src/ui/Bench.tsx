@@ -29,6 +29,7 @@ interface Props {
   entry: StashItem | undefined
   stash: StashItem[]
   gold: number
+  day: number // lifeforce prices move with the day
   canSpam: boolean // a search is typed in
   onCurrency: (c: CurrencyId) => void
   onBench: (index: number) => void
@@ -72,7 +73,7 @@ export function Bench(p: Props) {
   const cost = fossils.length ? fossilCost(item, fossils) : 0
   // One currency button: icon, price, greyed out when it can't be used or isn't affordable.
   const orb = (en: string, can: boolean, onUse: () => void) => (
-    <button key={en} className="currency" disabled={!can || priceOf(en) > gold} title={`${nameOf(en, lang)} — ${fmtGold(priceOf(en))}`}
+    <button key={en} className="currency" disabled={!can || priceOf(en) > gold} data-tip={`${nameOf(en, lang)} — ${fmtGold(priceOf(en))}`}
       onClick={() => { sfx('currencyApply'); onUse() }}>
       <img src={icon(en)} alt={nameOf(en, lang)} />
       <small>{fmtGold(priceOf(en))}</small>
@@ -107,7 +108,7 @@ export function Bench(p: Props) {
               const price = currencyPrice(c)
               return (
                 <button key={c} className="currency" disabled={!CURRENCIES[c].can(item) || price > gold}
-                  title={`${nameOf(CURRENCY_EN[c], lang)} — ${fmtGold(price)}`}
+                  data-tip={`${nameOf(CURRENCY_EN[c], lang)} — ${fmtGold(price)}`}
                   onClick={() => { sfx('currencyApply'); p.onCurrency(c) }}>
                   <img src={icon(CURRENCY_EN[c])} alt={nameOf(CURRENCY_EN[c], lang)} />
                   <small>{fmtGold(price)}</small>
@@ -115,7 +116,7 @@ export function Bench(p: Props) {
               )
             })}
             <button className="currency" disabled={!!item.mirrored || priceOf(MIRROR) > gold}
-              title={`${nameOf(MIRROR, lang)} — ${fmtGold(priceOf(MIRROR))}`} onClick={() => { sfx('currencyApply'); p.onMirror() }}>
+              data-tip={`${nameOf(MIRROR, lang)} — ${fmtGold(priceOf(MIRROR))}`} onClick={() => { sfx('currencyApply'); p.onMirror() }}>
               <img src={icon(MIRROR)} alt={nameOf(MIRROR, lang)} />
               <small>{fmtGold(priceOf(MIRROR))}</small>
             </button>
@@ -129,7 +130,7 @@ export function Bench(p: Props) {
             <label>{t(lang, 'maxTries')} <input type="number" min={1} value={opts.maxTries} onChange={(e) => setOpts({ ...opts, maxTries: Math.max(1, +e.target.value) })} /></label>
             <label>{t(lang, 'goldCap')} <input type="number" min={0} step={1000} value={opts.goldCap} onChange={(e) => setOpts({ ...opts, goldCap: Math.max(0, +e.target.value) })} /></label>
             <button disabled={!p.canSpam || item.rarity !== 'magic'}
-              title={!p.canSpam ? t(lang, 'spamNeedSearch') : item.rarity !== 'magic' ? t(lang, 'spamNeedMagic') : ''}
+              data-tip={!p.canSpam ? t(lang, 'spamNeedSearch') : item.rarity !== 'magic' ? t(lang, 'spamNeedMagic') : ''}
               onClick={() => { sfx('button'); setReport(p.onSpam(opts)) }}>
               {t(lang, 'start')}
             </button>
@@ -167,7 +168,7 @@ export function Bench(p: Props) {
             const forced = rangeText(item, CRAFTING.essences[n].mods[BASES[item.base].cls], lang).join(' / ')
             return (
               <button key={n} className="currency" disabled={priceOf(n) > gold}
-                title={`${nameOf(n, lang)} — ${fmtGold(priceOf(n))}
+                data-tip={`${nameOf(n, lang)} — ${fmtGold(priceOf(n))}
 ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
                 <img src={icon(n)} alt={nameOf(n, lang)} />
                 <small>{fmtGold(priceOf(n))}</small>
@@ -233,7 +234,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
             {usable.length === 0 && <p className="hint">{t(lang, 'harvestNone')}</p>}
             <ul className="craft-list">
               {usable.map((c) => {
-                const price = harvestCost(c.cost)
+                const price = harvestCost(c.cost, p.day)
                 return (
                   <li key={c.id}>
                     <span>{harvestText(c.id, lang)}</span>
@@ -242,7 +243,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
                         const en = LIFEFORCE[k as Lifeforce]
                         return iconOf(en).endsWith('/')
                           ? <span key={k}>{nameOf(en, lang)} {n}</span>
-                          : <span key={k} title={nameOf(en, lang)}><img className="inline-icon" src={icon(en)} alt={nameOf(en, lang)} />{n}</span>
+                          : <span key={k} data-tip={nameOf(en, lang)}><img className="inline-icon" src={icon(en)} alt={nameOf(en, lang)} />{n}</span>
                       })}
                     </span>
                     <button disabled={price > gold} onClick={() => { sfx('currencyApply'); p.onHarvest(c.id) }}>{fmtGold(price)}</button>
@@ -260,7 +261,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
           <ul className="craft-list">
             <li>
               <span>{nameOf(IMPRINT, lang)}: {bestiaryText(IMPRINT_RECIPE, lang)} — {nameOf(IMPRINT_BEAST, lang)}</span>
-              <button disabled={!canImprint(item) || priceOf(IMPRINT_BEAST) > gold} title={t(lang, 'imprintHint')}
+              <button disabled={!canImprint(item) || priceOf(IMPRINT_BEAST) > gold} data-tip={t(lang, 'imprintHint')}
                 onClick={() => { sfx('currencyApply'); p.onImprint() }}>{fmtGold(priceOf(IMPRINT_BEAST))}</button>
             </li>
             {item.imprint && (
@@ -271,7 +272,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
             )}
             <li>
               <span>{bestiaryText('EinharMasterCraftMemoryLine1', lang)} — {nameOf(MATRON, lang)}</span>
-              <button disabled={!matronOptions(item).length || priceOf(MATRON) > gold} title={t(lang, 'matronHint')}
+              <button disabled={!matronOptions(item).length || priceOf(MATRON) > gold} data-tip={t(lang, 'matronHint')}
                 onClick={() => { sfx('currencyApply'); p.onMatron() }}>{fmtGold(priceOf(MATRON))}</button>
             </li>
             {BEAST_RECIPES.filter((r) => r.can(item)).map((r) => (
@@ -339,7 +340,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
               const on = fossils.includes(n)
               return (
                 <button key={n} className={`currency ${on ? 'picked' : ''}`} disabled={!on && fossils.length >= 4}
-                  title={`${nameOf(n, lang)} — ${fmtGold(priceOf(n))}`}
+                  data-tip={`${nameOf(n, lang)} — ${fmtGold(priceOf(n))}`}
                   onClick={() => setFossils(on ? fossils.filter((x) => x !== n) : [...fossils, n])}>
                   <img src={icon(n)} alt={nameOf(n, lang)} />
                   <small>{fmtGold(priceOf(n))}</small>

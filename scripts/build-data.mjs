@@ -370,14 +370,21 @@ await mkdir(VOICE_DIR, { recursive: true })
 const voiceFiles = (await readdir('data-raw/dat/files')).filter((f) => f.startsWith('audio@dialogue@npc@faustus@'))
 for (const f of voiceFiles) await copyFile(`data-raw/dat/files/${f}`, `${VOICE_DIR}/${f.split('@').pop()}`)
 const voiceNames = voiceFiles.map((f) => f.split('@').pop())
-const fenceText = (rows) => rows.find((r) => r.Id === 'FaustusFence').Text
+// The first meeting's fence speech runs a minute (user: too long, cut it). Only its first two English sentences play
+// ("…in this case, markers. I take those goods … coin and prestige."): the voice pauses there at 17.9 s (ffmpeg
+// silencedetect), and the Korean text says the same in three sentences.
+const INTRO_END = 18.1
+const INTRO_SENTENCES = { en: 2, ko: 3 }
+const fenceText = (rows, lang) => rows.find((r) => r.Id === 'FaustusFence').Text
+  .split(/(?<=[.?!])\s+/).slice(0, INTRO_SENTENCES[lang]).join(' ')
 const faustus = {
   greeting: voiceNames.filter((n) => n.includes('greeting')),
   farewell: voiceNames.filter((n) => n.includes('farewell')),
   intro: {
     file: 'faustus_03.ogg',
-    en: fenceText(await raw('dat/tables/English/NPCTextAudio.json')),
-    ko: fenceText(await raw('dat/tables/Korean/NPCTextAudio.json')),
+    end: INTRO_END,
+    en: fenceText(await raw('dat/tables/English/NPCTextAudio.json'), 'en'),
+    ko: fenceText(await raw('dat/tables/Korean/NPCTextAudio.json'), 'ko'),
   },
 }
 

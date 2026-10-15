@@ -356,7 +356,7 @@ const needArt = [...new Set(Object.keys(bases).map((id) => repoeBases[id].visual
 for (let i = 0; i < needArt.length; i += 4) { // a few at a time, to be gentle with the CDN
   await Promise.all(needArt.slice(i, i + 4).map(async (dds) => {
     const res = await fetch(`https://web.poecdn.com/image/${dds.replace('.dds', '.png')}`, {
-      headers: { 'User-Agent': 'CraftingIsFun data build (https://github.com/RXDiceKey/CraftingIsFun)' },
+      headers: { 'User-Agent': 'CraftingIsFun data build (https://github.com/RXDiceKey/ExileCraftSomething)' },
     })
     if (!res.ok) return console.warn('no art', res.status, dds)
     await writeFile(`${ART_DIR}/${dds.split('/').pop().replace('.dds', '.png')}`, Buffer.from(await res.arrayBuffer()))

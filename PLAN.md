@@ -460,7 +460,7 @@ value(item, p, day) = 슬롯 예산(p) × e^(1.4 × (S − 6)) × 베이스 성�
 - **세이브**: localStorage(또는 IndexedDB) + 파일 내보내기.
 - **다국어**: 라이브러리 없이 `ko`/`en` 사전 두 개와 조회 함수 하나. 게임 데이터 텍스트는 가공 단계에서 언어별 JSON으로 만든다.
 - **배포: GitHub Pages** (공개 전환은 필요할 때)
-  - URL: `https://rxdicekey.github.io/CraftingIsFun/` (Vite `base: '/CraftingIsFun/'`)
+  - URL: `https://rxdicekey.github.io/ExileCraftSomething/` (Vite `base: '/ExileCraftSomething/'`, 저장소 RXDiceKey/ExileCraftSomething)
   - `main`에 push → GitHub Actions가 빌드·배포
   - 사용자가 한 번만 할 일: 리포를 Public으로 전환, Settings → Pages → Source를 **GitHub Actions**로
 

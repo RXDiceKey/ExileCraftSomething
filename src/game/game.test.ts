@@ -4,11 +4,11 @@ import textEn from '../data/text.en.json' with { type: 'json' }
 import { CURRENCIES } from '../engine/currency.ts'
 import { MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
-import { baseKind, modLines, modText, searchText, tierOf } from './describe.ts'
+import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
 import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, useCurrency, type GameState } from './game.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, premium } from './shop.ts'
-import { BUILDS, weekday, WEEKEND_BOOM } from './meta.ts'
+import { BUILDS, mergeCodex, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
 import { quote, stackedAttributes, synergy } from './value.ts'
 
@@ -266,4 +266,13 @@ test('능력치: 보통은 저항급, 스태킹 빌드에겐 핵심 옵션이고
   assert.ok(high.top[0].value > low.top[0].value * 1.3, `${high.top[0].value} vs ${low.top[0].value}`)
   const ring = quote(withMods(RING, ['IncreasedLife7', 'AddedLightningDamage9', 'Dexterity8']), 'ko', 7)
   assert.equal(ring.best?.mods.find((m) => m.id === 'Dexterity8')?.note, 'common')
+})
+
+test('빌드 도감: 1위 구매자 빌드가 열리고 최고 판매가를 기억, 같은 판매를 다시 합쳐도 그대로', () => {
+  const id = BUILDS[0].id
+  const once = mergeCodex({}, [{ buyer: id, price: 500 }, { buyer: 'life_res', price: 900 }, { price: 50 }])
+  assert.deepEqual(once, { [id]: 500 }, '범용 수요·구매자 없는 판매는 안 열림')
+  assert.equal(mergeCodex(once, [{ buyer: id, price: 500 }]), once, '바뀐 게 없으면 같은 객체')
+  assert.deepEqual(mergeCodex(once, [{ buyer: id, price: 800 }]), { [id]: 800 })
+  assert.equal(statLabel('base_maximum_life', 'ko')?.[1], '생명력 최대치 +#')
 })

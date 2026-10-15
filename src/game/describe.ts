@@ -67,6 +67,14 @@ function render(entryIdx: number, values: number[], lang: Lang): string {
   })
 }
 
+// A stat's wording with "#" for its numbers, keyed by its line (stats sharing a line give the same key). Build codex.
+export function statLabel(sid: string, lang: Lang): [number, string] | undefined {
+  const idx = entriesByStat.get(sid)?.[0]
+  if (idx === undefined) return undefined
+  const text = render(idx, STATS[idx].ids.map(() => 10), lang)
+  return text ? [idx, text.replace(/\d+(\.\d+)?/g, '#').replace(/\n/g, ' / ')] : undefined
+}
+
 // Fixed options like "+100% effect of explicit modifiers" (Simplex Amulet) scale the explicit values.
 export function modEffect(item: Item, gen: string): number {
   let pct = 0

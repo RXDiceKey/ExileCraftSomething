@@ -2,8 +2,9 @@
 // guarded and the game still runs without it; file export/import is the reliable backup.
 import type { Lang } from './game/describe.ts'
 import type { GameState } from './game/game.ts'
+import type { Codex } from './game/meta.ts'
 
-const KEY = { save: 'craftingisfun.save', best: 'craftingisfun.best', settings: 'craftingisfun.settings' }
+const KEY = { save: 'craftingisfun.save', best: 'craftingisfun.best', settings: 'craftingisfun.settings', codex: 'craftingisfun.codex' }
 
 export interface Settings { lang?: Lang; volume: number; muted: boolean; search: string; seenIntro?: boolean }
 const DEFAULT_SETTINGS: Settings = { volume: 0.7, muted: false, search: '' }
@@ -35,6 +36,8 @@ export const loadGame = () => {
 export const saveGame = (s: GameState | null) => write(KEY.save, s)
 export const loadBest = () => read<number>(KEY.best) ?? 0
 export const saveBest = (n: number) => write(KEY.best, n)
+export const loadCodex = () => read<Codex>(KEY.codex) ?? {}
+export const saveCodex = (c: Codex) => write(KEY.codex, c)
 export const loadSettings = (): Settings => ({ ...DEFAULT_SETTINGS, ...read<Partial<Settings>>(KEY.settings) })
 export const saveSettings = (s: Settings) => write(KEY.settings, s)
 

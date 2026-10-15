@@ -29,7 +29,7 @@ export const START_GOLD = 50_000 // ponytail: placeholder until the P7 economy s
 export const HUNT_REWARD: [number, number] = [1_000, 3_000]
 
 export interface StashItem { uid: number; item: Item }
-export interface Sale { day: number; item: Item; price: number }
+export interface Sale { day: number; item: Item; price: number; buyer?: string } // buyer: the paying build or demand
 
 export interface GameState {
   v: 1
@@ -272,13 +272,14 @@ export function sell(s: GameState, uid: number): Result<{ state: GameState; pric
   if (s.used >= ACTIONS_PER_DAY) return fail('noActions')
   const entry = findItem(s, uid)
   if (!entry) return fail('gone')
-  const price = quote(entry.item, 'en', s.day, s.meta).price
+  const q = quote(entry.item, 'en', s.day, s.meta)
+  const price = q.price
   return {
     ok: true,
     state: {
       state: {
         ...s, used: s.used + 1, pending: s.pending + price,
-        stash: s.stash.filter((x) => x.uid !== uid), sales: [...s.sales, { day: s.day, item: entry.item, price }],
+        stash: s.stash.filter((x) => x.uid !== uid), sales: [...s.sales, { day: s.day, item: entry.item, price, ...(q.best && { buyer: q.best.id }) }],
       },
       price,
     },

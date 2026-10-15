@@ -126,3 +126,6 @@ input[type='number'] { width: 90px; }
 .rivals li.you, .final-ranking li.you { color: var(--gold); font-weight: bold; }
 .rivals .up { color: #9fdc9f; } .rivals .down { color: #e08080; }
 .final-ranking { text-align: left; max-width: 420px; margin: 0 auto 16px; }
+.codex details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+.codex summary { cursor: pointer; }
+.codex-slots { margin: 4px 0 4px; padding-left: 18px; color: var(--mod); }

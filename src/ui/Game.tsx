@@ -7,11 +7,12 @@ import {
   useAwaken, useBeast, useDominance, useEldritchImplicit, useEldritchOrb, useHarvest, useRecombine, useImprint, useRestore, useReveal, useUnveil, useVeiledOrb, useFossils, useInfluenceExalt, useMatron, useMirror, useRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
-import { boom, buildName, weekday } from '../game/meta.ts'
+import { boom, buildName, weekday, type Codex as CodexData } from '../game/meta.ts'
 import { compileSearch } from '../game/search.ts'
 import { fmtGold, t } from '../i18n.ts'
 import { exportFile, importFile, type Settings } from '../save.ts'
 import { Bench } from './Bench.tsx'
+import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
 import { Shop } from './Shop.tsx'
 import { Rivals, rivalNewsText } from './Rivals.tsx'
@@ -25,13 +26,14 @@ interface Props {
   settings: Settings
   setSettings: (s: Settings) => void
   onMenu: () => void
+  codex: CodexData
 }
 
-type View = 'bench' | 'shop' | 'faustus'
+type View = 'bench' | 'shop' | 'faustus' | 'codex'
 
 const boomPct = (day: number) => Math.round((boom(day) - 1) * 100)
 
-export function Game({ lang, state, setState, settings, setSettings, onMenu }: Props) {
+export function Game({ lang, state, setState, settings, setSettings, onMenu, codex }: Props) {
   const [view, setView] = useState<View>(state.stash.length ? 'bench' : 'shop')
   const [selected, setSelected] = useState<number | null>(state.stash[0]?.uid ?? null)
   const [notice, setNotice] = useState<string | null>(null)
@@ -191,6 +193,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
             {tab('bench', t(lang, 'bench'))}
             {tab('shop', t(lang, 'shop'))}
             {tab('faustus', t(lang, 'faustus'))}
+            {tab('codex', t(lang, 'codex'))}
           </nav>
           {view === 'bench' && (
             <Bench lang={lang} entry={entry} gold={state.gold} canSpam={!!match}
@@ -202,6 +205,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
           )}
           {view === 'shop' && <Shop lang={lang} state={state} onBuy={onBuy} />}
+          {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} />}
           {view === 'faustus' && (
             <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} subtitle={subtitle}
               onSell={onSell} onBack={() => setView('bench')} />

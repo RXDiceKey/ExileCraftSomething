@@ -26,9 +26,10 @@ interface StartProps {
   onNew: () => void
   onContinue: () => void
   onCredits: () => void
+  onCodex: () => void
 }
 
-export function StartMenu({ lang, best, canContinue, onNew, onContinue, onCredits }: StartProps) {
+export function StartMenu({ lang, best, canContinue, onNew, onContinue, onCredits, onCodex }: StartProps) {
   return (
     <main className="screen">
       <h1>{t(lang, 'title')}</h1>
@@ -36,6 +37,7 @@ export function StartMenu({ lang, best, canContinue, onNew, onContinue, onCredit
       <div className="menu">
         <button className={canContinue ? '' : 'primary'} onClick={onNew}>{t(lang, 'newRun')}</button>
         <button className={canContinue ? 'primary' : ''} disabled={!canContinue} onClick={onContinue}>{t(lang, 'continue')}</button>
+        <button onClick={onCodex}>{t(lang, 'codex')}</button>
         <button onClick={onCredits}>{t(lang, 'credits')}</button>
       </div>
     </main>

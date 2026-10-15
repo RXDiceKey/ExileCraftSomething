@@ -63,6 +63,17 @@ export const trend = (meta: Meta | undefined, id: string): 'rising' | 'falling' 
 
 export const buildName = (id: string, lang: 'ko' | 'en') => BUILDS.find((b) => b.id === id)?.name[lang] ?? id
 
+// Build codex, kept across runs: build id -> best price it paid. A build opens once it is the paying buyer of a sale.
+export type Codex = Record<string, number>
+// Same object back when nothing changed, so callers can skip saving.
+export function mergeCodex(codex: Codex, sales: { buyer?: string; price: number }[]): Codex {
+  let out = codex
+  for (const { buyer, price } of sales) {
+    if (buyer && BUILDS.some((b) => b.id === buyer) && (out[buyer] ?? -1) < price) out = { ...out, [buyer]: price }
+  }
+  return out
+}
+
 // Day 1 is league launch, a Saturday (Korean time). The next weekend (days 8–9) everyone plays and buys: quotes rise.
 // Monday the bubble pops and prices are back to normal.
 export const START_WEEKDAY = 6 // 0 = Sunday

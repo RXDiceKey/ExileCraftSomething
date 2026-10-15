@@ -94,13 +94,14 @@ test('기대 비용: 드문 결과일수록 큼, 견적은 옵션 가치 (기대
   const q = quote(lucky, 'ko', 7)
   assert.equal(q.expectedCost, Math.round(eLucky))
   assert.ok(q.expectedCost > q.optionValue, '드문 결과라 기대 비용이 옵션 가치보다 큼')
-  assert.equal(q.price, Math.max(q.optionValue, q.baseResale))
+  assert.equal(q.price, Math.max(finalPrice(q.expectedCost, q.optionValue, q.best?.usefulCount ?? 0), q.baseResale))
 })
 
-test('견적 공식: A(기대 비용) < B(옵션 가치)면 max((A + B) / 2, B), 아니면 B', () => {
-  assert.equal(finalPrice(100, 300), 300)
-  assert.equal(finalPrice(300, 100), 100, '옵션 가치가 더 작으면 그 값')
-  assert.equal(finalPrice(200, 200), 200)
+test('견적 공식: A(기대 비용) < B(옵션 가치)면 B, 아니면 B — 단 쓸모 있는 옵션 5개 이상이면 (A + B) / 2', () => {
+  assert.equal(finalPrice(100, 300, 6), 300)
+  assert.equal(finalPrice(300, 100, 4), 100, '옵션 가치가 더 작으면 그 값')
+  assert.equal(finalPrice(300, 100, 5), 200, '거의 완성된 아이템은 만든 값의 절반을 더 쳐 줌')
+  assert.equal(finalPrice(200, 200, 6), 200)
 })
 
 test('고양 옵션: 유효한 고양 옵션이 많을수록 폭등 (1개 2배, 2개 8배, 3개 40배)', () => {

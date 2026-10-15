@@ -3,7 +3,7 @@ import { fractured } from '../engine/item.ts'
 import type { Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, type Meta } from '../game/meta.ts'
-import { ELEVATED_SURGE, quote } from '../game/value.ts'
+import { ELEVATED_SURGE, FINISHED, quote } from '../game/value.ts'
 import { fmtGold, t, tierText } from '../i18n.ts'
 import { Tooltip } from './Tooltip.tsx'
 
@@ -20,6 +20,7 @@ interface Props {
 
 export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onBack }: Props) {
   const q = useMemo(() => (entry ? quote(entry.item, lang, day, meta) : null), [entry, lang, day, meta])
+  const byCost = !!q && q.expectedCost > q.optionValue && (q.best?.usefulCount ?? 0) >= FINISHED && q.price > q.optionValue
   const elevated = Math.min(3, q?.best?.mods.filter((m) => m.useful && m.tier === 0).length ?? 0)
   return (
     <section className="panel faustus">
@@ -35,7 +36,7 @@ export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onB
             <button className="primary" disabled={!canSell} onClick={onSell}>{t(lang, 'sell')}</button>
             <button onClick={onBack}>{t(lang, 'back')}</button>
           </div>
-          <p className="hint">{t(lang, 'costNote', fmtGold(q.optionValue), fmtGold(q.expectedCost))}</p>
+          <p className="hint">{t(lang, 'costNote', fmtGold(q.optionValue), fmtGold(q.expectedCost))}{byCost && <><br />{t(lang, 'costRule', FINISHED)}</>}</p>
 
           <h3>{t(lang, 'whoUses')}</h3>
           <ol>{q.top.map((p) => (

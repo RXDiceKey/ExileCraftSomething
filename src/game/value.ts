@@ -330,13 +330,15 @@ const baseShare = (item: Item) => (fractured(item) ? FRACTURED_BASE : 1)
 export const itemExpectedCost = (item: Item, day: number) =>
   expectedCost(item, basePrice(item.base, item.ilvl, day) * baseShare(item), replay, highEffCount)
 
-// The user's rule as written (A = expected cost E, B = option value V).
-export const finalPrice = (e: number, v: number) => (e < v ? Math.max(Math.round((e + v) / 2), v) : v)
+// The user's rule as written (A = expected cost E, B = option value V, n = useful options for the paying build).
+export const FINISHED = 5
+export const finalPrice = (e: number, v: number, n: number) =>
+  e < v ? Math.max(Math.round((e + v) / 2), v) : n >= FINISHED ? Math.round((e + v) / 2) : v
 
 // Deterministic for a given item, day and meta: asking again doesn't reroll the quote.
-// Price (D35, corrected by the user): if E < V then max((E + V) / 2, V), else V. Both branches come to V: the
-// expected cost never moves the price (a junk item doesn't get half its crafting cost back); Faustus shows it as
-// information.
+// Price (D35, corrected by the user): if E < V then max((E + V) / 2, V) (= V), else V, except that a near-finished
+// item (the paying build finds FINISHED or more of its options useful) gets (E + V) / 2: a costly good item fetches
+// part of what it took to make, while a junk item never gets half its crafting cost back. Faustus shows E either way.
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).
@@ -349,7 +351,7 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const cost = Math.round(itemExpectedCost(item, day))
   return {
     boom: k,
-    price: Math.max(FLOOR, resale, finalPrice(cost, best.value)),
+    price: Math.max(FLOOR, resale, finalPrice(cost, best.value, best.usefulCount)),
     optionValue: best.value,
     expectedCost: cost,
     top: judged.slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id) : null })),

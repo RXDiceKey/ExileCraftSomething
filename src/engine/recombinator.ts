@@ -13,7 +13,9 @@ export const recombinedLevel = (a: number, b: number) => Math.min(Math.floor((a 
 
 // Exclusive mods (essence-only, beast aspects and other bench crafts incl. meta-crafts, elevated, unveiled): at most one
 // makes it, and a side's exclusive mods count as one for its pool size (3.26).
+// Breach, Delve and Incursion drop-only options too (PoE Wiki, Recombinator: exclusive modifiers).
 export const isExclusive = (m: RolledMod) => !!m.crafted || !!MODS[m.id].essenceOnly || !!MODS[m.id].elev || MODS[m.id].dom === 'unveiled'
+  || !!MODS[m.id].drop
 
 // How many mods a side keeps, by its pool size (Butsicles' 3.25 table, rows normalised).
 const KEEP: Record<number, number[]> = {
@@ -66,7 +68,8 @@ export function recombine(a: Item, b: Item, rng: Rng): Item {
   // The result can't hold mods its base couldn't roll (influence mods on a plain base, ...): such a pick is just lost.
   // Bench crafts and essence mods never roll but fit any base of the class; elevated mods need their influence.
   const tags = itemTags({ ...result, explicits: [] })
-  const fits = (m: RolledMod) => m.crafted || MODS[m.id].essenceOnly ? true
+  // Drop-only options move to other bases of the class (Grasping Mail options onto any body armour).
+  const fits = (m: RolledMod) => m.crafted || MODS[m.id].essenceOnly || MODS[m.id].drop ? true
     : MODS[m.id].elev ? result.influences.includes(modInfluence(m.id)!) : spawnWeight(m.id, tags) > 0
   const weight = (e: Entry) => spawnWeight(e.m.id, itemTags({ ...e.from, explicits: [] })) || 1000
   const out: RolledMod[] = []

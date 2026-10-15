@@ -163,6 +163,64 @@ const koDescriptions = new Map()
   }
 }
 
+// ---- Drop-only mods (D42). They never roll; `drop` names where they come from and `on` the item classes they appear
+// on ("Helmet:dex_armour" when the armour attributes matter).
+// - Breach: Breachlord mods on a Grasping Mail from 60 Breach Rings (PoE Wiki "Grasping Mail": 1-3 of them, weights).
+// - Delve / Incursion: rare drops from Azurite Mine nodes / the Temple of Atzoatl. Classes from poedb's per-class mod
+//   tables (scripts/research/poedb-drop-mods.json), matched to RePoE by name, side, level and stat ranges. Legacy ones
+//   (PoE Wiki "List of drop-restricted Delve modifiers") are left out; reflected ("Inverted") versions too.
+const BREACH_WEIGHT = {
+  BreachBodyArmourIncreasedByUncappedFireResistance1____: 250, BreachBodyCoverInAshWhenHit1__: 1000,
+  BreachBodyLifeGainedOnHittingIgnitedEnemies1: 1000, BreachBodyEvasionIncreasedByUncappedColdResistance1: 250,
+  BreachBodyAddedColdDamagePerPowerCharge1: 1000, BreachBodyOnHitBlindChilledEnemies1: 250,
+  BreachBodyArcticArmourReservationEfficiency1: 250, BreachBodyChillEnemiesWhenHit1: 1000,
+  BreachBodyGainPowerChargeOnKillingFrozenEnemy1: 1000, BreachBodyAddedLightningDamagePerShockedEnemyKilled1: 250,
+  BreachBodyChaosDamageDoesNotBypassESNotLowLifeOrMana1_: 1000, BreachBodyCriticalChanceIncreasedByUncappedLightningResistance1: 250,
+  BreachBodyIncreasedAttackSpeedPerDexterity1: 250, BreachBodyReflectsShocks1: 1000, BreachBodyEnemiesBlockedAreIntimidated1: 1000,
+  BreachBodyVulnerabilityOnHit1: 250, BreachBodyNoExtraBleedDamageWhileMoving1_: 1000, BreachBodyPhysicalDamageReductionWhileNotMoving1: 1000,
+  BreachBodyChaosDamageAsPortionOfFireDamage1_: 333, BreachBodyChaosDamageAsPortionOfColdDamage1: 333,
+  BreachBodyChaosDamageAsPortionOfLightningDamage1: 333, BreachBodyMaximumLifeConvertedToEnergyShield1___: 1000,
+  BreachBodyAllDefences1: 1000, BreachBodyGrantsEnvy1: 1000, BreachBodyMinionsPoisonEnemiesOnHit1_: 1000,
+}
+for (const [id, w] of Object.entries(BREACH_WEIGHT)) mods[id] = { ...toModDef(repoeMods[id]), drop: 'breach', on: ['Body Armour'], dw: w }
+const DELVE_LEGACY = new Set(['MaximumChaosResistDelve', 'MaximumColdResistDelve', 'MaximumFireResistDelve', 'MaximumLightningResistDelve',
+  'CurseEffectivenessDelve', 'DoomGainRateDelve'])
+const POEDB_CLASS = {
+  Amulets: 'Amulet', Belts: 'Belt', Rings: 'Ring', Quivers: 'Quiver', Bows: 'Bow', Claws: 'Claw', Daggers: 'Dagger', Rune_Daggers: 'Rune Dagger',
+  Wands: 'Wand', One_Hand_Swords: 'One Hand Sword', Thrusting_One_Hand_Swords: 'Thrusting One Hand Sword', One_Hand_Axes: 'One Hand Axe',
+  One_Hand_Maces: 'One Hand Mace', Sceptres: 'Sceptre', Staves: 'Staff', Warstaves: 'Warstaff', Two_Hand_Swords: 'Two Hand Sword',
+  Two_Hand_Axes: 'Two Hand Axe', Two_Hand_Maces: 'Two Hand Mace', Body_Armours: 'Body Armour', Helmets: 'Helmet', Gloves: 'Gloves',
+  Boots: 'Boots', Shields: 'Shield',
+}
+const pageClass = (p) => {
+  const m = p.match(/^(Body_Armours|Helmets|Gloves|Boots|Shields)_(.+)$/)
+  return m ? `${POEDB_CLASS[m[1]]}:${m[2]}_armour` : POEDB_CLASS[p]
+}
+const poedb = JSON.parse(await readFile('scripts/research/poedb-drop-mods.json', 'utf8'))
+for (const [key, rows] of Object.entries(poedb.groups)) {
+  const [family, idx] = key.split(':')
+  const pages = idx.split(',').map((i) => poedb.pages[+i])
+  for (const [name, side, lvl, statText] of rows) {
+    const want = statText.split('|').map((s) => { const p = s.split(':'); const max = +p.pop(), min = +p.pop(); return [p.join(':'), min, max] })
+    const hits = Object.keys(repoeMods).filter((id) => {
+      const m = repoeMods[id]
+      return m.domain === 'item' && m.name === name && m.generation_type === (side === 'P' ? 'prefix' : 'suffix') && m.required_level === lvl
+        && m.stats.length === want.length && want.every(([sid, a, b]) => m.stats.some((s) => s.id === sid
+          && Math.min(s.min, s.max) === Math.min(a, b) && Math.max(s.min, s.max) === Math.max(a, b)))
+    })
+    if (!hits.length) continue // fossil-only (domain 'delve') or unknown: not a drop
+    for (const page of pages) {
+      // Skeleton/zombie counts come in an amulet and a body armour version with the same stats.
+      const id = hits.length === 1 ? hits[0] : hits.find((h) => /Amulet/.test(h) === (page === 'Amulets'))
+      if (!id || DELVE_LEGACY.has(id)) continue
+      mods[id] ??= { ...toModDef(repoeMods[id]), drop: family === 'Delve' ? 'delve' : 'incursion', on: [] }
+      if (!mods[id].on.includes(pageClass(page))) mods[id].on.push(pageClass(page))
+    }
+  }
+}
+// In the wiki's current list but on no poedb class table: fire damage taken goes where its cold/lightning/chaos siblings go.
+mods.FireDamageTakenDelve = { ...toModDef(repoeMods.FireDamageTakenDelve), drop: 'delve', on: [...mods.ColdDamageTakenDelve.on] }
+
 // ---- Stat text: language-independent part (conditions/formats/handlers) + per-language strings
 const usedStats = new Set(Object.values(mods).flatMap((m) => m.stats.map((s) => s[0])))
 const koTrade = new Map(tradeKo.result.flatMap((g) => g.entries.map((e) => [e.id, e.text])))
@@ -236,6 +294,7 @@ const GAME_STRINGS = {
   exarchItem: 'ItemPopupSearingExarchItem', eaterItem: 'ItemPopupEaterofWorldsItem',
   veiledPrefix: 'ItemDisplayVeiledPrefix', veiledSuffix: 'ItemDisplayVeiledSuffix', // "장막 접두어"
   unveil: 'UnveilingWindowUnveilButton', // "장막 해제"
+  breach: 'FragmentStashSubTabBreach', delve: 'DelveTabName', incursion: 'IncursionTempleBlueprintWindowTitle', // 균열 / 탐광 / 앗조아틀의 사원
   ...Object.fromEntries([1, 2, 3, 4, 5, 6].map((n) => [`eldritchTier${n}`, `EldritchCurrencyTier${n}`])), // Lesser..Perfect
 }
 
@@ -367,7 +426,8 @@ if (needArt.length) console.log(`downloaded ${needArt.length} item images`)
 // ---- Faustus voice lines -> assets/voice/faustus/ (served as-is)
 const VOICE_DIR = 'assets/voice/faustus'
 await mkdir(VOICE_DIR, { recursive: true })
-const voiceFiles = (await readdir('data-raw/dat/files')).filter((f) => f.startsWith('audio@dialogue@npc@faustus@'))
+// Only greetings and farewells are used (no first-meeting speech, user), so only those are copied.
+const voiceFiles = (await readdir('data-raw/dat/files')).filter((f) => /^audio@dialogue@npc@faustus@faustus_(greeting|farewell)_/.test(f))
 for (const f of voiceFiles) await copyFile(`data-raw/dat/files/${f}`, `${VOICE_DIR}/${f.split('@').pop()}`)
 const voiceNames = voiceFiles.map((f) => f.split('@').pop())
 // No first-meeting speech (user): greetings when his window opens, farewells after a sale.

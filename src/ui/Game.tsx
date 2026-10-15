@@ -3,7 +3,7 @@ import { faustusFarewell, faustusGreeting, sfx } from '../audio.ts'
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
+  ACTIONS_PER_DAY, buyBase, buySpecial, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
   doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -68,6 +68,11 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     sfx('button')
     const uid = state.nextUid
     if (run(buyBase(state, base, ilvl))) { setSelected(uid); setView('bench') }
+  }
+  const onBuySpecial = (id: number) => {
+    sfx('button')
+    const uid = state.nextUid
+    if (run(buySpecial(state, id))) { setSelected(uid); setView('bench') }
   }
   const onCurrency = (c: CurrencyId) => selected !== null && run(doCurrency(state, selected, c))
   const onBench = (i: number) => selected !== null && run(doBench(state, selected, i))
@@ -223,7 +228,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               onBeast={onBeast} onImprint={onImprint} onRestore={onRestore}
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
           )}
-          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} />}
+          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuySpecial={onBuySpecial} />}
           {view === 'board' && (
             <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
           )}

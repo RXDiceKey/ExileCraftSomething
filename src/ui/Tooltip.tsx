@@ -1,5 +1,5 @@
 import type { Item } from '../engine/item.ts'
-import { baseArt, baseKind, eldritchItemLines, eldritchLabel, influenceName, itemName, modLines, type Lang } from '../game/describe.ts'
+import { baseArt, baseKind, eldritchItemLines, eldritchLabel, gameText, influenceName, itemName, modLines, type Lang } from '../game/describe.ts'
 import { t, tierText } from '../i18n.ts'
 
 // lit: the search's bright/dim look (true matches, false doesn't, null/undefined no search).
@@ -32,7 +32,7 @@ export function Tooltip({ item, lang, lit }: { item: Item; lang: Lang; lit?: boo
           <div key={l.id} className="mod">
             <div className="mod-tag">
               {t(lang, l.kind === 'prefix' ? 'prefix' : 'suffix')} · {tierText(lang, l.tier ?? 1)} · {l.name}
-              {l.crafted && ` · ${t(lang, 'crafted')}`}{l.fractured && ` · ${t(lang, 'fractured')}`}
+              {l.crafted && ` · ${t(lang, 'crafted')}`}{l.fractured && ` · ${t(lang, 'fractured')}`}{l.drop && ` · ${gameText(lang, l.drop)}`}
             </div>
             {l.text.map((line, k) => <div key={k} className="mod-line">{line}</div>)}
           </div>

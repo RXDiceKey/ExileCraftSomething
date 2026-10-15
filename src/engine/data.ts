@@ -30,6 +30,9 @@ export interface ModDef {
   essenceOnly?: true
   et?: number // eldritch implicit tier 1-6 (Lesser..Perfect)
   elev?: string // elevated influence mod (Orb of Dominance): the mod family (type) it upgrades; never rolls
+  drop?: 'breach' | 'delve' | 'incursion' // drop-only (D42): Grasping Mail, Azurite Mine, Temple of Atzoatl; never rolls
+  on?: string[] // drop-only: item classes it appears on ("Helmet:dex_armour" when the armour attributes matter)
+  dw?: number // Breachlord mod weight
 }
 
 export const BASES = basesJson as Record<string, BaseDef>

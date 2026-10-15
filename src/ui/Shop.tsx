@@ -1,9 +1,13 @@
 import { useLayoutEffect, useMemo, useRef, type Dispatch, type SetStateAction } from 'react'
 import { BASES } from '../engine/data.ts'
-import { baseArt, baseKind, baseName, className, type Lang } from '../game/describe.ts'
+import { baseArt, baseKind, baseName, className, gameText, itemName, type Lang } from '../game/describe.ts'
 import type { GameState } from '../game/game.ts'
 import { basePrice, buyableBases } from '../game/shop.ts'
 import { fmtGold, t } from '../i18n.ts'
+import { Tooltip } from './Tooltip.tsx'
+
+// The 60 Breach Rings a Grasping Mail is made from, by their game names.
+const BREACH_RINGS = [1, 2, 3, 4, 5].map((k) => `Metadata/Items/Rings/RingB${k}`)
 
 const CLASSES = [...new Set(Object.values(BASES).map((b) => b.cls))]
 
@@ -17,9 +21,10 @@ interface Props {
   view: ShopView
   onView: Dispatch<SetStateAction<ShopView>>
   onBuy: (base: string, ilvl: number) => void
+  onBuySpecial: (id: number) => void
 }
 
-export function Shop({ lang, state, view, onView, onBuy }: Props) {
+export function Shop({ lang, state, view, onView, onBuy, onBuySpecial }: Props) {
   const { cls, query, ilvl } = view
   const list = useRef<HTMLUListElement>(null)
   // Back where the player left the list, and remember the spot on the way out. A new filter starts from the top.
@@ -43,6 +48,33 @@ export function Shop({ lang, state, view, onView, onBuy }: Props) {
   return (
     <section className="panel shop">
       <h2>{t(lang, 'shop')}</h2>
+
+      {(state.specials?.length ?? 0) > 0 && (
+        <div className="specials">
+          <h3>{t(lang, 'specials')}</h3>
+          <ul>
+            {state.specials!.map((o) => (
+              <li key={o.id}>
+                <details>
+                  <summary>
+                    <img src={`${import.meta.env.BASE_URL}${baseArt(o.item.base)}`} alt="" />
+                    <span className="base-name">
+                      <span className="base-title">
+                        {itemName(o.item, lang)}
+                        <button disabled={o.price > state.gold} onClick={(e) => { e.preventDefault(); onBuySpecial(o.id) }}>{t(lang, 'buy')} {fmtGold(o.price)}</button>
+                      </span>
+                      <small>{gameText(lang, o.source)} · {o.source === 'breach'
+                        ? t(lang, 'specialBreach', BREACH_RINGS.map((r) => baseName(r, lang)).join('·'))
+                        : t(lang, o.source === 'delve' ? 'specialDelve' : 'specialIncursion')}</small>
+                    </span>
+                  </summary>
+                  <Tooltip item={o.item} lang={lang} />
+                </details>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="shop-filters">
         <select value={cls} onChange={(e) => set({ cls: e.target.value })}>

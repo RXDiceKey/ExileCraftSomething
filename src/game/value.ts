@@ -2,7 +2,7 @@
 // so high-tier options spread across different builds are cheap and options concentrated on one build are pricey.
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
-import { fractured, type Item } from '../engine/item.ts'
+import { affixCounts, affixLimits, fractured, itemTags, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
@@ -259,10 +259,28 @@ function buyers(item: Item, lang: Lang, day: number, meta?: Meta): Buyer[] {
   return [...builds, ...generic]
 }
 
+// ---- Drop-only options (D42): Breachlord, Delve and Incursion options are top tier by nature and can't be crafted, so a
+// buyer who wants one pays DROP_PREMIUM more. Options no build profile lists (they never show up in crafted gear) go to
+// the builds of their theme: minion options to minion builds, mine/trap options to mine/trap builds, aura options to aura
+// builds; "+1 to maximum number of Spectres" only to the spectre build.
+export const DROP_PREMIUM = 1.5
+const THEME_WANT = 0.8
+const THEMES: [has: RegExp, gives: RegExp][] = [[/minion/, /minion/], [/mine/, /mine/], [/trap/, /trap/], [/aura/, /aura|envy/]] // Envy is an aura
+const BUILD_STATS = new Map(BUILDS.map((b) => [b.id, Object.values(b.slots).flatMap((s) => Object.keys(s?.wants ?? {}))]))
+function dropThemeWant(p: Buyer, stats: string[]): number {
+  if (!p.build) return 0
+  if (stats.includes('base_number_of_spectres_allowed')) return /spectre/.test(p.id) ? 1 : 0
+  const own = BUILD_STATS.get(p.id) ?? []
+  return THEMES.some(([has, gives]) => own.some((s) => has.test(s)) && stats.some((s) => gives.test(s))) ? THEME_WANT : 0
+}
+
 function judge(item: Item, p: Buyer, lang: Lang) {
   const mods = item.explicits.map((m): ModVerdict => {
     const def = MODS[m.id]
-    const { w, note, steep } = wantOf(p, def.stats.map(([sid]) => sid))
+    // A drop option's zero stats (the other minion counts) say nothing about what it does.
+    const stats = (def.drop ? def.stats.filter(([, a, b]) => a || b) : def.stats).map(([sid]) => sid)
+    const natural = wantOf(p, stats)
+    const { w, note, steep } = def.drop ? { ...natural, w: Math.max(natural.w, dropThemeWant(p, stats)) } : natural
     const tier = tierOf(item, m.id)
     const roll = def.stats.length
       ? def.stats.reduce((s, [, a, b], i) => s + (a === b ? 1 : (m.values[i] - Math.min(a, b)) / Math.abs(b - a)), 0) / def.stats.length
@@ -270,7 +288,7 @@ function judge(item: Item, p: Buyer, lang: Lang) {
     // Fixed options that boost explicit values (Simplex Amulet +100%) make every option worth that much more.
     const boost = 1 + effectPct(item, m.id, true) / 100
     const tierQuality = tierQualityOf(tier) ** (steep ? 2 : 1)
-    const contribution = tier > p.maxTier ? 0 : w * tierQuality * (0.85 + 0.15 * roll) * boost
+    const contribution = tier > p.maxTier ? 0 : w * tierQuality * (0.85 + 0.15 * roll) * boost * (def.drop ? DROP_PREMIUM : 1)
     return { id: m.id, name: modName(m.id, lang), tier, contribution, useful: contribution >= USEFUL_MIN, note: contribution > 0 ? note : undefined }
   })
   const set = Object.keys(p.wants).filter((sid) => SET_STAT.test(sid))
@@ -357,6 +375,33 @@ export const finalPrice = (e: number, v: number, n: number) =>
 // Price (D35, corrected by the user): if E < V then max((E + V) / 2, V) (= V), else V, except that a near-finished
 // item (the paying build finds FINISHED or more of its options useful) gets (E + V) / 2: a costly good item fetches
 // part of what it took to make, while a junk item never gets half its crafting cost back. Faustus shows E either way.
+// What an item with drop-only options (D42) is worth to the buyer that wants them most, once crafted up to FULL_FROM useful
+// options with that buyer's favourite options at their best tier on this base. Special offers are priced from it: the
+// option is the point of the item, the rest is still to be crafted.
+export function finishedValue(item: Item, day: number, meta?: Meta): number {
+  const drops = item.explicits.filter((m) => MODS[m.id].drop)
+  const tags = itemTags({ ...item, explicits: [] })
+  const rollable = Object.keys(MODS).filter((id) => (MODS[id].gen === 'prefix' || MODS[id].gen === 'suffix') && !MODS[id].dom
+    && MODS[id].lvl <= item.ilvl && spawnWeight(id, tags) > 0)
+  let best = 0
+  for (const p of buyers(item, 'en', day, meta)) {
+    let it: Item = { ...item, explicits: drops }
+    if (p.fit <= 0 || judge(it, p, 'en').usefulCount === 0) continue
+    for (const [sid] of Object.entries(p.wants).sort((a, b) => b[1] - a[1])) {
+      if (judge(it, p, 'en').usefulCount >= FULL_FROM) break
+      const c = affixCounts(it)
+      const l = affixLimits(it)
+      const top = rollable.filter((id) => MODS[id].stats.some(([s]) => s === sid)
+        && (MODS[id].gen === 'prefix' ? c.prefix < l.prefix : c.suffix < l.suffix)
+        && !it.explicits.some((m) => MODS[m.id].grp.some((g) => MODS[id].grp.includes(g))))
+        .sort((a, b) => MODS[b].lvl - MODS[a].lvl)[0]
+      if (top) it = { ...it, explicits: [...it.explicits, rollMod(top, { s: 1 })] }
+    }
+    best = Math.max(best, judge(it, p, 'en').value * boom(day))
+  }
+  return Math.round(best)
+}
+
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).

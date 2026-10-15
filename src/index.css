@@ -170,3 +170,9 @@ input[type='number'] { width: 90px; }
   .craft-list li { flex-wrap: wrap; }
   .lang-switch { position: static; justify-content: flex-end; padding: 4px 6px 0; } /* a fixed corner would cover buttons */
 }
+.specials ul { list-style: none; padding: 0; margin: 0 0 8px; }
+.specials li { border-bottom: 1px solid #241e16; padding: 3px 0; }
+.specials summary { display: flex; gap: 10px; align-items: center; cursor: pointer; list-style: none; }
+.specials summary::-webkit-details-marker { display: none; }
+.specials img { width: 32px; height: 32px; object-fit: contain; flex: none; }
+.specials small { color: var(--dim); }

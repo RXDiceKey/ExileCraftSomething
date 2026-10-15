@@ -128,6 +128,7 @@ const tierCache = new Map<string, number>()
 // Influence mods are ranked within their own influence (Shaper's and Hunter's versions of a family are separate ladders).
 export function tierOf(item: Item, modId: string): number {
   if (MODS[modId].elev) return 0
+  if (MODS[modId].drop) return 1 // drop-only options have no ladder; they're as good as it gets (D42)
   const key = `${item.base}|${item.influences.join()}|${modId}`
   let t = tierCache.get(key)
   if (t === undefined) {
@@ -164,6 +165,7 @@ export interface ModLine {
   text: string[]
   crafted?: true
   fractured?: true
+  drop?: 'breach' | 'delve' | 'incursion'
 }
 
 export function modLines(item: Item, lang: Lang): ModLine[] {
@@ -178,6 +180,7 @@ export function modLines(item: Item, lang: Lang): ModLine[] {
       text: modText(item, m, true, lang),
       ...(m.crafted && { crafted: true as const }),
       ...(m.fractured && { fractured: true as const }),
+      ...(MODS[m.id].drop && { drop: MODS[m.id].drop }),
     }))
   return [...imp.filter((l) => l.text.length), ...exp]
 }

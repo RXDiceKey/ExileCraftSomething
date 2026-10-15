@@ -19,7 +19,7 @@ import { BASES } from '../engine/data.ts'
 import { affixCounts, editable, newItem, type Item } from '../engine/item.ts'
 import { int, type Rng } from '../engine/rng.ts'
 import { canDeliver, refreshBoard, type Commission } from './commissions.ts'
-import { refreshSpecials, type Special } from './specials.ts'
+import { rollUnidentified, unidentifiedPrice, type DropSource } from './specials.ts'
 import { advanceMeta, rollMeta, saturate, type Meta } from './meta.ts'
 import { advanceRivals, newRivals, type Rival, type RivalNews } from './rivals.ts'
 import { basePrice, currencyPrice, GOLD_PER_CHAOS, lifeforcePrice, MIRROR, priceOf } from './shop.ts'
@@ -48,7 +48,6 @@ export interface GameState {
   rivals: Rival[] // trade rivals (D34)
   rivalNews?: RivalNews[] // what they did at the last day close
   board?: Commission[] // commission board (D38); older saves get one on load
-  specials?: Special[] // today's special offers in the shop (D42); older saves get them on load
   finished?: { score: number }
 }
 
@@ -65,8 +64,7 @@ export function newGame(seed: number): GameState {
   const rng = { s: seed }
   const meta = rollMeta(rng)
   const board = refreshBoard([], 1, LAST_DAY, meta, rng)
-  const specials = refreshSpecials(1, meta, rng)
-  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD), board, specials }
+  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD), board }
 }
 
 // Older saves get what they're missing on load: build popularity (rolled now), trade rivals (starting at the start gold).
@@ -81,10 +79,6 @@ export function upgradeSave(s: GameState): GameState {
     const rng = { ...out.rng }
     out = { ...out, board: refreshBoard([], out.day, LAST_DAY, out.meta, rng), rng }
   }
-  if (!out.specials) {
-    const rng = { ...out.rng }
-    out = { ...out, specials: refreshSpecials(out.day, out.meta, rng), rng }
-  }
   return out
 }
 
@@ -98,12 +92,13 @@ export function buyBase(s: GameState, base: string, ilvl: number): Result {
   return { ok: true, state: addItem(s, item, s.gold - price, rng) }
 }
 
-// A special offer (D42) goes into the stash as it is.
-export function buySpecial(s: GameState, id: number): Result {
-  const offer = s.specials?.find((x) => x.id === id)
-  if (!offer) return fail('gone')
-  if (offer.price > s.gold) return fail('noGold')
-  return { ok: true, state: { ...addItem(s, offer.item, s.gold - offer.price, s.rng), specials: s.specials!.filter((x) => x !== offer) } }
+// An unidentified special base (D42): its drop option is rolled as it is bought.
+export function buyUnidentified(s: GameState, source: DropSource, base: string): Result {
+  const price = unidentifiedPrice(source, base, s.day)
+  if (!price) return fail('cantApply')
+  if (price > s.gold) return fail('noGold')
+  const [item, rng] = withRng(s, (r) => rollUnidentified(source, base, r))
+  return { ok: true, state: addItem(s, item, s.gold - price, rng) }
 }
 
 const findItem = (s: GameState, uid: number) => s.stash.find((x) => x.uid === uid)
@@ -335,6 +330,5 @@ export function closeDay(s: GameState): GameState {
   const rng = { ...rng0 }
   const meta = advanceMeta(s.meta, s.day + 1, rng)
   const board = refreshBoard(s.board ?? [], s.day + 1, LAST_DAY, meta, rng)
-  const specials = refreshSpecials(s.day + 1, meta, rng)
-  return { ...withRivals, rng, meta, board, specials, day: s.day + 1 }
+  return { ...withRivals, rng, meta, board, day: s.day + 1 }
 }

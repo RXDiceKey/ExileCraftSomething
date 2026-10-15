@@ -3,7 +3,7 @@ import { faustusFarewell, faustusGreeting, sfx } from '../audio.ts'
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, buySpecial, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
+  ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
   doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -15,6 +15,7 @@ import { Bench } from './Bench.tsx'
 import { Board } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
+import type { DropSource } from '../game/specials.ts'
 import { Shop, type ShopView } from './Shop.tsx'
 import { Popular } from './Popular.tsx'
 import { Rivals } from './Rivals.tsx'
@@ -40,7 +41,7 @@ const boomPct = (day: number) => Math.round((boom(day) - 1) * 100)
 export function Game({ lang, state, setState, settings, setSettings, onMenu, codex }: Props) {
   const [view, setView] = useState<View>(state.stash.length ? 'bench' : 'shop')
   const [selected, setSelected] = useState<number | null>(state.stash[0]?.uid ?? null)
-  const [shopView, setShopView] = useState<ShopView>({ cls: 'Body Armour', query: '', ilvl: 84, scroll: 0 })
+  const [shopView, setShopView] = useState<ShopView>({ cls: 'Body Armour', query: '', ilvl: 84, scroll: 0, kind: '', lower: false })
   const [notice, setNotice] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -69,10 +70,10 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     const uid = state.nextUid
     if (run(buyBase(state, base, ilvl))) { setSelected(uid); setView('bench') }
   }
-  const onBuySpecial = (id: number) => {
+  const onBuyUnidentified = (source: DropSource, base: string) => {
     sfx('button')
     const uid = state.nextUid
-    if (run(buySpecial(state, id))) { setSelected(uid); setView('bench') }
+    if (run(buyUnidentified(state, source, base))) { setSelected(uid); setView('bench') }
   }
   const onCurrency = (c: CurrencyId) => selected !== null && run(doCurrency(state, selected, c))
   const onBench = (i: number) => selected !== null && run(doBench(state, selected, i))
@@ -228,7 +229,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               onBeast={onBeast} onImprint={onImprint} onRestore={onRestore}
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
           )}
-          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuySpecial={onBuySpecial} />}
+          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuyUnidentified={onBuyUnidentified} />}
           {view === 'board' && (
             <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
           )}

@@ -1,19 +1,18 @@
 import { useLayoutEffect, useMemo, useRef, type Dispatch, type SetStateAction } from 'react'
 import { BASES } from '../engine/data.ts'
-import { baseArt, baseKind, baseName, className, gameText, itemName, type Lang } from '../game/describe.ts'
+import { newItem } from '../engine/item.ts'
+import { baseArt, baseKind, baseName, className, gameText, rangeText, type Lang } from '../game/describe.ts'
 import type { GameState } from '../game/game.ts'
-import { basePrice, buyableBases } from '../game/shop.ts'
+import { basePrice, buyableBases, isTopBase } from '../game/shop.ts'
+import { DROP_SOURCES, dropOptions, SPECIAL_ILVL, unidentifiedPrice, type DropSource } from '../game/specials.ts'
 import { fmtGold, t } from '../i18n.ts'
-import { Tooltip } from './Tooltip.tsx'
-
-// The 60 Breach Rings a Grasping Mail is made from, by their game names.
-const BREACH_RINGS = [1, 2, 3, 4, 5].map((k) => `Metadata/Items/Rings/RingB${k}`)
 
 const CLASSES = [...new Set(Object.values(BASES).map((b) => b.cls))]
 
 // What the shop shows, kept by the game screen so it survives a trip to another tab (user). The list's scroll is handed
 // back when the shop closes, so scrolling itself doesn't re-render anything.
-export interface ShopView { cls: string; query: string; ilvl: number; scroll: number }
+// kind: plain bases, or unidentified special bases of one drop source (D42); lower: also the lower bases.
+export interface ShopView { cls: string; query: string; ilvl: number; scroll: number; kind: '' | DropSource; lower: boolean }
 
 interface Props {
   lang: Lang
@@ -21,11 +20,11 @@ interface Props {
   view: ShopView
   onView: Dispatch<SetStateAction<ShopView>>
   onBuy: (base: string, ilvl: number) => void
-  onBuySpecial: (id: number) => void
+  onBuyUnidentified: (source: DropSource, base: string) => void
 }
 
-export function Shop({ lang, state, view, onView, onBuy, onBuySpecial }: Props) {
-  const { cls, query, ilvl } = view
+export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Props) {
+  const { cls, query, ilvl, kind, lower } = view
   const list = useRef<HTMLUListElement>(null)
   // Back where the player left the list, and remember the spot on the way out. A new filter starts from the top.
   const top = useRef(view.scroll)
@@ -41,52 +40,33 @@ export function Shop({ lang, state, view, onView, onBuy, onBuySpecial }: Props) 
   }
 
   const rows = useMemo(() => buyableBases()
-    .filter((id) => (cls === '' || BASES[id].cls === cls) && baseName(id, lang).toLowerCase().includes(query.toLowerCase()))
-    .map((id) => ({ id, price: basePrice(id, ilvl, state.day) }))
-    .sort((a, b) => BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, lang, state.day])
+    .filter((id) => (cls === '' || BASES[id].cls === cls) && (lower || isTopBase(id))
+      && (!kind || dropOptions(kind, id).length > 0) && baseName(id, lang).toLowerCase().includes(query.toLowerCase()))
+    .map((id) => ({ id, price: kind ? unidentifiedPrice(kind, id, state.day) : basePrice(id, ilvl, state.day) }))
+    .sort((a, b) => BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, kind, lower, lang, state.day])
 
   return (
     <section className="panel shop">
       <h2>{t(lang, 'shop')}</h2>
 
-      {(state.specials?.length ?? 0) > 0 && (
-        <div className="specials">
-          <h3>{t(lang, 'specials')}</h3>
-          <ul>
-            {state.specials!.map((o) => (
-              <li key={o.id}>
-                <details>
-                  <summary>
-                    <img src={`${import.meta.env.BASE_URL}${baseArt(o.item.base)}`} alt="" />
-                    <span className="base-name">
-                      <span className="base-title">
-                        {itemName(o.item, lang)}
-                        <button disabled={o.price > state.gold} onClick={(e) => { e.preventDefault(); onBuySpecial(o.id) }}>{t(lang, 'buy')} {fmtGold(o.price)}</button>
-                      </span>
-                      <small>{gameText(lang, o.source)} · {o.source === 'breach'
-                        ? t(lang, 'specialBreach', BREACH_RINGS.map((r) => baseName(r, lang)).join('·'))
-                        : t(lang, o.source === 'delve' ? 'specialDelve' : 'specialIncursion')}</small>
-                    </span>
-                  </summary>
-                  <Tooltip item={o.item} lang={lang} />
-                </details>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       <div className="shop-filters">
+        <select value={kind} onChange={(e) => set({ kind: e.target.value as ShopView['kind'] })}>
+          <option value="">{t(lang, 'plainBases')}</option>
+          {DROP_SOURCES.map((s) => <option key={s} value={s}>{gameText(lang, s)} · {t(lang, 'unidentified')}</option>)}
+        </select>
         <select value={cls} onChange={(e) => set({ cls: e.target.value })}>
           <option value="">{t(lang, 'allClasses')}</option>
           {CLASSES.map((c) => <option key={c} value={c}>{className(c, lang)}</option>)}
         </select>
         <input value={query} placeholder={t(lang, 'baseSearch')} onChange={(e) => set({ query: e.target.value })} />
-        <label>
-          {t(lang, 'itemLevel')}{' '}
-          <input type="number" min={1} max={86} value={ilvl}
-            onChange={(e) => onView({ ...view, ilvl: Math.min(86, Math.max(1, Math.round(+e.target.value))) })} />
-        </label>
+        {kind ? <span>{t(lang, 'itemLevel')} {SPECIAL_ILVL}</span> : (
+          <label>
+            {t(lang, 'itemLevel')}{' '}
+            <input type="number" min={1} max={86} value={ilvl}
+              onChange={(e) => onView({ ...view, ilvl: Math.min(86, Math.max(1, Math.round(+e.target.value))) })} />
+          </label>
+        )}
+        <button onClick={() => set({ lower: !lower })}>{t(lang, lower ? 'hideLowerBases' : 'showLowerBases')}</button>
       </div>
 
       <ul className="bases" ref={list} onScroll={(e) => { top.current = e.currentTarget.scrollTop }}>
@@ -96,13 +76,28 @@ export function Shop({ lang, state, view, onView, onBuy, onBuySpecial }: Props) 
             <span className="base-name">
               <span className="base-title">
                 {baseName(id, lang)}
-                <button disabled={price > state.gold} onClick={() => onBuy(id, ilvl)}>{t(lang, 'buy')} {fmtGold(price)}</button>
+                <button disabled={price > state.gold} onClick={() => (kind ? onBuyUnidentified(kind, id) : onBuy(id, ilvl))}>
+                  {t(lang, 'buy')} {fmtGold(price)}
+                </button>
               </span>
               <small>{className(BASES[id].cls, lang)} · {baseKind(id, lang) || '—'} · lv {BASES[id].lvl}</small>
+              {kind && <Options lang={lang} source={kind} base={id} />}
             </span>
           </li>
         ))}
       </ul>
     </section>
+  )
+}
+
+// The options an unidentified special base can come with, folded.
+function Options({ lang, source, base }: { lang: Lang; source: DropSource; base: string }) {
+  const ids = dropOptions(source, base)
+  const item = newItem(base, SPECIAL_ILVL, { s: 1 })
+  return (
+    <details className="drop-options">
+      <summary>{t(lang, 'possibleOptions', ids.length)}</summary>
+      <ul>{ids.map((id) => <li key={id}>{rangeText(item, id, lang).join(' / ')}</li>)}</ul>
+    </details>
   )
 }

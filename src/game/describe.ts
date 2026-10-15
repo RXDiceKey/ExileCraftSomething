@@ -113,7 +113,11 @@ export function modText(item: Item, m: RolledMod, explicit: boolean, lang: Lang)
     for (const idx of entriesByStat.get(sid) ?? []) {
       if (done.has(idx)) continue
       done.add(idx)
-      const line = render(idx, STATS[idx].ids.map((id) => { const k = stats.indexOf(id); return k < 0 ? 0 : values[k] }), lang)
+      const vals = STATS[idx].ids.map((id) => { const k = stats.indexOf(id); return k < 0 ? 0 : values[k] })
+      // Like the game, a line whose numbers are all 0 isn't shown ("+1 to maximum number of Spectres" carries a 0 for
+      // zombies and skeletons).
+      if (vals.every((v) => v === 0)) continue
+      const line = render(idx, vals, lang)
       if (line) lines.push(...line.split('\n'))
     }
   }
@@ -253,6 +257,8 @@ export function rangeText(item: Item, modId: string, lang: Lang): string[] {
   return lo.map((line, i) => {
     const a = line.split(/(-?\d+(?:\.\d+)?)/)
     const b = (hi[i] ?? line).split(/(-?\d+(?:\.\d+)?)/)
-    return a.map((tok, k) => (k % 2 && b[k] !== undefined && b[k] !== tok ? `(${tok}-${b[k]})` : tok)).join('')
+    // Negative ranges read like the game: "-(8-6)", not "(-8--6)".
+    const range = (x: string, y: string) => (+x < 0 && +y < 0 ? `-(${-x}-${-y})` : `(${x}-${y})`)
+    return a.map((tok, k) => (k % 2 && b[k] !== undefined && b[k] !== tok ? range(tok, b[k]) : tok)).join('')
   })
 }

@@ -1,6 +1,7 @@
 import basePricesJson from '../data/basePrices.json' with { type: 'json' }
 import pricesJson from '../data/prices.json' with { type: 'json' }
 import { CRAFTING } from '../engine/crafting.ts'
+import { BASES } from '../engine/data.ts'
 import type { CurrencyId } from '../engine/currency.ts'
 import { LIFEFORCE, type Lifeforce } from '../engine/harvest.ts'
 import type { Lang } from './describe.ts'
@@ -55,3 +56,30 @@ export const RESALE_RATE = 0.9 // Faustus always pays 90% of the same base's pri
 export const baseResale = (base: string, ilvl: number, day: number) => Math.round(RESALE_RATE * basePrice(base, ilvl, day))
 
 export const buyableBases = () => Object.keys(BASE_PRICES)
+
+// What the shop shows first (user): the top TOP_PER_GROUP bases (by level) of each weapon class and of each armour class
+// per attribute mix, plus the special bases (atlas / experimental ones, each its own thing). Jewellery and quivers differ
+// by their fixed option, so they all show. The rest waits behind "lower bases".
+export const TOP_PER_GROUP = 2
+const SPECIAL_TAGS = ['atlas_base_type', 'experimental_base'] // not 'not_for_sale': the newer top bases carry it too
+const ARMOUR = ['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield']
+const OTHER = ['Ring', 'Amulet', 'Belt', 'Quiver']
+export const isSpecialBase = (id: string) => BASES[id].tags.some((t) => SPECIAL_TAGS.includes(t))
+const groupOf = (id: string) => {
+  const b = BASES[id]
+  if (OTHER.includes(b.cls)) return null
+  if (!ARMOUR.includes(b.cls)) return b.cls
+  return `${b.cls}|${b.tags.find((t) => /^((str|dex|int)(_(dex|int))*|ward)_armour$/.test(t)) ?? ''}`
+}
+let top: Set<string> | undefined
+export function isTopBase(id: string): boolean {
+  if (!top) {
+    const groups = new Map<string, string[]>()
+    for (const b of buyableBases()) {
+      const g = groupOf(b)
+      if (g !== null && !isSpecialBase(b)) groups.set(g, [...(groups.get(g) ?? []), b])
+    }
+    top = new Set([...groups.values()].flatMap((bs) => bs.sort((a, b) => BASES[b].lvl - BASES[a].lvl).slice(0, TOP_PER_GROUP)))
+  }
+  return groupOf(id) === null || isSpecialBase(id) || top.has(id)
+}

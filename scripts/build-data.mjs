@@ -235,18 +235,16 @@ for (const t of translations) {
   stats.push({ ids: t.ids, v: variants.map((v) => ({ c: v.condition, f: v.format, h: v.index_handlers })) })
   statsEn.push(variants.map((v) => v.string))
 
-  // Korean comes from the trade site: one text per trade stat, '#' as placeholders.
-  // ponytail: one Korean string per entry, so e.g. a "reduced" variant renders as a negative "increased";
-  // parse the Korean blocks of Metadata/StatDescriptions/stat_descriptions.txt if that ever matters.
+  // Korean: the game's own lines when stat_descriptions.txt has the block (below), else the trade site's one sentence per
+  // trade stat ('#' as placeholders).
   const trade = [...(t.trade_stats ?? [])].sort(
     (a, b) => TRADE_PREF.indexOf(a.id.split('.')[0]) - TRADE_PREF.indexOf(b.id.split('.')[0]),
   ).find((ts) => koTrade.has(ts.id))
-  if (!trade) {
-    // Not on the trade site: the game's own Korean lines, one per variant like English.
-    const ko = koDescriptions.get(t.ids.join(' '))
-    statsKo.push(ko?.length === variants.length ? ko : null)
-    continue
-  }
+  // The game's own Korean lines (stat_descriptions.txt), one per variant like English, so "reduced" reads as such; the
+  // trade site's single sentence only when the game file has no matching block.
+  const own = koDescriptions.get(t.ids.join(' '))
+  if (own?.length === variants.length) { statsKo.push(own); continue }
+  if (!trade) { statsKo.push(null); continue }
   const asTrade = (v) => v.string.replace(/\{(\d+)\}/g, (_, i) => v.format[i])
   const vi = Math.max(0, variants.findIndex((v) => asTrade(v).trim() === trade.text.trim()))
   const order = [...variants[vi].string.matchAll(/\{(\d+)\}/g)].map((m) => +m[1])
@@ -470,7 +468,7 @@ assert.equal(names('ko').mods.SpellDamageAndManaOnWeapon6, '대마법사의')
 assert.equal(names('ko').bases['Metadata/Items/Rings/Ring12'], '쌍보석 반지')
 const life = stats.findIndex((s) => s.ids.length === 1 && s.ids[0] === 'base_maximum_life')
 assert.equal(statsEn[life][0], '{0} to maximum Life')
-assert.equal(statsKo[life].s, '생명력 최대치 {0}') // trade text "생명력 최대치 +#", '+' comes from the format
+assert.equal(statsKo[life][0], '생명력 최대치 {0}') // game line "생명력 최대치 {0:+d}", '+' comes from the format
 assert.equal(missingKoExplicit.length, 0, 'every prefix/suffix needs Korean text')
 assert.equal(prices['Chaos Orb'], 100)
 assert.ok(prices['Divine Orb'] > prices['Chaos Orb'] * 50)

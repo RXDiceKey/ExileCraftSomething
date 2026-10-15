@@ -2,7 +2,7 @@
 // so high-tier options spread across different builds are cheap and options concentrated on one build are pricey.
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
-import { affixCounts, affixLimits, fractured, itemTags, rollMod, spawnWeight, type Item } from '../engine/item.ts'
+import { fractured, rollMod, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
@@ -375,32 +375,21 @@ export const finalPrice = (e: number, v: number, n: number) =>
 // Price (D35, corrected by the user): if E < V then max((E + V) / 2, V) (= V), else V, except that a near-finished
 // item (the paying build finds FINISHED or more of its options useful) gets (E + V) / 2: a costly good item fetches
 // part of what it took to make, while a junk item never gets half its crafting cost back. Faustus shows E either way.
-// What an item with drop-only options (D42) is worth to the buyer that wants them most, once crafted up to FULL_FROM useful
-// options with that buyer's favourite options at their best tier on this base. Special offers are priced from it: the
-// option is the point of the item, the rest is still to be crafted.
-export function finishedValue(item: Item, day: number, meta?: Meta): number {
-  const drops = item.explicits.filter((m) => MODS[m.id].drop)
-  const tags = itemTags({ ...item, explicits: [] })
-  const rollable = Object.keys(MODS).filter((id) => (MODS[id].gen === 'prefix' || MODS[id].gen === 'suffix') && !MODS[id].dom
-    && MODS[id].lvl <= item.ilvl && spawnWeight(id, tags) > 0)
-  let best = 0
-  for (const p of buyers(item, 'en', day, meta)) {
-    let it: Item = { ...item, explicits: drops }
-    if (p.fit <= 0 || judge(it, p, 'en').usefulCount === 0) continue
-    for (const [sid] of Object.entries(p.wants).sort((a, b) => b[1] - a[1])) {
-      if (judge(it, p, 'en').usefulCount >= FULL_FROM) break
-      const c = affixCounts(it)
-      const l = affixLimits(it)
-      const top = rollable.filter((id) => MODS[id].stats.some(([s]) => s === sid)
-        && (MODS[id].gen === 'prefix' ? c.prefix < l.prefix : c.suffix < l.suffix)
-        && !it.explicits.some((m) => MODS[m.id].grp.some((g) => MODS[id].grp.includes(g))))
-        .sort((a, b) => MODS[b].lvl - MODS[a].lvl)[0]
-      if (top) it = { ...it, explicits: [...it.explicits, rollMod(top, { s: 1 })] }
-    }
-    best = Math.max(best, judge(it, p, 'en').value * boom(day))
+// Does some buyer of this base want this drop-only option (D42)? Unidentified special offers are priced by the chance
+// of rolling one that is.
+const appeal = new Map<string, boolean>()
+export function dropAppeal(modId: string, base: string): boolean {
+  // Buyers only look at the class and defence types of a base, so that is the key.
+  const key = `${modId}|${BASES[base].cls}|${baseKindKeys(base).defences.join()}`
+  let ok = appeal.get(key)
+  if (ok === undefined) {
+    const item: Item = { base, ilvl: 83, rarity: 'rare', implicits: [], explicits: [rollMod(modId, { s: 1 })], influences: [] }
+    ok = buyers(item, 'en', 1).some((p) => p.fit > 0 && judge(item, p, 'en').mods[0].useful)
+    appeal.set(key, ok)
   }
-  return Math.round(best)
+  return ok
 }
+export const slotBudget = (cls: string) => SLOT_BUDGET[slotOf(cls)]
 
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))

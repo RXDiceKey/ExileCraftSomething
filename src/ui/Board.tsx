@@ -8,13 +8,14 @@ import { fmtGold, t } from '../i18n.ts'
 interface Props {
   lang: Lang
   board: Commission[]
+  day: number
   meta: Meta
   entry: StashItem | undefined
   canSell: boolean
   onDeliver: (id: number) => void
 }
 
-export function Board({ lang, board, meta, entry, canSell, onDeliver }: Props) {
+export function Board({ lang, board, day, meta, entry, canSell, onDeliver }: Props) {
   return (
     <section className="panel board">
       <h2>{t(lang, 'board')}</h2>
@@ -35,7 +36,7 @@ export function Board({ lang, board, meta, entry, canSell, onDeliver }: Props) {
                 ))}
               </ul>
               <div className="commission-foot">
-                {t(lang, 'commissionUntil', c.until)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
+                {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
                 <button className="primary" disabled={!fits || !canSell} onClick={() => onDeliver(c.id)}>{t(lang, 'deliver')}</button>
                 {entry && !fits && <span className="hint">{t(lang, 'notFit')}</span>}
               </div>

@@ -225,7 +225,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           )}
           {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} />}
           {view === 'board' && (
-            <Board lang={lang} board={state.board ?? []} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
+            <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
           )}
           {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
           {view === 'faustus' && (

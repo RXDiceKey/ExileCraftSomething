@@ -26,8 +26,8 @@ import { record, type StepInfo } from './history.ts'
 import { highEffCount, itemExpectedCost, quote, slotOf } from './value.ts'
 
 export const LAST_DAY = 14
-export const ACTIONS_PER_DAY = 4 // sales + hunts
-export const START_GOLD = 50_000 // ponytail: placeholder until the P7 economy sim
+export const ACTIONS_PER_DAY = 4 // sales + deliveries + hunts
+export const START_GOLD = 20_000 // user decision for the P7 play test
 export const HUNT_REWARD: [number, number] = [1_000, 3_000]
 
 export interface StashItem { uid: number; item: Item }

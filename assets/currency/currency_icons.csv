@@ -1,0 +1,356 @@
+﻿category,name_ko,name_en,file
+기본,대장장이의 숫돌,Blacksmith's Whetstone,기본/대장장이의 숫돌.png
+기본,감정 주문서,Scroll of Wisdom,기본/감정 주문서.png
+기본,카오스 오브,Chaos Orb,기본/카오스 오브.png
+기본,장막의 엑잘티드 오브,Veiled Exalted Orb,기본/장막의 엑잘티드 오브.png
+기본,장막의 카오스 오브,Veiled Chaos Orb,기본/장막의 카오스 오브.png
+기본,방어구 장인의 고철,Armourer's Scrap,기본/방어구 장인의 고철.png
+기본,칼란드라의 거울,Mirror of Kalandra,기본/칼란드라의 거울.png
+기본,연금술의 오브,Orb of Alchemy,기본/연금술의 오브.png
+기본,기회의 오브,Orb of Chance,기본/기회의 오브.png
+기본,진화의 오브,Orb of Transmutation,기본/진화의 오브.png
+기본,변화의 오브,Orb of Alteration,기본/변화의 오브.png
+기본,정제의 오브,Orb of Scouring,기본/정제의 오브.png
+기본,엑잘티드 오브,Exalted Orb,기본/엑잘티드 오브.png
+기본,제왕의 오브,Regal Orb,기본/제왕의 오브.png
+기본,확장의 오브,Orb of Augmentation,기본/확장의 오브.png
+기본,유리직공의 방울,Glassblower's Bauble,기본/유리직공의 방울.png
+기본,세공사의 프리즘,Gemcutter's Prism,기본/세공사의 프리즘.png
+기본,색채의 오브,Chromatic Orb,기본/색채의 오브.png
+기본,연결의 오브,Orb of Fusing,기본/연결의 오브.png
+기본,쥬얼러 오브,Jeweller's Orb,기본/쥬얼러 오브.png
+기본,신성한 오브,Divine Orb,기본/신성한 오브.png
+기본,축복의 오브,Blessed Orb,기본/축복의 오브.png
+기본,성스러운 오브,Sacred Orb,기본/성스러운 오브.png
+리그_기타,깨진 칼란드라의 거울,Broken Mirror of Kalandra,리그_기타/깨진 칼란드라의 거울.png
+기본,영원의 오브,Eternal Orb,기본/영원의 오브.png
+기본,각인,Imprint,기본/각인.png
+기본,바알 오브,Vaal Orb,기본/바알 오브.png
+리그_기타,인챈트,Enchant,리그_기타/인챈트.png
+리그_기타,더럽혀진 축복,Tainted Blessing,리그_기타/더럽혀진 축복.png
+리그_기타,야수의 오브,Bestiary Orb,리그_기타/야수의 오브.png
+리그_기타,각인된 야수의 오브,Imprinted Bestiary Orb,리그_기타/각인된 야수의 오브.png
+리그_기타,빈 관,Empty Coffin,리그_기타/빈 관.png
+리그_기타,채워진 관,Filled Coffin,리그_기타/채워진 관.png
+영향력,쉐이퍼의 엑잘티드 오브,Shaper's Exalted Orb,영향력/쉐이퍼의 엑잘티드 오브.png
+영향력,엘더의 엑잘티드 오브,Elder's Exalted Orb,영향력/엘더의 엑잘티드 오브.png
+젬,1차 재보정 렌즈,Prime Regrading Lens,젬/1차 재보정 렌즈.png
+젬,2차 재보정 렌즈,Secondary Regrading Lens,젬/2차 재보정 렌즈.png
+리그_기타,단조 오브,Tempering Orb,리그_기타/단조 오브.png
+리그_기타,재단 오브,Tailoring Orb,리그_기타/재단 오브.png
+리그_기타,굴절하는 안개,Refracting Fog,리그_기타/굴절하는 안개.png
+이식,확장 이식물,Augmentation Implant,이식/확장 이식물.png
+이식,제왕의 이식물,Regal Implant,이식/제왕의 이식물.png
+이식,엑잘티드 이식물,Exalted Implant,이식/엑잘티드 이식물.png
+이식,불안정한 이식물,Unstable Implant,이식/불안정한 이식물.png
+이식,삿된 확장의 오브,Foulborn Orb of Augmentation,이식/삿된 확장의 오브.png
+이식,삿된 제왕의 오브,Foulborn Regal Orb,이식/삿된 제왕의 오브.png
+이식,삿된 엑잘티드 오브,Foulborn Exalted Orb,이식/삿된 엑잘티드 오브.png
+에센스,속삭이는 증오의 에센스,Whispering Essence of Hatred,에센스/속삭이는 증오의 에센스.png
+에센스,불평하는 증오의 에센스,Muttering Essence of Hatred,에센스/불평하는 증오의 에센스.png
+에센스,흐느끼는 증오의 에센스,Weeping Essence of Hatred,에센스/흐느끼는 증오의 에센스.png
+에센스,울부짖는 증오의 에센스,Wailing Essence of Hatred,에센스/울부짖는 증오의 에센스.png
+에센스,절규하는 증오의 에센스,Screaming Essence of Hatred,에센스/절규하는 증오의 에센스.png
+에센스,악을 쓰는 증오의 에센스,Shrieking Essence of Hatred,에센스/악을 쓰는 증오의 에센스.png
+에센스,귀를 찢는 증오의 에센스,Deafening Essence of Hatred,에센스/귀를 찢는 증오의 에센스.png
+에센스,속삭이는 비애의 에센스,Whispering Essence of Woe,에센스/속삭이는 비애의 에센스.png
+에센스,불평하는 비애의 에센스,Muttering Essence of Woe,에센스/불평하는 비애의 에센스.png
+에센스,흐느끼는 비애의 에센스,Weeping Essence of Woe,에센스/흐느끼는 비애의 에센스.png
+에센스,울부짖는 비애의 에센스,Wailing Essence of Woe,에센스/울부짖는 비애의 에센스.png
+에센스,절규하는 비애의 에센스,Screaming Essence of Woe,에센스/절규하는 비애의 에센스.png
+에센스,악을 쓰는 비애의 에센스,Shrieking Essence of Woe,에센스/악을 쓰는 비애의 에센스.png
+에센스,귀를 찢는 비애의 에센스,Deafening Essence of Woe,에센스/귀를 찢는 비애의 에센스.png
+에센스,속삭이는 탐욕의 에센스,Whispering Essence of Greed,에센스/속삭이는 탐욕의 에센스.png
+에센스,불평하는 탐욕의 에센스,Muttering Essence of Greed,에센스/불평하는 탐욕의 에센스.png
+에센스,흐느끼는 탐욕의 에센스,Weeping Essence of Greed,에센스/흐느끼는 탐욕의 에센스.png
+에센스,울부짖는 탐욕의 에센스,Wailing Essence of Greed,에센스/울부짖는 탐욕의 에센스.png
+에센스,절규하는 탐욕의 에센스,Screaming Essence of Greed,에센스/절규하는 탐욕의 에센스.png
+에센스,악을 쓰는 탐욕의 에센스,Shrieking Essence of Greed,에센스/악을 쓰는 탐욕의 에센스.png
+에센스,귀를 찢는 탐욕의 에센스,Deafening Essence of Greed,에센스/귀를 찢는 탐욕의 에센스.png
+에센스,속삭이는 경멸의 에센스,Whispering Essence of Contempt,에센스/속삭이는 경멸의 에센스.png
+에센스,불평하는 경멸의 에센스,Muttering Essence of Contempt,에센스/불평하는 경멸의 에센스.png
+에센스,흐느끼는 경멸의 에센스,Weeping Essence of Contempt,에센스/흐느끼는 경멸의 에센스.png
+에센스,울부짖는 경멸의 에센스,Wailing Essence of Contempt,에센스/울부짖는 경멸의 에센스.png
+에센스,절규하는 경멸의 에센스,Screaming Essence of Contempt,에센스/절규하는 경멸의 에센스.png
+에센스,악을 쓰는 경멸의 에센스,Shrieking Essence of Contempt,에센스/악을 쓰는 경멸의 에센스.png
+에센스,귀를 찢는 경멸의 에센스,Deafening Essence of Contempt,에센스/귀를 찢는 경멸의 에센스.png
+에센스,불평하는 슬픔의 에센스,Muttering Essence of Sorrow,에센스/불평하는 슬픔의 에센스.png
+에센스,흐느끼는 슬픔의 에센스,Weeping Essence of Sorrow,에센스/흐느끼는 슬픔의 에센스.png
+에센스,울부짖는 슬픔의 에센스,Wailing Essence of Sorrow,에센스/울부짖는 슬픔의 에센스.png
+에센스,절규하는 슬픔의 에센스,Screaming Essence of Sorrow,에센스/절규하는 슬픔의 에센스.png
+에센스,악을 쓰는 슬픔의 에센스,Shrieking Essence of Sorrow,에센스/악을 쓰는 슬픔의 에센스.png
+에센스,귀를 찢는 슬픔의 에센스,Deafening Essence of Sorrow,에센스/귀를 찢는 슬픔의 에센스.png
+에센스,불평하는 분노의 에센스,Muttering Essence of Anger,에센스/불평하는 분노의 에센스.png
+에센스,흐느끼는 분노의 에센스,Weeping Essence of Anger,에센스/흐느끼는 분노의 에센스.png
+에센스,울부짖는 분노의 에센스,Wailing Essence of Anger,에센스/울부짖는 분노의 에센스.png
+에센스,절규하는 분노의 에센스,Screaming Essence of Anger,에센스/절규하는 분노의 에센스.png
+에센스,악을 쓰는 분노의 에센스,Shrieking Essence of Anger,에센스/악을 쓰는 분노의 에센스.png
+에센스,귀를 찢는 분노의 에센스,Deafening Essence of Anger,에센스/귀를 찢는 분노의 에센스.png
+에센스,불평하는 고뇌의 에센스,Muttering Essence of Torment,에센스/불평하는 고뇌의 에센스.png
+에센스,흐느끼는 고뇌의 에센스,Weeping Essence of Torment,에센스/흐느끼는 고뇌의 에센스.png
+에센스,울부짖는 고뇌의 에센스,Wailing Essence of Torment,에센스/울부짖는 고뇌의 에센스.png
+에센스,절규하는 고뇌의 에센스,Screaming Essence of Torment,에센스/절규하는 고뇌의 에센스.png
+에센스,악을 쓰는 고뇌의 에센스,Shrieking Essence of Torment,에센스/악을 쓰는 고뇌의 에센스.png
+에센스,귀를 찢는 고뇌의 에센스,Deafening Essence of Torment,에센스/귀를 찢는 고뇌의 에센스.png
+에센스,불평하는 두려움의 에센스,Muttering Essence of Fear,에센스/불평하는 두려움의 에센스.png
+에센스,흐느끼는 두려움의 에센스,Weeping Essence of Fear,에센스/흐느끼는 두려움의 에센스.png
+에센스,울부짖는 두려움의 에센스,Wailing Essence of Fear,에센스/울부짖는 두려움의 에센스.png
+에센스,절규하는 두려움의 에센스,Screaming Essence of Fear,에센스/절규하는 두려움의 에센스.png
+에센스,악을 쓰는 두려움의 에센스,Shrieking Essence of Fear,에센스/악을 쓰는 두려움의 에센스.png
+에센스,귀를 찢는 두려움의 에센스,Deafening Essence of Fear,에센스/귀를 찢는 두려움의 에센스.png
+에센스,흐느끼는 고통의 에센스,Weeping Essence of Suffering,에센스/흐느끼는 고통의 에센스.png
+에센스,울부짖는 고통의 에센스,Wailing Essence of Suffering,에센스/울부짖는 고통의 에센스.png
+에센스,절규하는 고통의 에센스,Screaming Essence of Suffering,에센스/절규하는 고통의 에센스.png
+에센스,악을 쓰는 고통의 에센스,Shrieking Essence of Suffering,에센스/악을 쓰는 고통의 에센스.png
+에센스,귀를 찢는 고통의 에센스,Deafening Essence of Suffering,에센스/귀를 찢는 고통의 에센스.png
+에센스,흐느끼는 격노의 에센스,Weeping Essence of Rage,에센스/흐느끼는 격노의 에센스.png
+에센스,울부짖는 격노의 에센스,Wailing Essence of Rage,에센스/울부짖는 격노의 에센스.png
+에센스,절규하는 격노의 에센스,Screaming Essence of Rage,에센스/절규하는 격노의 에센스.png
+에센스,악을 쓰는 격노의 에센스,Shrieking Essence of Rage,에센스/악을 쓰는 격노의 에센스.png
+에센스,귀를 찢는 격노의 에센스,Deafening Essence of Rage,에센스/귀를 찢는 격노의 에센스.png
+에센스,흐느끼는 진노의 에센스,Weeping Essence of Wrath,에센스/흐느끼는 진노의 에센스.png
+에센스,울부짖는 진노의 에센스,Wailing Essence of Wrath,에센스/울부짖는 진노의 에센스.png
+에센스,절규하는 진노의 에센스,Screaming Essence of Wrath,에센스/절규하는 진노의 에센스.png
+에센스,악을 쓰는 진노의 에센스,Shrieking Essence of Wrath,에센스/악을 쓰는 진노의 에센스.png
+에센스,귀를 찢는 진노의 에센스,Deafening Essence of Wrath,에센스/귀를 찢는 진노의 에센스.png
+에센스,흐느끼는 의심의 에센스,Weeping Essence of Doubt,에센스/흐느끼는 의심의 에센스.png
+에센스,울부짖는 의심의 에센스,Wailing Essence of Doubt,에센스/울부짖는 의심의 에센스.png
+에센스,절규하는 의심의 에센스,Screaming Essence of Doubt,에센스/절규하는 의심의 에센스.png
+에센스,악을 쓰는 의심의 에센스,Shrieking Essence of Doubt,에센스/악을 쓰는 의심의 에센스.png
+에센스,귀를 찢는 의심의 에센스,Deafening Essence of Doubt,에센스/귀를 찢는 의심의 에센스.png
+에센스,울부짖는 비통의 에센스,Wailing Essence of Anguish,에센스/울부짖는 비통의 에센스.png
+에센스,절규하는 비통의 에센스,Screaming Essence of Anguish,에센스/절규하는 비통의 에센스.png
+에센스,악을 쓰는 비통의 에센스,Shrieking Essence of Anguish,에센스/악을 쓰는 비통의 에센스.png
+에센스,귀를 찢는 비통의 에센스,Deafening Essence of Anguish,에센스/귀를 찢는 비통의 에센스.png
+에센스,울부짖는 혐오의 에센스,Wailing Essence of Loathing,에센스/울부짖는 혐오의 에센스.png
+에센스,절규하는 혐오의 에센스,Screaming Essence of Loathing,에센스/절규하는 혐오의 에센스.png
+에센스,악을 쓰는 혐오의 에센스,Shrieking Essence of Loathing,에센스/악을 쓰는 혐오의 에센스.png
+에센스,귀를 찢는 혐오의 에센스,Deafening Essence of Loathing,에센스/귀를 찢는 혐오의 에센스.png
+에센스,울부짖는 악의의 에센스,Wailing Essence of Spite,에센스/울부짖는 악의의 에센스.png
+에센스,절규하는 악의의 에센스,Screaming Essence of Spite,에센스/절규하는 악의의 에센스.png
+에센스,악을 쓰는 악의의 에센스,Shrieking Essence of Spite,에센스/악을 쓰는 악의의 에센스.png
+에센스,귀를 찢는 악의의 에센스,Deafening Essence of Spite,에센스/귀를 찢는 악의의 에센스.png
+에센스,울부짖는 열의의 에센스,Wailing Essence of Zeal,에센스/울부짖는 열의의 에센스.png
+에센스,절규하는 열의의 에센스,Screaming Essence of Zeal,에센스/절규하는 열의의 에센스.png
+에센스,악을 쓰는 열의의 에센스,Shrieking Essence of Zeal,에센스/악을 쓰는 열의의 에센스.png
+에센스,귀를 찢는 열의의 에센스,Deafening Essence of Zeal,에센스/귀를 찢는 열의의 에센스.png
+에센스,절규하는 비참의 에센스,Screaming Essence of Misery,에센스/절규하는 비참의 에센스.png
+에센스,악을 쓰는 비참의 에센스,Shrieking Essence of Misery,에센스/악을 쓰는 비참의 에센스.png
+에센스,귀를 찢는 비참의 에센스,Deafening Essence of Misery,에센스/귀를 찢는 비참의 에센스.png
+에센스,절규하는 불안의 에센스,Screaming Essence of Dread,에센스/절규하는 불안의 에센스.png
+에센스,악을 쓰는 불안의 에센스,Shrieking Essence of Dread,에센스/악을 쓰는 불안의 에센스.png
+에센스,귀를 찢는 불안의 에센스,Deafening Essence of Dread,에센스/귀를 찢는 불안의 에센스.png
+에센스,절규하는 멸시의 에센스,Screaming Essence of Scorn,에센스/절규하는 멸시의 에센스.png
+에센스,악을 쓰는 멸시의 에센스,Shrieking Essence of Scorn,에센스/악을 쓰는 멸시의 에센스.png
+에센스,귀를 찢는 멸시의 에센스,Deafening Essence of Scorn,에센스/귀를 찢는 멸시의 에센스.png
+에센스,절규하는 선망의 에센스,Screaming Essence of Envy,에센스/절규하는 선망의 에센스.png
+에센스,악을 쓰는 선망의 에센스,Shrieking Essence of Envy,에센스/악을 쓰는 선망의 에센스.png
+에센스,귀를 찢는 선망의 에센스,Deafening Essence of Envy,에센스/귀를 찢는 선망의 에센스.png
+에센스,발작의 에센스,Essence of Hysteria,에센스/발작의 에센스.png
+에센스,광기의 에센스,Essence of Insanity,에센스/광기의 에센스.png
+에센스,경악의 에센스,Essence of Horror,에센스/경악의 에센스.png
+에센스,섬망의 에센스,Essence of Delirium,에센스/섬망의 에센스.png
+에센스,황량함의 에센스,Essence of Desolation,에센스/황량함의 에센스.png
+에센스,Remnant of Corruption,Remnant of Corruption,에센스/Remnant of Corruption.png
+고유_업그레이드,조프의 축복,Blessing of Xoph,고유_업그레이드/조프의 축복.png
+고유_업그레이드,툴의 축복,Blessing of Tul,고유_업그레이드/툴의 축복.png
+고유_업그레이드,에쉬의 축복,Blessing of Esh,고유_업그레이드/에쉬의 축복.png
+고유_업그레이드,울네톨의 축복,Blessing of Uul-Netol,고유_업그레이드/울네톨의 축복.png
+고유_업그레이드,차율라의 축복,Blessing of Chayula,고유_업그레이드/차율라의 축복.png
+고유_업그레이드,제쉬트의 육체,Flesh of Xesht,고유_업그레이드/제쉬트의 육체.png
+기본,소멸의 오브,Orb of Annulment,기본/소멸의 오브.png
+기본,속박의 오브,Orb of Binding,기본/속박의 오브.png
+기본,고대의 오브,Ancient Orb,기본/고대의 오브.png
+기본,분열의 오브,Fracturing Orb,기본/분열의 오브.png
+고유_업그레이드,지배의 시약,Vial of Dominance,고유_업그레이드/지배의 시약.png
+고유_업그레이드,소환의 시약,Vial of Summoning,고유_업그레이드/소환의 시약.png
+고유_업그레이드,각성의 시약,Vial of Awakening,고유_업그레이드/각성의 시약.png
+고유_업그레이드,의식의 시약,Vial of the Ritual,고유_업그레이드/의식의 시약.png
+고유_업그레이드,운명의 시약,Vial of Fate,고유_업그레이드/운명의 시약.png
+고유_업그레이드,결과의 시약,Vial of Consequence,고유_업그레이드/결과의 시약.png
+고유_업그레이드,유령의 시약,Vial of the Ghost,고유_업그레이드/유령의 시약.png
+고유_업그레이드,초월의 시약,Vial of Transcendence,고유_업그레이드/초월의 시약.png
+고유_업그레이드,희생의 시약,Vial of Sacrifice,고유_업그레이드/희생의 시약.png
+화석,그을린 화석,Scorched Fossil,화석/그을린 화석.png
+화석,차디찬 화석,Frigid Fossil,화석/차디찬 화석.png
+화석,금속성 화석,Metallic Fossil,화석/금속성 화석.png
+화석,뾰족한 화석,Jagged Fossil,화석/뾰족한 화석.png
+화석,특이한 화석,Aberrant Fossil,화석/특이한 화석.png
+화석,온전한 화석,Pristine Fossil,화석/온전한 화석.png
+화석,조밀한 화석,Dense Fossil,화석/조밀한 화석.png
+화석,부식된 화석,Corroded Fossil,화석/부식된 화석.png
+화석,분광 화석,Prismatic Fossil,화석/분광 화석.png
+화석,에테르 화석,Aetheric Fossil,화석/에테르 화석.png
+화석,톱니 화석,Serrated Fossil,화석/톱니 화석.png
+화석,빛나는 화석,Lucent Fossil,화석/빛나는 화석.png
+화석,전율의 화석,Shuddering Fossil,화석/전율의 화석.png
+화석,속박의 화석,Bound Fossil,화석/속박의 화석.png
+화석,호화로운 화석,Opulent Fossil,화석/호화로운 화석.png
+화석,날렵한 화석,Deft Fossil,화석/날렵한 화석.png
+화석,근본적인 화석,Fundamental Fossil,화석/근본적인 화석.png
+화석,연마한 화석,Faceted Fossil,화석/연마한 화석.png
+화석,피얼룩 화석,Bloodstained Fossil,화석/피얼룩 화석.png
+화석,공허의 화석,Hollow Fossil,화석/공허의 화석.png
+화석,분열된 화석,Fractured Fossil,화석/분열된 화석.png
+화석,상형 문자 화석,Glyphic Fossil,화석/상형 문자 화석.png
+화석,얽혀든 화석,Tangled Fossil,화석/얽혀든 화석.png
+화석,축성된 화석,Sanctified Fossil,화석/축성된 화석.png
+화석,도금된 화석,Gilded Fossil,화석/도금된 화석.png
+공명기,초기형 연금술 공명기,Primitive Alchemical Resonator,공명기/초기형 연금술 공명기.png
+공명기,강화형 연금술 공명기,Potent Alchemical Resonator,공명기/강화형 연금술 공명기.png
+공명기,강력 연금술 공명기,Powerful Alchemical Resonator,공명기/강력 연금술 공명기.png
+공명기,최종형 연금술 공명기,Prime Alchemical Resonator,공명기/최종형 연금술 공명기.png
+공명기,초기형 혼돈 공명기,Primitive Chaotic Resonator,공명기/초기형 혼돈 공명기.png
+공명기,강화형 혼돈 공명기,Potent Chaotic Resonator,공명기/강화형 혼돈 공명기.png
+공명기,강력 혼돈 공명기,Powerful Chaotic Resonator,공명기/강력 혼돈 공명기.png
+공명기,최종형 혼돈 공명기,Prime Chaotic Resonator,공명기/최종형 혼돈 공명기.png
+공명기,초기형 연금술 공명기,Primitive Alchemical Resonator,공명기/초기형 연금술 공명기 (Primitive Alchemical Resonator).png
+공명기,강화형 연금술 공명기,Potent Alchemical Resonator,공명기/강화형 연금술 공명기 (Potent Alchemical Resonator).png
+공명기,강력 연금술 공명기,Powerful Alchemical Resonator,공명기/강력 연금술 공명기 (Powerful Alchemical Resonator).png
+공명기,최종형 연금술 공명기,Prime Alchemical Resonator,공명기/최종형 연금술 공명기 (Prime Alchemical Resonator).png
+공명기,초기형 혼돈 공명기,Primitive Chaotic Resonator,공명기/초기형 혼돈 공명기 (Primitive Chaotic Resonator).png
+공명기,강화형 혼돈 공명기,Potent Chaotic Resonator,공명기/강화형 혼돈 공명기 (Potent Chaotic Resonator).png
+공명기,강력 혼돈 공명기,Powerful Chaotic Resonator,공명기/강력 혼돈 공명기 (Powerful Chaotic Resonator).png
+공명기,최종형 혼돈 공명기,Prime Chaotic Resonator,공명기/최종형 혼돈 공명기 (Prime Chaotic Resonator).png
+기폭제,격동의 기폭제,Turbulent Catalyst,기폭제/격동의 기폭제.png
+기폭제,부여의 기폭제,Imbued Catalyst,기폭제/부여의 기폭제.png
+기폭제,연마의 기폭제,Abrasive Catalyst,기폭제/연마의 기폭제.png
+기폭제,완화의 기폭제,Tempering Catalyst,기폭제/완화의 기폭제.png
+기폭제,풍요의 기폭제,Fertile Catalyst,기폭제/풍요의 기폭제.png
+기폭제,분광의 기폭제,Prismatic Catalyst,기폭제/분광의 기폭제.png
+기폭제,본질의 기폭제,Intrinsic Catalyst,기폭제/본질의 기폭제.png
+기폭제,유독성 기폭제,Noxious Catalyst,기폭제/유독성 기폭제.png
+기폭제,가속의 기폭제,Accelerating Catalyst,기폭제/가속의 기폭제.png
+기폭제,불안정한 기폭제,Unstable Catalyst,기폭제/불안정한 기폭제.png
+기폭제,더럽혀진 기폭제,Tainted Catalyst,기폭제/더럽혀진 기폭제.png
+기폭제,좌측 기폭제,Sinistral Catalyst,기폭제/좌측 기폭제.png
+기폭제,우측 기폭제,Dextral Catalyst,기폭제/우측 기폭제.png
+고유_업그레이드,시간과 빛의 주문서,Time-light Scroll,고유_업그레이드/시간과 빛의 주문서.png
+고유_업그레이드,파쇄 주문서,Fragmentation Scroll,고유_업그레이드/파쇄 주문서.png
+고유_업그레이드,자율 주문서,Deregulation Scroll,고유_업그레이드/자율 주문서.png
+고유_업그레이드,전격 주문서,Electroshock Scroll,고유_업그레이드/전격 주문서.png
+고유_업그레이드,핏빛 연소 주문서,Haemocombustion Scroll,고유_업그레이드/핏빛 연소 주문서.png
+고유_업그레이드,반영 주문서,Specularity Scroll,고유_업그레이드/반영 주문서.png
+젬,무아지경의 렌즈,Facetor's Lens,젬/무아지경의 렌즈.png
+섬뜩한,하급 섬뜩한 불씨,Lesser Eldritch Ember,섬뜩한/하급 섬뜩한 불씨.png
+섬뜩한,상급 섬뜩한 불씨,Greater Eldritch Ember,섬뜩한/상급 섬뜩한 불씨.png
+섬뜩한,우수한 섬뜩한 불씨,Grand Eldritch Ember,섬뜩한/우수한 섬뜩한 불씨.png
+섬뜩한,특출난 섬뜩한 불씨,Exceptional Eldritch Ember,섬뜩한/특출난 섬뜩한 불씨.png
+섬뜩한,하급 섬뜩한 영액,Lesser Eldritch Ichor,섬뜩한/하급 섬뜩한 영액.png
+섬뜩한,상급 섬뜩한 영액,Greater Eldritch Ichor,섬뜩한/상급 섬뜩한 영액.png
+섬뜩한,우수한 섬뜩한 영액,Grand Eldritch Ichor,섬뜩한/우수한 섬뜩한 영액.png
+섬뜩한,특출난 섬뜩한 영액,Exceptional Eldritch Ichor,섬뜩한/특출난 섬뜩한 영액.png
+섬뜩한,갈등의 오브,Orb of Conflict,섬뜩한/갈등의 오브.png
+성유,더럽혀진 성유,Tainted Oil,성유/더럽혀진 성유.png
+성유,투영 성유,Reflective Oil,성유/투영 성유.png
+성유,분광 성유,Prismatic Oil,성유/분광 성유.png
+성유,투명한 성유,Clear Oil,성유/투명한 성유.png
+성유,적갈빛 성유,Sepia Oil,성유/적갈빛 성유.png
+성유,호박빛 성유,Amber Oil,성유/호박빛 성유.png
+성유,신록빛 성유,Verdant Oil,성유/신록빛 성유.png
+성유,청록빛 성유,Teal Oil,성유/청록빛 성유.png
+성유,담청빛 성유,Azure Oil,성유/담청빛 성유.png
+성유,남색 성유,Indigo Oil,성유/남색 성유.png
+성유,보랏빛 성유,Violet Oil,성유/보랏빛 성유.png
+성유,진홍빛 성유,Crimson Oil,성유/진홍빛 성유.png
+성유,검은빛 성유,Black Oil,성유/검은빛 성유.png
+성유,오팔빛 성유,Opalescent Oil,성유/오팔빛 성유.png
+성유,은빛 성유,Silver Oil,성유/은빛 성유.png
+성유,금빛 성유,Golden Oil,성유/금빛 성유.png
+영향력,십자군의 엑잘티드 오브,Crusader's Exalted Orb,영향력/십자군의 엑잘티드 오브.png
+영향력,대속자의 엑잘티드 오브,Redeemer's Exalted Orb,영향력/대속자의 엑잘티드 오브.png
+영향력,사냥꾼의 엑잘티드 오브,Hunter's Exalted Orb,영향력/사냥꾼의 엑잘티드 오브.png
+영향력,전쟁군주의 엑잘티드 오브,Warlord's Exalted Orb,영향력/전쟁군주의 엑잘티드 오브.png
+영향력,각성자의 오브,Awakener's Orb,영향력/각성자의 오브.png
+영향력,지배의 오브,Orb of Dominance,영향력/지배의 오브.png
+기본,자극의 오브,Enkindling Orb,기본/자극의 오브.png
+기본,주입의 오브,Instilling Orb,기본/주입의 오브.png
+더럽혀진,더럽혀진 색채의 오브,Tainted Chromatic Orb,더럽혀진/더럽혀진 색채의 오브.png
+더럽혀진,더럽혀진 연결의 오브,Tainted Orb of Fusing,더럽혀진/더럽혀진 연결의 오브.png
+더럽혀진,더럽혀진 쥬얼러 오브,Tainted Jeweller's Orb,더럽혀진/더럽혀진 쥬얼러 오브.png
+더럽혀진,더럽혀진 카오스 오브,Tainted Chaos Orb,더럽혀진/더럽혀진 카오스 오브.png
+더럽혀진,더럽혀진 엑잘티드 오브,Tainted Exalted Orb,더럽혀진/더럽혀진 엑잘티드 오브.png
+더럽혀진,더럽혀진 신화 오브,Tainted Mythic Orb,더럽혀진/더럽혀진 신화 오브.png
+더럽혀진,더럽혀진 방어구 장인의 고철,Tainted Armourer's Scrap,더럽혀진/더럽혀진 방어구 장인의 고철.png
+더럽혀진,더럽혀진 대장장이의 숫돌,Tainted Blacksmith's Whetstone,더럽혀진/더럽혀진 대장장이의 숫돌.png
+더럽혀진,더럽혀진 신성한 눈물방울,Tainted Divine Teardrop,더럽혀진/더럽혀진 신성한 눈물방울.png
+더럽혀진,폭발성 바알 오브,Volatile Vaal Orb,더럽혀진/폭발성 바알 오브.png
+섬뜩한,섬뜩한 카오스 오브,Eldritch Chaos Orb,섬뜩한/섬뜩한 카오스 오브.png
+섬뜩한,섬뜩한 엑잘티드 오브,Eldritch Exalted Orb,섬뜩한/섬뜩한 엑잘티드 오브.png
+섬뜩한,섬뜩한 소멸의 오브,Eldritch Orb of Annulment,섬뜩한/섬뜩한 소멸의 오브.png
+센티넬,동력 핵,Power Core,센티넬/동력 핵.png
+센티넬,변화하는 동력 핵,Transforming Power Core,센티넬/변화하는 동력 핵.png
+센티넬,증폭하는 동력 핵,Amplifying Power Core,센티넬/증폭하는 동력 핵.png
+센티넬,보강하는 동력 핵,Augmenting Power Core,센티넬/보강하는 동력 핵.png
+센티넬,방어구 재조합기,Armour Recombinator,센티넬/방어구 재조합기.png
+센티넬,무기 재조합기,Weapon Recombinator,센티넬/무기 재조합기.png
+센티넬,장신구 재조합기,Jewellery Recombinator,센티넬/장신구 재조합기.png
+생기,야생 생기 결정,Wild Crystallised Lifeforce,생기/야생 생기 결정.png
+생기,혈기 생기 결정,Vivid Crystallised Lifeforce,생기/혈기 생기 결정.png
+생기,원시 생기 결정,Primal Crystallised Lifeforce,생기/원시 생기 결정.png
+생기,신성한 생기 결정,Sacred Crystallised Lifeforce,생기/신성한 생기 결정.png
+생기,앙심의 결정체,Crystallised Rancour,생기/앙심의 결정체.png
+기본,히네코라의 머리카락,Hinekora's Lock,기본/히네코라의 머리카락.png
+징조,개량의 징조,Omen of Amelioration,징조/개량의 징조.png
+징조,귀환의 징조,Omen of Return,징조/귀환의 징조.png
+징조,죽음의 춤의 징조,Omen of Death-dancing,징조/죽음의 춤의 징조.png
+징조,원기 회복의 징조,Omen of Refreshment,징조/원기 회복의 징조.png
+징조,영혼 포식자의 징조,Omen of the Soul Devourer,징조/영혼 포식자의 징조.png
+징조,가속의 징조,Omen of Acceleration,징조/가속의 징조.png
+징조,행운의 징조,Omen of Fortune,징조/행운의 징조.png
+징조,보석상의 징조,Omen of the Jeweller,징조/보석상의 징조.png
+징조,연결의 징조,Omen of Connections,징조/연결의 징조.png
+징조,삼색성의 징조,Omen of Trichromatism,징조/삼색성의 징조.png
+징조,복수의 징조,Omen of Revenge,징조/복수의 징조.png
+징조,대물림의 징조,Omen of Bequeathal,징조/대물림의 징조.png
+징조,재기의 징조,Omen of Resurgence,징조/재기의 징조.png
+징조,아드레날린의 징조,Omen of Adrenaline,징조/아드레날린의 징조.png
+징조,죽음의 문턱의 징조,Omen of Death's Door,징조/죽음의 문턱의 징조.png
+징조,광채의 징조,Omen of Brilliance,징조/광채의 징조.png
+리그_기타,태양 룬,Sun Rune,리그_기타/태양 룬.png
+리그_기타,속박 룬,Bound Rune,리그_기타/속박 룬.png
+리그_기타,생명 룬,Life Rune,리그_기타/생명 룬.png
+리그_기타,전쟁 룬,War Rune,리그_기타/전쟁 룬.png
+리그_기타,강 룬,River Rune,리그_기타/강 룬.png
+리그_기타,하사품 룬,Bounty Rune,리그_기타/하사품 룬.png
+리그_기타,여정 룬,Journey Rune,리그_기타/여정 룬.png
+리그_기타,산 룬,Mountain Rune,리그_기타/산 룬.png
+리그_기타,시간 룬,Time Rune,리그_기타/시간 룬.png
+리그_기타,권능 룬,Power Rune,리그_기타/권능 룬.png
+기본,투영하는 안개,Reflecting Mist,기본/투영하는 안개.png
+리그_기타,회복의 주화,Coin of Restoration,리그_기타/회복의 주화.png
+리그_기타,모독의 주화,Coin of Desecration,리그_기타/모독의 주화.png
+리그_기타,지식의 주화,Coin of Knowledge,리그_기타/지식의 주화.png
+리그_기타,힘의 주화,Coin of Power,리그_기타/힘의 주화.png
+리그_기타,기량의 주화,Coin of Skill,리그_기타/기량의 주화.png
+기본,진의 손길에 닿은 바알 오브,Djinn-Touched Vaal Orb,기본/진의 손길에 닿은 바알 오브.png
+기본,흐릿해지는 투영하는 안개,Fading Reflecting Mist,기본/흐릿해지는 투영하는 안개.png
+젬,세공사의 렌즈,Gemcutters Lens,젬/세공사의 렌즈.png
+리그_기타,메릭의 두카트,Merrick's Ducat,리그_기타/메릭의 두카트.png
+리그_기타,사이악산의 두카트,Cyaxan's Ducat,리그_기타/사이악산의 두카트.png
+리그_기타,체인질링의 두카트,The Changeling's Ducat,리그_기타/체인질링의 두카트.png
+리그_기타,고상한 자의 두카트,The Genteel's Ducat,리그_기타/고상한 자의 두카트.png
+리그_기타,키샤라의 두카트,Kishara's Ducat,리그_기타/키샤라의 두카트.png
+리그_기타,텔레시아의 두카트,Telesia's Ducat,리그_기타/텔레시아의 두카트.png
+리그_기타,부패모의 두카트,Rotmother's Ducat,리그_기타/부패모의 두카트.png
+리그_기타,브라인훅의 두카트,Brinehook's Ducat,리그_기타/브라인훅의 두카트.png
+리그_기타,카타코히의 두카트,Katakohi's Ducat,리그_기타/카타코히의 두카트.png
+리그_기타,자모토의 두카트,Tzamoto's Ducat,리그_기타/자모토의 두카트.png
+리그_기타,우카토아의 두카트,Ukatoa's Ducat,리그_기타/우카토아의 두카트.png
+craftofexile,하베스트,aharvest,craftofexile/하베스트.png
+craftofexile,하베스트 추가·제거,haugment,craftofexile/하베스트 추가·제거.png
+craftofexile,하베스트 교체,hreplace,craftofexile/하베스트 교체.png
+craftofexile,하베스트 소멸,hannul,craftofexile/하베스트 소멸.png
+craftofexile,하베스트 신성,hdivine,craftofexile/하베스트 신성.png
+craftofexile,하베스트 재련,hreroll,craftofexile/하베스트 재련.png
+craftofexile,하베스트 재련+,hrerollp,craftofexile/하베스트 재련+.png
+craftofexile,야수 접두→접미,bpretsuf,craftofexile/야수 접두→접미.png
+craftofexile,야수 접미→접두,bsuftpre,craftofexile/야수 접미→접두.png
+craftofexile,야수 각인,bimprint,craftofexile/야수 각인.png
+craftofexile,야수 수치 재설정,breroll,craftofexile/야수 수치 재설정.png
+craftofexile,야수 고양이(파룰),bcat,craftofexile/야수 고양이(파룰).png
+craftofexile,야수 조류,bavian,craftofexile/야수 조류.png
+craftofexile,야수 거미,bspider,craftofexile/야수 거미.png
+craftofexile,야수 게,bcrab,craftofexile/야수 게.png
+craftofexile,타락의 장소,locus,craftofexile/타락의 장소.png
+craftofexile,상인 조합,vendor,craftofexile/상인 조합.png

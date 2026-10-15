@@ -1,0 +1,3984 @@
+[
+ {
+  "id": "winter-orb",
+  "name": {
+   "en": "Winter Orb Elementalist",
+   "ko": "겨울 보주 엘리멘탈리스트"
+  },
+  "share": 0.1042,
+  "views": 1232174,
+  "tier": "starter",
+  "pobs": 3,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_minimum_added_fire_damage": 1.0,
+     "local_maximum_added_fire_damage": 1.0,
+     "local_minimum_added_lightning_damage": 1.0,
+     "local_maximum_added_lightning_damage": 1.0,
+     "spell_damage_+%": 1.0,
+     "spell_critical_strike_chance_+%": 1.0,
+     "spell_skill_gem_level_+": 1.0,
+     "cold_spell_skill_gem_level_+": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "cold_damage_+%": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_critical_strike_multiplier_+": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "cold_skill_gem_level_+": 0.7,
+     "fire_and_chaos_damage_resistance_%": 0.7
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_armour_and_energy_shield_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "local_socketed_area_of_effect_gem_level_+": 0.7,
+     "base_skill_area_of_effect_+%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "local_block_chance_+%": 1.0,
+     "spell_critical_strike_chance_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "cold_spell_skill_gem_level_+": 1.0,
+     "chance_to_deal_double_damage_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_additional_physical_damage_reduction_%": 1.0,
+     "monster_base_block_%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 0.7,
+     "non_damaging_ailment_effect_+%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cast_speed_+%": 0.7,
+     "cold_and_lightning_damage_resistance_%": 0.7,
+     "base_maximum_energy_shield": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "cold_and_chaos_damage_resistance_%": 0.7
+    }
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_armour_and_energy_shield_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_skill_area_of_effect_+%": 0.7,
+     "area_damage_+%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "belt": {
+    "wants": {
+     "additional_strength": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "fire_and_lightning_damage_resistance_%": 1.0,
+     "base_physical_damage_reduction_rating": 1.0,
+     "base_maximum_energy_shield": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "ethereal-knives",
+  "name": {
+   "en": "Ethereal Knives Elementalist",
+   "ko": "천상의 단도 엘리멘탈리스트"
+  },
+  "share": 0.0995,
+  "views": 1176699,
+  "tier": "starter",
+  "pobs": 9,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "physical_spell_skill_gem_level_+": 1.0,
+     "spell_skill_gem_level_+": 0.9,
+     "base_cast_speed_+%": 0.8,
+     "fire_dot_multiplier_+": 0.7,
+     "fire_damage_+%": 0.7,
+     "base_chance_to_ignite_%": 0.7,
+     "spell_damage_+%": 0.7,
+     "non_chaos_damage_to_add_as_chaos_damage_%": 0.6
+    },
+    "classes": [
+     "Rune Dagger",
+     "Sceptre",
+     "Staff",
+     "Wand"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_energy_shield": 0.7,
+     "local_energy_shield_+%": 0.7,
+     "local_base_evasion_rating": 0.6,
+     "base_lightning_damage_resistance_%": 0.6,
+     "base_chance_to_ignite_%": 0.6,
+     "faster_burn_%": 0.6,
+     "local_display_nearby_enemy_fire_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 0.93,
+     "base_chaos_damage_resistance_%": 0.85,
+     "base_physical_damage_%_to_convert_to_cold": 0.85,
+     "base_projectile_speed_+%": 0.78,
+     "projectile_damage_+%": 0.78,
+     "base_cold_damage_resistance_%": 0.7,
+     "damage_+%_vs_chilled_enemies": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_fire_damage_resistance_%": 0.78,
+     "base_avoid_shock_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.62,
+     "base_chaos_damage_resistance_%": 0.62,
+     "additional_dexterity": 0.55,
+     "base_avoid_chill_%": 0.55
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   }
+  }
+ },
+ {
+  "id": "righteous-fire",
+  "name": {
+   "en": "Righteous Fire Chieftain",
+   "ko": "정의의 화염 치프틴"
+  },
+  "share": 0.0645,
+  "views": 762604,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "fire_dot_multiplier_+": 1.0,
+     "base_maximum_life": 1.0,
+     "fire_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_socketed_area_of_effect_gem_level_+": 1.0,
+     "local_display_socketed_gems_supported_by_level_x_increased_burning_damage": 1.0,
+     "local_display_socketed_gems_get_concentrated_area_level": 1.0,
+     "local_display_socketed_gems_elemental_damage_+%_final": 1.0,
+     "life_regeneration_rate_+%": 1.0,
+     "burn_damage_+%": 1.0,
+     "base_skill_area_of_effect_+%": 1.0,
+     "area_damage_+%": 1.0
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_skill_area_of_effect_+%": 1.0,
+     "explode_enemies_for_10%_life_as_physical_on_kill_chance_%": 1.0,
+     "cold_and_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "life_regeneration_rate_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_skill_area_of_effect_+%": 1.0,
+     "area_damage_+%": 1.0,
+     "damage_+%_during_flask_effect": 1.0
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "dot_multiplier_+": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_minimum_frenzy_charges": 1.0,
+     "add_frenzy_charge_on_kill_%_chance": 1.0,
+     "skill_mana_cost_+_with_non_channelling_skills": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "cyclone",
+  "name": {
+   "en": "Cyclone Slayer",
+   "ko": "회오리바람 슬레이어"
+  },
+  "share": 0.0483,
+  "views": 571066,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "gloves": {
+    "wants": {
+     "melee_damage_+%": 1.0,
+     "accuracy_rating": 1.0,
+     "local_physical_damage_reduction_rating_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "melee_range_+": 1.0,
+     "damage_+%_while_leeching": 1.0
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "mana_regeneration_rate_+%": 1.0,
+     "attack_minimum_added_physical_damage": 1.0,
+     "attack_maximum_added_physical_damage": 1.0,
+     "attack_minimum_added_fire_damage": 1.0,
+     "attack_maximum_added_fire_damage": 1.0,
+     "base_maximum_life": 1.0,
+     "skill_mana_cost_+_with_channelling_skills": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "lightning-arrow",
+  "name": {
+   "en": "Lightning Arrow Deadeye",
+   "ko": "번개 화살 데드아이"
+  },
+  "share": 0.0396,
+  "views": 468233,
+  "tier": "starter",
+  "pobs": 3,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "local_minimum_added_fire_damage": 1.0,
+     "local_maximum_added_fire_damage": 1.0,
+     "local_minimum_added_cold_damage": 1.0,
+     "local_maximum_added_cold_damage": 1.0,
+     "local_minimum_added_lightning_damage": 1.0,
+     "local_maximum_added_lightning_damage": 1.0,
+     "local_attack_speed_+%": 1.0
+    },
+    "classes": [
+     "Bow"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "attack_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "attack_minimum_added_cold_damage": 0.7,
+     "attack_maximum_added_cold_damage": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_maximum_life": 0.7,
+     "base_resist_all_elements_%": 0.7
+    }
+   }
+  }
+ },
+ {
+  "id": "kinetic-blast",
+  "name": {
+   "en": "Kinetic Blast Hierophant",
+   "ko": "역학 폭발 하이로펀트"
+  },
+  "share": 0.0345,
+  "views": 408065,
+  "tier": "starter",
+  "pobs": 3,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "damage_+%": 1.0,
+     "additional_strength": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "additional_intelligence": 0.7,
+     "base_maximum_energy_shield": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    }
+   },
+   "weapon": {
+    "wants": {
+     "local_attack_speed_+%": 1.0,
+     "local_critical_strike_chance_+%": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "base_maximum_mana": 1.0,
+     "local_chaos_penetration_%": 1.0,
+     "spell_damage_+%": 0.7,
+     "non_chaos_damage_to_add_as_chaos_damage_%": 0.7
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_maximum_mana": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_item_found_rarity_+%": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "rare_or_unique_monster_dropped_item_rarity_+%": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "spell_damage_+%": 1.0,
+     "additional_intelligence": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_spell_block_%": 0.7,
+     "base_life_regeneration_rate_per_minute": 0.7,
+     "energy_shield_%_gained_on_block": 0.7
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "local_energy_shield": 1.0,
+     "base_maximum_mana": 0.8,
+     "local_energy_shield_+%": 0.8,
+     "base_fire_damage_resistance_%": 0.8,
+     "additional_dexterity": 0.6,
+     "accuracy_rating": 0.6,
+     "base_cold_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1.0,
+     "additional_intelligence": 0.8,
+     "local_energy_shield": 0.8,
+     "base_maximum_mana": 0.8,
+     "local_energy_shield_+%": 0.8,
+     "base_lightning_damage_resistance_%": 0.8,
+     "base_fire_damage_resistance_%": 0.6,
+     "base_cold_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 0.85,
+     "additional_intelligence": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "all_attributes_+%": 0.7,
+     "base_maximum_mana": 0.55,
+     "base_additional_physical_damage_reduction_%": 0.55
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "additional_strength": 0.8,
+     "base_maximum_mana": 0.8,
+     "base_cold_damage_resistance_%": 0.6,
+     "base_item_found_rarity_+%": 0.6,
+     "base_resist_all_elements_%": 0.6,
+     "base_critical_strike_multiplier_+": 0.6,
+     "base_lightning_damage_resistance_%": 0.6
+    }
+   }
+  }
+ },
+ {
+  "id": "kinetic-fusillade",
+  "name": {
+   "en": "Kinetic Fusillade Hierophant",
+   "ko": "역학 일제 사격 하이로펀트"
+  },
+  "share": 0.034,
+  "views": 402531,
+  "tier": "starter",
+  "pobs": 4,
+  "source": "pob",
+  "slots": {
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "additional_all_attributes": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 0.8,
+     "local_base_physical_damage_reduction_rating": 0.6,
+     "local_physical_damage_reduction_rating_+%": 0.6,
+     "attack_speed_+%": 0.6,
+     "additional_dexterity": 0.6,
+     "attack_minimum_added_lightning_damage": 0.6,
+     "attack_maximum_added_lightning_damage": 0.6,
+     "local_armour_and_energy_shield_+%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_fire_damage_resistance_%": 0.8,
+     "base_chaos_damage_resistance_%": 0.8,
+     "local_physical_damage_reduction_rating_+%": 0.6,
+     "base_lightning_damage_resistance_%": 0.6,
+     "cold_and_chaos_damage_resistance_%": 0.6,
+     "local_armour_and_energy_shield_+%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "attack_minimum_added_lightning_damage": 0.85,
+     "attack_maximum_added_lightning_damage": 0.85,
+     "cold_and_chaos_damage_resistance_%": 0.7,
+     "attack_minimum_added_cold_damage": 0.7,
+     "attack_maximum_added_cold_damage": 0.7,
+     "additional_dexterity": 0.55,
+     "base_fire_damage_resistance_%": 0.55,
+     "attack_minimum_added_fire_damage": 0.55,
+     "attack_maximum_added_fire_damage": 0.55,
+     "base_critical_strike_multiplier_+": 0.55
+    }
+   },
+   "weapon": {
+    "wants": {
+     "local_minimum_added_cold_damage": 1.0,
+     "local_maximum_added_cold_damage": 1.0,
+     "local_critical_strike_chance_+%": 1.0,
+     "local_minimum_added_lightning_damage": 1.0,
+     "local_maximum_added_lightning_damage": 1.0,
+     "local_elemental_penetration_%": 0.7,
+     "local_minimum_added_fire_damage": 0.7,
+     "local_maximum_added_fire_damage": 0.7,
+     "local_attack_speed_+%": 0.7,
+     "chance_to_deal_double_damage_%": 0.7,
+     "additional_strength_and_intelligence": 0.7
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "elemental_damage_with_attack_skills_+%": 1.0,
+     "base_fire_damage_resistance_%": 0.8,
+     "additional_strength": 0.6,
+     "base_lightning_damage_resistance_%": 0.6,
+     "additional_dexterity": 0.6,
+     "base_maximum_energy_shield": 0.6,
+     "base_cold_damage_resistance_%": 0.6
+    }
+   }
+  }
+ },
+ {
+  "id": "exsanguinate",
+  "name": {
+   "en": "Exsanguinate Trickster",
+   "ko": "방혈 트릭스터"
+  },
+  "share": 0.0315,
+  "views": 372559,
+  "tier": "starter",
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_attribute_requirements_+%": 1.0,
+     "spell_critical_strike_chance_+%": 1.0,
+     "physical_spell_skill_gem_level_+": 1.0,
+     "mine_laying_speed_+%": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_resist_all_elements_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "physical_skill_gem_level_+": 1.0,
+     "mine_laying_speed_+%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "accuracy_rating": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "additional_strength_and_intelligence": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "physical_spell_skill_gem_level_+": 1.0,
+     "base_spell_suppression_chance_%": 1.0,
+     "spell_critical_strike_chance_+%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "local_base_evasion_rating": 0.7,
+     "local_energy_shield": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_stun_recovery_+%": 0.7
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "trap_and_mine_throwing_speed_+%": 1.0,
+     "fire_and_lightning_damage_resistance_%": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "boneshatter",
+  "name": {
+   "en": "Boneshatter Juggernaut",
+   "ko": "뼈 박살 저거넛"
+  },
+  "share": 0.0303,
+  "views": 358852,
+  "tier": "starter",
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_minimum_added_physical_damage": 1.0,
+     "local_maximum_added_physical_damage": 1.0,
+     "local_attack_speed_+%": 1.0,
+     "local_accuracy_rating": 0.7,
+     "local_chance_to_blind_on_hit_%": 0.7,
+     "physical_dot_multiplier_+": 0.7,
+     "additional_dexterity_and_intelligence": 0.7
+    },
+    "classes": [
+     "One Hand Axe",
+     "Two Hand Axe"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "dot_multiplier_+": 0.7,
+     "base_resist_all_elements_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "skill_mana_cost_+_with_non_channelling_skills": 0.7,
+     "additional_all_attributes": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_physical_damage_reduction_rating_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "cold_and_lightning_damage_resistance_%": 0.7,
+     "additional_intelligence": 0.7,
+     "base_lightning_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_physical_damage_reduction_rating_+%": 1.0,
+     "base_additional_physical_damage_reduction_%": 0.7,
+     "self_critical_strike_multiplier_-%_per_endurance_charge": 0.7,
+     "cold_and_lightning_damage_resistance_%": 0.7,
+     "base_fire_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_chaos_damage_resistance_%": 0.7,
+     "fire_and_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "local_physical_damage_reduction_rating_+%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "melee_damage_+%": 0.7,
+     "melee_range_+": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "additional_dexterity": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "additional_dexterity": 0.7,
+     "attack_minimum_added_physical_damage": 0.7,
+     "attack_maximum_added_physical_damage": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "spellslinger",
+  "name": {
+   "en": "Spellslinger Elementalist",
+   "ko": "주문투척 엘리멘탈리스트"
+  },
+  "share": 0.0268,
+  "views": 316649,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "offhand": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "local_block_chance_+%": 1.0,
+     "base_spell_suppression_chance_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "non_damaging_ailment_effect_+%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_minimum_endurance_charges": 1.0,
+     "endurance_charge_on_kill_%": 1.0
+    }
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "cold_skill_gem_level_+": 1.0,
+     "base_minimum_endurance_charges": 1.0
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_energy_shield": 1.0,
+     "base_maximum_life": 1.0,
+     "energy_shield_regeneration_rate_per_minute_if_rare_or_unique_enemy_nearby": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "essence-drain",
+  "name": {
+   "en": "Essence Drain Occultist",
+   "ko": "정수 흡수 오컬티스트"
+  },
+  "share": 0.0265,
+  "views": 313551,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "body": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_strength": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_energy_shield": 1.0,
+     "maximum_energy_shield_+%": 1.0
+    }
+   },
+   "ring": {
+    "wants": {
+     "local_socketed_gem_level_+": 1.0,
+     "additional_strength": 1.0,
+     "additional_dexterity": 1.0,
+     "base_maximum_energy_shield": 1.0,
+     "dot_multiplier_+": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "chaos_dot_multiplier_+": 1.0,
+     "spell_skill_gem_level_+": 1.0,
+     "chaos_spell_skill_gem_level_+": 1.0
+    },
+    "classes": [
+     "Staff"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "animate-guardian",
+  "name": {
+   "en": "Animate Guardian Guardian",
+   "ko": "수호자 기동 가디언"
+  },
+  "share": 0.0254,
+  "views": 300000,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "template",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   },
+   "ring": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   },
+   "belt": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   }
+  }
+ },
+ {
+  "id": "ice-nova",
+  "name": {
+   "en": "Ice Nova Occultist",
+   "ko": "얼음 폭발 오컬티스트"
+  },
+  "share": 0.0241,
+  "views": 285493,
+  "tier": "starter",
+  "pobs": 3,
+  "source": "pob",
+  "slots": {
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "base_spell_block_%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "chance_to_deal_double_damage_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "additional_dexterity": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "attack_and_cast_speed_+%_while_focused": 0.7,
+     "additional_strength": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_fire_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_energy_shield": 1.0,
+     "additional_strength": 0.8,
+     "base_fire_damage_resistance_%": 0.8,
+     "base_cold_damage_resistance_%": 0.8,
+     "base_resist_all_elements_%": 0.6,
+     "skill_mana_cost_+_with_non_channelling_skills": 0.6,
+     "additional_dexterity": 0.6,
+     "base_maximum_life": 0.6
+    }
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "local_armour_and_energy_shield_+%": 0.7,
+     "local_energy_shield": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "base_additional_physical_damage_reduction_%": 0.7,
+     "energy_shield_regeneration_rate_per_minute_if_rare_or_unique_enemy_nearby": 0.7,
+     "base_maximum_life": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "ground-slam",
+  "name": {
+   "en": "Ground Slam Slayer",
+   "ko": "대지 강타 슬레이어"
+  },
+  "share": 0.0238,
+  "views": 281902,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_minimum_added_physical_damage": 1.0,
+     "local_maximum_added_physical_damage": 1.0,
+     "local_attack_speed_+%": 1.0,
+     "local_accuracy_rating": 1.0,
+     "physical_dot_multiplier_+": 1.0,
+     "damage_+%_per_endurance_charge": 1.0
+    },
+    "classes": [
+     "Two Hand Axe"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "additional_all_attributes": 1.0,
+     "dot_multiplier_+": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "damage_+%_while_leeching": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "local_socketed_area_of_effect_gem_level_+": 1.0,
+     "base_skill_area_of_effect_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "attack_speed_+%": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%_while_leeching": 1.0
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "shocked_chilled_effect_on_self_+%": 1.0,
+     "base_movement_velocity_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "skill_mana_cost_+_with_non_channelling_skills": 1.0,
+     "base_resist_all_elements_%": 0.7,
+     "additional_dexterity": 0.7
+    }
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_base_evasion_rating": 1.0,
+     "local_armour_and_evasion_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_additional_physical_damage_reduction_%": 1.0,
+     "base_spell_suppression_chance_%": 1.0
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   }
+  }
+ },
+ {
+  "id": "glacial-cascade",
+  "name": {
+   "en": "Glacial Cascade Elementalist",
+   "ko": "빙하 폭포 엘리멘탈리스트"
+  },
+  "share": 0.0223,
+  "views": 263850,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "donor:Ice Nova",
+  "slots": {
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "base_spell_block_%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "chance_to_deal_double_damage_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "additional_dexterity": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "attack_and_cast_speed_+%_while_focused": 0.7,
+     "additional_strength": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_fire_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_energy_shield": 1.0,
+     "additional_strength": 0.8,
+     "base_fire_damage_resistance_%": 0.8,
+     "base_cold_damage_resistance_%": 0.8,
+     "base_resist_all_elements_%": 0.6,
+     "skill_mana_cost_+_with_non_channelling_skills": 0.6,
+     "additional_dexterity": 0.6,
+     "base_maximum_life": 0.6
+    }
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "local_armour_and_energy_shield_+%": 0.7,
+     "local_energy_shield": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "base_additional_physical_damage_reduction_%": 0.7,
+     "energy_shield_regeneration_rate_per_minute_if_rare_or_unique_enemy_nearby": 0.7,
+     "base_maximum_life": 0.7
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "penance-brand",
+  "name": {
+   "en": "Penance Brand Elementalist",
+   "ko": "속죄의 낙인 엘리멘탈리스트"
+  },
+  "share": 0.0211,
+  "views": 249977,
+  "tier": "starter",
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "base_critical_strike_multiplier_+": 1.0,
+     "spell_damage_+%": 1.0,
+     "spell_skill_gem_level_+": 1.0,
+     "physical_spell_skill_gem_level_+": 1.0,
+     "chance_to_deal_double_damage_%": 1.0,
+     "base_cast_speed_+%": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_cast_speed_+%": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "physical_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_socketed_area_of_effect_gem_level_+": 1.0,
+     "base_skill_area_of_effect_+%": 1.0,
+     "local_display_socketed_gems_get_concentrated_area_level": 0.7,
+     "local_display_socketed_gems_supported_by_x_hypothermia": 0.7,
+     "local_display_socketed_gems_elemental_damage_+%_final": 0.7,
+     "local_display_socketed_spells_additional_critical_strike_chance": 0.7,
+     "local_base_physical_damage_reduction_rating": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "additional_intelligence": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "fire_and_lightning_damage_resistance_%": 0.7,
+     "base_spell_suppression_chance_%": 0.7,
+     "local_base_evasion_rating": 0.7
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "additional_dexterity": 0.7,
+     "local_energy_shield": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "damage_+%_vs_chilled_enemies": 0.7,
+     "additional_strength_and_intelligence": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "local_energy_shield_+%": 0.7,
+     "base_avoid_chill_%": 0.7,
+     "base_avoid_shock_%": 0.7,
+     "additional_strength_and_intelligence": 0.7,
+     "base_spell_suppression_chance_%": 0.7
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "raise-spectre",
+  "name": {
+   "en": "Raise Spectre Necromancer",
+   "ko": "망령 소환 네크로맨서"
+  },
+  "share": 0.0203,
+  "views": 240000,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "template",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1,
+     "minion_maximum_life_+%": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "body": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "amulet": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "ring": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_attack_and_cast_speed_+%": 0.8,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "weapon": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 1,
+     "minion_attack_and_cast_speed_+%": 0.9,
+     "minion_maximum_life_+%": 0.7
+    },
+    "classes": [
+     "Sceptre",
+     "Wand"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_maximum_life_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    },
+    "classes": [
+     "Shield"
+    ]
+   }
+  }
+ },
+ {
+  "id": "spark",
+  "name": {
+   "en": "Spark Hierophant",
+   "ko": "전기불꽃 하이로펀트"
+  },
+  "share": 0.0167,
+  "views": 198014,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "donor:Arc",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "lightning_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "additional_intelligence": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "additional_strength_and_dexterity": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "absolution",
+  "name": {
+   "en": "Absolution Guardian",
+   "ko": "면죄 가디언"
+  },
+  "share": 0.0157,
+  "views": 186159,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "template",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1,
+     "minion_maximum_life_+%": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "body": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "amulet": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "ring": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_attack_and_cast_speed_+%": 0.8,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "weapon": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 1,
+     "minion_attack_and_cast_speed_+%": 0.9,
+     "minion_maximum_life_+%": 0.7
+    },
+    "classes": [
+     "Sceptre",
+     "Wand"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_maximum_life_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    },
+    "classes": [
+     "Shield"
+    ]
+   }
+  }
+ },
+ {
+  "id": "blade-blast",
+  "name": {
+   "en": "Blade Blast Assassin",
+   "ko": "칼날 폭격 어쌔신"
+  },
+  "share": 0.0156,
+  "views": 184957,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "base_critical_strike_multiplier_+": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_life_leech_from_cold_damage_permyriad": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_armour_and_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_armour_and_energy_shield_+%": 1.0,
+     "monster_base_block_%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "poisonous-concoction",
+  "name": {
+   "en": "Poisonous Concoction Assassin",
+   "ko": "독성 혼합물 어쌔신"
+  },
+  "share": 0.0144,
+  "views": 170193,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "local_base_evasion_rating": 1.0,
+     "local_energy_shield": 1.0,
+     "base_maximum_life": 1.0,
+     "local_socketed_area_of_effect_gem_level_+": 1.0,
+     "base_skill_area_of_effect_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "attack_speed_+%": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "local_base_evasion_rating": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   }
+  }
+ },
+ {
+  "id": "smite",
+  "name": {
+   "en": "Smite Slayer",
+   "ko": "징벌 슬레이어"
+  },
+  "share": 0.0142,
+  "views": 168068,
+  "tier": "starter",
+  "pobs": 3,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "additional_strength": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "elemental_damage_with_attack_skills_+%": 1.0,
+     "maximum_life_+%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_fire_damage_resistance_%": 0.7
+    }
+   },
+   "ring": {
+    "wants": {
+     "base_evasion_rating": 1.0,
+     "base_maximum_life": 1.0,
+     "base_resist_all_elements_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "additional_intelligence": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "elemental_damage_with_attack_skills_+%": 0.7
+    }
+   },
+   "boots": {
+    "wants": {
+     "base_fire_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "local_armour_and_evasion_+%": 0.7,
+     "additional_intelligence": 0.7,
+     "additional_dexterity": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "attack_speed_+%": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_maximum_life": 1.0,
+     "attack_minimum_added_cold_damage": 0.7,
+     "attack_maximum_added_cold_damage": 0.7,
+     "accuracy_rating": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "additional_strength": 0.7,
+     "base_life_regeneration_rate_per_minute": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_armour_and_evasion_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "local_base_evasion_rating": 0.8,
+     "base_spell_suppression_chance_%": 0.6,
+     "local_base_physical_damage_reduction_rating": 0.6,
+     "base_stun_recovery_+%": 0.6,
+     "base_additional_physical_damage_reduction_%": 0.6,
+     "local_attribute_requirements_+%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "additional_intelligence": 1.0,
+     "local_armour_and_evasion_+%": 0.8,
+     "local_socketed_area_of_effect_gem_level_+": 0.8,
+     "base_skill_area_of_effect_+%": 0.8,
+     "base_spell_suppression_chance_%": 0.6,
+     "base_cold_damage_resistance_%": 0.6,
+     "life_regeneration_rate_+%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "additional_strength": 1.0,
+     "base_maximum_life": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "base_resist_all_elements_%": 1.0,
+     "local_physical_damage_reduction_rating_+%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "armour"
+    ]
+   }
+  }
+ },
+ {
+  "id": "shock-nova",
+  "name": {
+   "en": "Shock Nova Hierophant",
+   "ko": "충격 폭발 하이로펀트"
+  },
+  "share": 0.0117,
+  "views": 137807,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "additional_strength": 1.0,
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "flask_duration_+%": 1.0,
+     "flask_effect_+%": 1.0,
+     "base_maximum_mana": 1.0
+    }
+   },
+   "body": {
+    "wants": {
+     "additional_strength": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_additional_physical_damage_reduction_%": 1.0,
+     "restore_energy_shield_and_mana_when_you_focus_%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_maximum_life": 1.0,
+     "base_maximum_mana": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_maximum_life": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_movement_velocity_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "static-strike",
+  "name": {
+   "en": "Static Strike Slayer",
+   "ko": "정전기 타격 슬레이어"
+  },
+  "share": 0.0111,
+  "views": 131665,
+  "tier": "starter",
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_minimum_added_physical_damage": 1.0,
+     "local_maximum_added_physical_damage": 1.0,
+     "local_accuracy_rating": 0.7,
+     "local_minimum_added_fire_damage": 0.7,
+     "local_maximum_added_fire_damage": 0.7,
+     "local_attack_speed_+%": 0.7
+    },
+    "classes": [
+     "One Hand Axe"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "accuracy_rating": 0.7,
+     "lightning_and_chaos_damage_resistance_%": 0.7,
+     "additional_dexterity": 0.7,
+     "base_stun_recovery_+%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_physical_damage_reduction_rating_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 0.7,
+     "base_additional_physical_damage_reduction_%": 0.7,
+     "additional_dexterity_and_intelligence": 0.7,
+     "base_maximum_life": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "accuracy_rating": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_physical_damage_%_to_convert_to_cold": 1.0,
+     "attack_speed_+%": 0.7,
+     "base_maximum_life": 0.7,
+     "attack_minimum_added_cold_damage": 0.7,
+     "attack_maximum_added_cold_damage": 0.7,
+     "base_lightning_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "base_avoid_shock_%": 0.7,
+     "local_base_evasion_rating": 0.7,
+     "local_energy_shield": 0.7,
+     "base_maximum_mana": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "additional_dexterity_and_intelligence": 0.55,
+     "lightning_and_chaos_damage_resistance_%": 0.55,
+     "additional_strength": 0.55,
+     "base_maximum_energy_shield": 0.55
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "maximum_life_+%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "additional_dexterity_and_intelligence": 0.7,
+     "base_life_regeneration_rate_per_minute": 0.7,
+     "flask_mana_recovery_rate_+%": 0.7,
+     "fire_and_cold_damage_resistance_%": 0.7
+    }
+   },
+   "amulet": {
+    "wants": {
+     "attack_minimum_added_physical_damage": 1.0,
+     "attack_maximum_added_physical_damage": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_life_gain_per_target": 1.0,
+     "base_maximum_life": 1.0
+    }
+   },
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "local_socketed_melee_gem_level_+": 1.0,
+     "additional_dexterity": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   }
+  }
+ },
+ {
+  "id": "energy-blade",
+  "name": {
+   "en": "Energy Blade Inquisitor",
+   "ko": "에너지 칼날 인퀴지터"
+  },
+  "share": 0.0106,
+  "views": 125261,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_base_physical_damage_reduction_rating": 0.7,
+     "base_life_regeneration_rate_per_minute": 0.7,
+     "life_regeneration_rate_+%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "local_physical_damage_reduction_rating_+%": 0.7
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_armour_and_energy_shield_+%": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "life_regeneration_rate_+%": 1.0,
+     "base_maximum_mana": 1.0,
+     "cold_and_chaos_damage_resistance_%": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "additional_strength": 1.0,
+     "additional_intelligence": 1.0,
+     "local_armour_and_energy_shield_+%": 1.0,
+     "life_regeneration_rate_+%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_item_found_rarity_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_evasion_rating": 0.7,
+     "base_life_regeneration_rate_per_minute": 0.7
+    }
+   }
+  }
+ },
+ {
+  "id": "siege-ballista",
+  "name": {
+   "en": "Siege Ballista Hierophant",
+   "ko": "공성 쇠뇌 하이로펀트"
+  },
+  "share": 0.0104,
+  "views": 122895,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "donor:Lightning Arrow",
+  "slots": {
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "local_minimum_added_fire_damage": 1.0,
+     "local_maximum_added_fire_damage": 1.0,
+     "local_minimum_added_cold_damage": 1.0,
+     "local_maximum_added_cold_damage": 1.0,
+     "local_minimum_added_lightning_damage": 1.0,
+     "local_maximum_added_lightning_damage": 1.0,
+     "local_attack_speed_+%": 1.0
+    },
+    "classes": [
+     "Bow"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "attack_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "attack_minimum_added_cold_damage": 0.7,
+     "attack_maximum_added_cold_damage": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_maximum_life": 0.7,
+     "base_resist_all_elements_%": 0.7
+    }
+   }
+  }
+ },
+ {
+  "id": "arc",
+  "name": {
+   "en": "Arc Elementalist",
+   "ko": "연쇄 번개 엘리멘탈리스트"
+  },
+  "share": 0.0094,
+  "views": 110783,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "lightning_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "additional_intelligence": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "additional_strength_and_dexterity": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "soulrend",
+  "name": {
+   "en": "Soulrend Occultist",
+   "ko": "영혼 분리 오컬티스트"
+  },
+  "share": 0.0086,
+  "views": 101253,
+  "tier": "starter",
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "chaos_dot_multiplier_+": 1.0,
+     "spell_skill_gem_level_+": 1.0,
+     "chaos_spell_skill_gem_level_+": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "gain_arcane_surge_on_kill_chance_%": 1.0
+    },
+    "classes": [
+     "Staff"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "all_skill_gem_level_+": 1.0,
+     "chaos_skill_gem_level_+": 1.0,
+     "non_damaging_ailment_effect_+%": 1.0
+    }
+   },
+   "ring": {
+    "wants": {
+     "additional_strength": 1.0,
+     "additional_dexterity": 1.0,
+     "base_resist_all_elements_%": 1.0,
+     "base_maximum_life": 1.0
+    }
+   }
+  }
+ },
+ {
+  "id": "animate-weapon",
+  "name": {
+   "en": "Animate Weapon Necromancer",
+   "ko": "무기 기동 네크로맨서"
+  },
+  "share": 0.0082,
+  "views": 96538,
+  "tier": "starter",
+  "pobs": 0,
+  "source": "template",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1,
+     "minion_maximum_life_+%": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "body": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "boots": {
+    "wants": {
+     "base_movement_velocity_+%": 1,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "amulet": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "ring": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_attack_and_cast_speed_+%": 0.8,
+     "base_maximum_life": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    }
+   },
+   "weapon": {
+    "wants": {
+     "minion_skill_gem_level_+": 1,
+     "minion_damage_+%": 1,
+     "minion_attack_and_cast_speed_+%": 0.9,
+     "minion_maximum_life_+%": 0.7
+    },
+    "classes": [
+     "Sceptre",
+     "Wand"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "minion_damage_+%": 0.8,
+     "minion_maximum_life_+%": 0.8,
+     "base_maximum_life": 0.8,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6
+    },
+    "classes": [
+     "Shield"
+    ]
+   }
+  }
+ },
+ {
+  "id": "lightning-conduit",
+  "name": {
+   "en": "Lightning Conduit Elementalist",
+   "ko": "번개 도관 엘리멘탈리스트"
+  },
+  "share": 0.0082,
+  "views": 96520,
+  "tier": "starter",
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "spell_damage_+%": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "lightning_spell_skill_gem_level_+": 1.0,
+     "spell_skill_gem_level_+": 0.7,
+     "base_inflict_lightning_exposure_on_hit_%_chance": 0.7,
+     "chance_to_deal_double_damage_%": 0.7,
+     "spell_minimum_added_lightning_damage": 0.7,
+     "spell_maximum_added_lightning_damage": 0.7,
+     "local_accuracy_rating": 0.7
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "lightning_skill_gem_level_+": 1.0,
+     "additional_dexterity": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "skill_mana_cost_+_with_non_channelling_skills": 0.7,
+     "cold_damage_+%": 0.7,
+     "accuracy_rating": 0.7,
+     "base_cast_speed_+%": 0.7
+    }
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_spell_suppression_chance_%": 0.7,
+     "local_armour_and_evasion_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "cold_and_lightning_damage_resistance_%": 0.7,
+     "local_base_physical_damage_reduction_rating": 0.7,
+     "local_base_evasion_rating": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "local_base_evasion_rating": 1.0,
+     "local_armour_and_evasion_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_spell_suppression_chance_%": 0.7,
+     "fire_and_cold_damage_resistance_%": 0.7,
+     "additional_dexterity": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_spell_suppression_chance_%": 0.7,
+     "non_damaging_ailment_effect_+%": 0.7,
+     "lightning_and_chaos_damage_resistance_%": 0.7,
+     "local_armour_and_evasion_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_resist_all_elements_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "skill_mana_cost_+_with_non_channelling_skills": 0.7,
+     "attack_minimum_added_fire_damage": 0.7,
+     "attack_maximum_added_fire_damage": 0.7,
+     "base_cast_speed_+%": 0.7,
+     "fire_and_chaos_damage_resistance_%": 0.7
+    }
+   },
+   "belt": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_physical_damage_reduction_rating": 0.7,
+     "maximum_life_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7,
+     "additional_strength_and_dexterity": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.7
+    }
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "local_armour_and_evasion_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "fire_and_chaos_damage_resistance_%": 1.0,
+     "base_spell_suppression_chance_%": 0.7,
+     "base_item_found_rarity_+%": 0.7,
+     "base_fire_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "armour",
+     "evasion"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "additional_intelligence": 1.0,
+     "spell_critical_strike_chance_+%": 1.0,
+     "base_maximum_mana": 1.0,
+     "lightning_spell_skill_gem_level_+": 1.0,
+     "fire_and_chaos_damage_resistance_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   }
+  }
+ },
+ {
+  "id": "lightning-arrow-deadeye-uber",
+  "name": {
+   "en": "Lightning Arrow Deadeye (Uber)",
+   "ko": "번개 화살 데드아이 (우버)"
+  },
+  "tier": "uber",
+  "views": 137836,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "local_minimum_added_physical_damage": 1.0,
+     "local_maximum_added_physical_damage": 1.0,
+     "local_attack_speed_+%": 1.0,
+     "local_critical_strike_chance_+%": 1.0,
+     "number_of_additional_arrows": 1.0,
+     "local_accuracy_rating": 1.0
+    },
+    "classes": [
+     "Bow"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_item_found_rarity_+%": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "bow_critical_strike_multiplier_+": 1.0,
+     "base_maximum_life": 1.0,
+     "base_projectile_speed_+%": 1.0,
+     "damage_+%_with_bow_skills": 1.0
+    }
+   },
+   "body": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "local_base_evasion_rating": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%_vs_chilled_enemies": 1.0,
+     "attack_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_physical_damage_%_to_convert_to_lightning": 1.0,
+     "base_projectile_speed_+%": 1.0,
+     "projectile_damage_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_critical_strike_multiplier_+": 1.0,
+     "base_maximum_life": 1.0,
+     "base_item_found_rarity_+%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0
+    }
+   }
+  },
+  "video": "Going over my Multi-Mirror LA Deadeye, Final Build Update - Path of Exile 1",
+  "share": 0.0117
+ },
+ {
+  "id": "ice-spear-hierophant-uber",
+  "name": {
+   "en": "Ice Spear Hierophant (Uber)",
+   "ko": "얼음 창 하이로펀트 (우버)"
+  },
+  "tier": "uber",
+  "views": 155597,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "boots": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "base_maximum_mana": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%_vs_chilled_enemies": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_critical_strike_multiplier_+": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_mana_regeneration_rate_per_minute": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "cold_skill_gem_level_+": 1.0,
+     "base_minimum_frenzy_charges": 1.0
+    }
+   },
+   "ring": {
+    "wants": {
+     "attack_minimum_added_fire_damage": 1.0,
+     "attack_maximum_added_fire_damage": 1.0,
+     "base_cast_speed_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "base_maximum_mana": 1.0
+    }
+   }
+  },
+  "video": "(Updated POB for 3.28) Crazy 1.7 Billion DPS build - Hierophant Ice Spear Totems, Uber Bos",
+  "share": 0.0132
+ },
+ {
+  "id": "vortex-hierophant-uber",
+  "name": {
+   "en": "Vortex Hierophant (Uber)",
+   "ko": "소용돌이 하이로펀트 (우버)"
+  },
+  "tier": "uber",
+  "views": 122427,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "elemental_damage_%_to_add_as_chaos": 1.0,
+     "base_reduce_enemy_lightning_resistance_%": 1.0
+    },
+    "classes": [
+     "Staff"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "maximum_mana_+%": 1.0,
+     "additional_all_attributes": 1.0,
+     "additional_strength": 1.0,
+     "additional_intelligence": 1.0,
+     "physical_damage_reduction_rating_+%": 1.0,
+     "maximum_energy_shield_+%": 1.0
+    }
+   },
+   "ring": {
+    "wants": {
+     "additional_strength": 1.0,
+     "additional_intelligence": 1.0,
+     "base_maximum_energy_shield": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_mana_regeneration_rate_per_minute": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_maximum_life": 1.0
+    }
+   },
+   "boots": {
+    "wants": {
+     "additional_strength": 1.0,
+     "additional_intelligence": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_avoid_chill_%": 1.0,
+     "essence_display_elemental_damage_taken_while_not_moving_+%": 1.0,
+     "local_energy_shield_+%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  },
+  "video": "The 1 Billion DPS Archmage build - Battery Vortex",
+  "share": 0.0104
+ },
+ {
+  "id": "bladefall-juggernaut-uber",
+  "name": {
+   "en": "Bladefall Juggernaut (Uber)",
+   "ko": "칼날비 저거넛 (우버)"
+  },
+  "tier": "uber",
+  "views": 63008,
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "offhand": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "spell_damage_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_maximum_mana": 1.0,
+     "chance_to_deal_double_damage_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "base_fire_damage_resistance_%": 1.0,
+     "base_mana_reservation_efficiency_+%": 1.0,
+     "physical_damage_taken_%_as_fire": 1.0,
+     "physical_damage_taken_%_as_lightning": 1.0
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_skill_area_of_effect_+%": 1.0,
+     "area_damage_+%": 1.0,
+     "area_of_effect_+%_if_culled_recently": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "gain_elusive_on_crit_%_chance": 1.0,
+     "attack_cast_and_movement_speed_+%_during_onslaught": 1.0,
+     "elusive_effect_+%": 1.0,
+     "tailwind_effect_on_self_+%": 1.0
+    }
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "base_minimum_frenzy_charges": 1.0
+    }
+   }
+  },
+  "video": "[3.28] Screen-Wide, Buttonless, AFK Billions of DPS - Bladefall of Trarthus (Legacy Build)",
+  "share": 0.0053
+ },
+ {
+  "id": "blade-vortex-occultist-uber",
+  "name": {
+   "en": "Blade Vortex Occultist (Uber)",
+   "ko": "칼날 소용돌이 오컬티스트 (우버)"
+  },
+  "tier": "uber",
+  "views": 87328,
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "base_minimum_endurance_charges": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 0.8,
+     "base_lightning_damage_resistance_%": 0.6,
+     "base_chaos_damage_resistance_%": 0.6,
+     "local_armour_and_energy_shield_+%": 0.6,
+     "local_energy_shield_+%": 0.6,
+     "base_fire_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "gain_elusive_on_crit_%_chance": 1.0,
+     "attack_cast_and_movement_speed_+%_during_onslaught": 1.0,
+     "tailwind_effect_on_self_+%": 1.0,
+     "base_maximum_life": 0.7,
+     "local_energy_shield_+%": 0.7
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "minion_maximum_life_+%": 0.8,
+     "attack_minimum_added_physical_damage": 0.6,
+     "attack_maximum_added_physical_damage": 0.6,
+     "chaos_damage_+%": 0.6,
+     "base_evasion_rating": 0.6,
+     "local_display_grants_skill_cat_aspect_level": 0.6,
+     "base_critical_strike_multiplier_+": 0.6,
+     "minion_elemental_resistance_%": 0.6
+    }
+   }
+  },
+  "video": "Blade Vortex Minion Pact Occultist | Double-Explody for Mirage | Endgame Build Guide | Pat",
+  "share": 0.0074
+ },
+ {
+  "id": "kinetic-fusillade-ascendant-uber",
+  "name": {
+   "en": "Kinetic Fusillade Ascendant (Uber)",
+   "ko": "역학 일제 사격 어센던트 (우버)"
+  },
+  "tier": "uber",
+  "views": 63120,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "chaos_damage_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "damage_+%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "accuracy_rating": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "local_physical_damage_reduction_rating_+%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "critical_strike_chance_+%_per_10_strength": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_strength": 1.0,
+     "attack_speed_+%": 1.0,
+     "local_base_physical_damage_reduction_rating": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_maximum_life": 1.0
+    },
+    "defence": [
+     "armour"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "additional_all_attributes": 1.0,
+     "additional_strength": 1.0,
+     "base_evasion_rating": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_maximum_life": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "local_minimum_added_chaos_damage": 1.0,
+     "local_maximum_added_chaos_damage": 1.0,
+     "spell_damage_+%": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "local_chaos_penetration_%": 1.0,
+     "local_critical_strike_chance_+%": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   }
+  },
+  "video": "PoE 3.28 - Kinetic Fusillade Wand Crafting Guide",
+  "share": 0.0053
+ },
+ {
+  "id": "ethereal-knives-elementalist-uber",
+  "name": {
+   "en": "Ethereal Knives Elementalist (Uber)",
+   "ko": "천상의 단도 엘리멘탈리스트 (우버)"
+  },
+  "tier": "uber",
+  "views": 316134,
+  "pobs": 0,
+  "source": "donor:Ethereal Knives Elementalist",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "physical_spell_skill_gem_level_+": 1.0,
+     "spell_skill_gem_level_+": 0.9,
+     "base_cast_speed_+%": 0.8,
+     "fire_dot_multiplier_+": 0.7,
+     "fire_damage_+%": 0.7,
+     "base_chance_to_ignite_%": 0.7,
+     "spell_damage_+%": 0.7,
+     "non_chaos_damage_to_add_as_chaos_damage_%": 0.6
+    },
+    "classes": [
+     "Rune Dagger",
+     "Sceptre",
+     "Staff",
+     "Wand"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "local_energy_shield": 0.7,
+     "local_energy_shield_+%": 0.7,
+     "local_base_evasion_rating": 0.6,
+     "base_lightning_damage_resistance_%": 0.6,
+     "base_chance_to_ignite_%": 0.6,
+     "faster_burn_%": 0.6,
+     "local_display_nearby_enemy_fire_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_fire_damage_resistance_%": 0.93,
+     "base_chaos_damage_resistance_%": 0.85,
+     "base_physical_damage_%_to_convert_to_cold": 0.85,
+     "base_projectile_speed_+%": 0.78,
+     "projectile_damage_+%": 0.78,
+     "base_cold_damage_resistance_%": 0.7,
+     "damage_+%_vs_chilled_enemies": 0.7
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_fire_damage_resistance_%": 0.78,
+     "base_avoid_shock_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.62,
+     "base_chaos_damage_resistance_%": 0.62,
+     "additional_dexterity": 0.55,
+     "base_avoid_chill_%": 0.55
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   }
+  },
+  "video": "[PoE 3.29] UBER EK Ignite Build - DoT Cap, Ubers, Screen Clear - Elementalist Guide - Path",
+  "share": 0.0267
+ },
+ {
+  "id": "animate-guardian-guardian-uber",
+  "name": {
+   "en": "Animate Guardian Guardian (Uber)",
+   "ko": "수호자 기동 가디언 (우버)"
+  },
+  "tier": "uber",
+  "views": 408755,
+  "pobs": 0,
+  "source": "donor:Animate Guardian Guardian",
+  "slots": {
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   },
+   "ring": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   },
+   "belt": {
+    "wants": {
+     "local_energy_shield": 1,
+     "local_energy_shield_+%": 1,
+     "base_maximum_energy_shield": 1,
+     "maximum_energy_shield_+%": 0.9,
+     "base_fire_damage_resistance_%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_chaos_damage_resistance_%": 0.6,
+     "base_mana_reservation_efficiency_+%": 1,
+     "non_curse_aura_effect_+%": 1
+    }
+   }
+  },
+  "video": "[PoE] Project Bob - The Animate Guardian with BILLIONS of DPS - Stream Highlights #705",
+  "share": 0.0346
+ },
+ {
+  "id": "lightning-tendrils-elementalist-advanced",
+  "name": {
+   "en": "Lightning Tendrils Elementalist (Advanced)",
+   "ko": "덩굴 번개 엘리멘탈리스트 (고급)"
+  },
+  "tier": "advanced",
+  "views": 99391,
+  "pobs": 0,
+  "source": "donor:Arc Elementalist",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "lightning_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "additional_intelligence": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "additional_strength_and_dexterity": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  },
+  "video": "The MAGNUM OPUS of Lightning - Lightning Tendrils of ESCALATION - Full Final Build Guide P",
+  "share": 0.0084
+ },
+ {
+  "id": "kinetic-blast-necromancer-advanced",
+  "name": {
+   "en": "Kinetic Blast Necromancer (Advanced)",
+   "ko": "역학 폭발 네크로맨서 (고급)"
+  },
+  "tier": "advanced",
+  "views": 95358,
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "belt": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_maximum_energy_shield": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%": 1.0
+    }
+   },
+   "weapon": {
+    "wants": {
+     "base_maximum_mana": 1.0,
+     "local_attack_speed_+%": 1.0,
+     "local_critical_strike_chance_+%": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "local_chaos_penetration_%": 1.0,
+     "spell_damage_+%": 1.0,
+     "non_chaos_damage_to_add_as_chaos_damage_%": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "additional_all_attributes": 1.0,
+     "physical_damage_reduction_rating_+%": 1.0,
+     "maximum_energy_shield_+%": 1.0,
+     "base_maximum_mana": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_item_found_rarity_+%": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "offhand": {
+    "wants": {
+     "local_block_chance_+%": 1.0,
+     "base_spell_block_%": 1.0,
+     "spell_damage_+%": 1.0,
+     "base_life_regeneration_rate_per_minute": 1.0,
+     "energy_shield_%_gained_on_block": 1.0,
+     "chance_to_deal_double_damage_%": 1.0
+    },
+    "classes": [
+     "Shield"
+    ],
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 0.8,
+     "base_stun_recovery_+%": 0.8,
+     "all_attributes_+%": 0.8,
+     "base_fire_damage_resistance_%": 0.6,
+     "base_lightning_damage_resistance_%": 0.6,
+     "additional_intelligence": 0.6,
+     "base_cold_damage_resistance_%": 0.6
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "additional_intelligence": 1.0,
+     "base_maximum_mana": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "attack_speed_+%": 0.7,
+     "base_physical_damage_%_to_convert_to_lightning": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "local_energy_shield": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "local_attribute_requirements_+%": 0.7,
+     "additional_intelligence": 0.7,
+     "base_maximum_mana": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "additional_intelligence": 1.0,
+     "base_item_found_rarity_+%": 0.7,
+     "base_resist_all_elements_%": 0.7,
+     "additional_strength": 0.7,
+     "base_critical_strike_multiplier_+": 0.7,
+     "base_lightning_damage_resistance_%": 0.7,
+     "base_maximum_mana": 0.7
+    }
+   }
+  },
+  "video": "[POE 3.28] GIGA BREACH BUILD! Kinetic Blast of Clustering 200% Rarity! Path of Exile: Mira",
+  "share": 0.0081
+ },
+ {
+  "id": "ethereal-knives-assassin-advanced",
+  "name": {
+   "en": "Ethereal Knives Assassin (Advanced)",
+   "ko": "천상의 단도 어쌔신 (고급)"
+  },
+  "tier": "advanced",
+  "views": 92626,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "additional_block_%": 1.0,
+     "spell_damage_+%": 0.7,
+     "non_chaos_damage_to_add_as_chaos_damage_%": 0.7,
+     "physical_spell_skill_gem_level_+": 0.7,
+     "spell_skill_gem_level_+": 0.7,
+     "base_cast_speed_+%": 0.7,
+     "critical_strike_multiplier_+_if_you_have_blocked_recently": 0.7
+    },
+    "classes": [
+     "Staff"
+    ]
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 0.7,
+     "base_stun_recovery_+%": 0.7,
+     "base_mana_reservation_efficiency_+%": 0.7,
+     "base_cold_damage_resistance_%": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "base_stun_recovery_+%": 0.7,
+     "local_energy_shield": 0.7,
+     "base_mana_reservation_efficiency_+%": 0.7,
+     "base_cold_damage_resistance_%": 0.7,
+     "additional_intelligence": 0.7
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "base_maximum_energy_shield": 1.0,
+     "base_evasion_rating": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "base_cast_speed_+%": 1.0
+    }
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_avoid_shock_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "local_evasion_and_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_physical_damage_%_to_convert_to_cold": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%_vs_chilled_enemies": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es",
+     "evasion"
+    ]
+   }
+  },
+  "video": "Most Broken Juice Farming Build! Golden Charlatan Ethereal Knives Assassin Build Guide - P",
+  "share": 0.0078
+ },
+ {
+  "id": "discharge-slayer-advanced",
+  "name": {
+   "en": "Discharge Slayer (Advanced)",
+   "ko": "방출 슬레이어 (고급)"
+  },
+  "tier": "advanced",
+  "views": 103947,
+  "pobs": 2,
+  "source": "pob",
+  "slots": {
+   "gloves": {
+    "wants": {
+     "base_cold_damage_resistance_%": 1.0,
+     "damage_+%_vs_chilled_enemies": 1.0,
+     "local_display_socketed_gems_attack_and_cast_speed_+%_final": 1.0,
+     "local_ward": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "damage_+%_while_leeching": 1.0
+    },
+    "defence": [
+     "ward"
+    ]
+   }
+  },
+  "video": "Trying To One Tap Ubers On A Budget With Discharge Cast On Death Slayer PoE 3.29",
+  "share": 0.0088
+ },
+ {
+  "id": "venom-gyre-deadeye-advanced",
+  "name": {
+   "en": "Venom Gyre Deadeye (Advanced)",
+   "ko": "독액 선회 데드아이 (고급)"
+  },
+  "tier": "advanced",
+  "views": 57175,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "additional_dexterity": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0
+    },
+    "defence": [
+     "evasion"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "base_critical_strike_multiplier_+": 1.0,
+     "additional_all_attributes": 1.0
+    }
+   },
+   "body": {
+    "wants": {
+     "base_spell_suppression_chance_%": 1.0,
+     "additional_dexterity": 1.0,
+     "local_armour_and_evasion_and_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "maximum_life_+%": 1.0,
+     "maximum_mana_+%": 1.0
+    },
+    "defence": [
+     "armour",
+     "es",
+     "evasion"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "all_attributes_+%": 1.0,
+     "dexterity_+%": 1.0,
+     "damage_+%_per_15_dex": 1.0
+    }
+   }
+  },
+  "video": "Venom Gyre is Still Good! | My plans for 3.29 Curse of the Allflame | Path of Exile 1",
+  "share": 0.0048
+ },
+ {
+  "id": "arc-elementalist-advanced",
+  "name": {
+   "en": "Arc Elementalist (Advanced)",
+   "ko": "연쇄 번개 엘리멘탈리스트 (고급)"
+  },
+  "tier": "advanced",
+  "views": 53316,
+  "pobs": 0,
+  "source": "donor:Arc Elementalist",
+  "slots": {
+   "amulet": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "all_skill_gem_level_+": 1.0,
+     "lightning_skill_gem_level_+": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "additional_intelligence": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "gloves": {
+    "wants": {
+     "additional_dexterity": 1.0,
+     "attack_minimum_added_lightning_damage": 1.0,
+     "attack_maximum_added_lightning_damage": 1.0,
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "local_energy_shield_+%": 1.0,
+     "local_energy_shield": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "additional_strength_and_dexterity": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  },
+  "video": "[3.29] New Buffed Arc Lightning Archmage Build is Insane! (10k Mana + 50M damage) - Path o",
+  "share": 0.0045
+ },
+ {
+  "id": "contagion-necromancer-advanced",
+  "name": {
+   "en": "Contagion Necromancer (Advanced)",
+   "ko": "전염 네크로맨서 (고급)"
+  },
+  "tier": "advanced",
+  "views": 133642,
+  "pobs": 1,
+  "source": "pob",
+  "slots": {
+   "weapon": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "spell_damage_+%": 1.0,
+     "spell_skill_gem_level_+": 1.0,
+     "chaos_spell_skill_gem_level_+": 1.0,
+     "base_projectile_speed_+%": 1.0,
+     "chaos_dot_multiplier_+": 1.0
+    },
+    "classes": [
+     "Wand"
+    ]
+   },
+   "amulet": {
+    "wants": {
+     "all_skill_gem_level_+": 1.0,
+     "chaos_skill_gem_level_+": 1.0,
+     "chaos_damage_+%": 1.0
+    }
+   },
+   "helmet": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "ring": {
+    "wants": {
+     "dot_multiplier_+": 1.0,
+     "chaos_damage_+%": 0.7,
+     "base_cast_speed_+%": 0.7,
+     "base_minimum_frenzy_charges": 0.7,
+     "add_frenzy_charge_on_kill_%_chance": 0.7,
+     "base_maximum_life": 0.7,
+     "lightning_damage_+%": 0.7,
+     "base_item_found_rarity_+%": 0.7
+    }
+   },
+   "gloves": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_lightning_damage_resistance_%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "boots": {
+    "wants": {
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0,
+     "base_movement_velocity_+%": 1.0,
+     "base_avoid_shock_%": 1.0,
+     "local_energy_shield_+%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   },
+   "body": {
+    "wants": {
+     "local_energy_shield": 1.0,
+     "local_energy_shield_+%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
+     "base_cold_damage_resistance_%": 1.0,
+     "base_stun_recovery_+%": 1.0
+    },
+    "defence": [
+     "es"
+    ]
+   }
+  },
+  "video": "How I Farmed a Mirror in Phrecia with Blight of Contagion | PoE1 3.27",
+  "share": 0.0113
+ }
+]

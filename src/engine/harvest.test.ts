@@ -23,7 +23,7 @@ const legal = (i: Item) => {
 }
 const tagged = (tag: string) => (id: string) => (MODS[id].tags ?? []).includes(tag)
 
-test('하베스트 [태그] 포함 재련: 그 태그 옵션이 반드시 하나, 접두어 변경 불가는 지킴', () => {
+test('수확 [태그] 포함 재련: 그 태그 옵션이 반드시 하나, 접두어 변경 불가는 지킴', () => {
   const lock = lockOf('item_generation_cannot_change_prefixes')
   const item = make(HELMET, ['IncreasedLife10', 'LocalIncreasedPhysicalDamageReductionRating5', 'FireResist7'])
   item.explicits.push({ ...rollMod(lock, { s: 1 }), crafted: true })
@@ -38,7 +38,7 @@ test('하베스트 [태그] 포함 재련: 그 태그 옵션이 반드시 하나
   assert.equal(c.can({ ...item, rarity: 'magic' }), false, '희귀만')
 })
 
-test('하베스트 같은 종류 더 나오게: 있던 옵션이 훨씬 자주, 옵션 수는 줄지 않음', () => {
+test('수확 같은 종류 더 나오게: 있던 옵션이 훨씬 자주, 옵션 수는 줄지 않음', () => {
   const item = make(HELMET, ['IncreasedLife10', 'LocalIncreasedPhysicalDamageReductionRating5', 'FireResist7', 'ColdResist7', 'LightningResist7'])
   const groups = new Set(item.explicits.flatMap((m) => MODS[m.id].grp))
   const share = (more: boolean) => {
@@ -56,7 +56,7 @@ test('하베스트 같은 종류 더 나오게: 있던 옵션이 훨씬 자주, 
   assert.ok(less < 0.1, `덜 나오게 ${less}`)
 })
 
-test('하베스트 저항·피해 종류 변경: 같은 등급의 다른 원소로', () => {
+test('수확 저항·피해 종류 변경: 같은 등급의 다른 원소로', () => {
   const ring = make(HELMET, ['IncreasedLife10', 'ColdResist7'])
   const toFire = harvestCraft('ChangeColdToFireResist')
   assert.ok(toFire.can(ring))
@@ -71,7 +71,19 @@ test('하베스트 저항·피해 종류 변경: 같은 등급의 다른 원소�
   assert.equal(harvestCraft('ChangeColdToFireResist').can(axe), false, '피해 옵션은 저항 변경 대상 아님')
 })
 
-test('하베스트 영향력 무작위 변경 + 재련, 영향력 옵션 포함 재련', () => {
+test('수확 저항·피해 종류 변경: 바꿀 원소의 옵션이 이미 있으면 못 씀 (같은 옵션 그룹은 하나만)', () => {
+  const both = make(HELMET, ['IncreasedLife10', 'ColdResist7', 'FireResist7'])
+  assert.equal(harvestCraft('ChangeColdToFireResist').can(both), false, '화염 저항이 이미 있음')
+  assert.equal(harvestCraft('ChangeFireToColdResist').can(both), false, '냉기 저항이 이미 있음')
+  assert.ok(harvestCraft('ChangeColdToLightningResist').can(both), '번개 저항은 없으니 됨')
+  const r = harvestCraft('ChangeColdToLightningResist').apply(both, { s: 1 })
+  legal(r)
+  const axe = make(AXE, ['LocalAddedColdDamage5', 'LocalAddedFireDamage5'])
+  assert.equal(harvestCraft('ChangeColdToFireDamage').can(axe), false, '화염 피해가 이미 있음')
+  assert.ok(harvestCraft('ChangeColdToLightningDamage').can(axe))
+})
+
+test('수확 영향력 무작위 변경 + 재련, 영향력 옵션 포함 재련', () => {
   const item = make(HELMET, ['AreaDamageSupportedUber3', 'IncreasedLife10'], { influences: ['elder'] })
   const seen = new Set<string>()
   for (let s = 0; s < 100; s++) {
@@ -88,7 +100,7 @@ test('하베스트 영향력 무작위 변경 + 재련, 영향력 옵션 포함 
   }
 })
 
-test('하베스트 [태그] 옵션 추가 + 다른 옵션 제거: 꽉 찬 아이템에도, 영향력 아이템 불가', () => {
+test('수확 [태그] 옵션 추가 + 다른 옵션 제거: 꽉 찬 아이템에도, 영향력 아이템 불가', () => {
   const full = make(HELMET, ['IncreasedLife10', 'LocalIncreasedPhysicalDamageReductionRating5', 'LocalBaseArmourAndLife4', 'FireResist7', 'ColdResist7', 'LightningResist7'])
   const c = harvestCraft('AugmentChaos')
   assert.ok(c.can(full))

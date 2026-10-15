@@ -62,6 +62,15 @@ test('각성자의 오브: 양쪽 영향력 옵션 하나씩 유지, 영향력 �
   assert.equal(canAwaken(donor, { ...target, corrupted: true }), false, '타락 불가')
 })
 
+test('각성자의 오브: 분열 아이템에는 못 씀 (기증·대상 둘 다)', () => {
+  const target = make(HELMET, ['IncreasedLife10'], { influences: ['shaper'] })
+  const donor = make(HELMET, ['FireResist7'], { influences: ['elder'] })
+  assert.ok(canAwaken(donor, target))
+  const broken = { ...target, explicits: [{ ...target.explicits[0], fractured: true as const }] }
+  assert.equal(canAwaken(donor, broken), false)
+  assert.equal(canAwaken({ ...donor, explicits: [{ ...donor.explicits[0], fractured: true as const }] }, target), false)
+})
+
 test('각성자의 오브: 남길 두 옵션이 같은 옵션 그룹이면 하나만, 메타 속성은 무시', () => {
   const lock = Object.keys(MODS).find((id) => MODS[id].stats.some(([s]) => s === 'item_generation_cannot_change_suffixes'))!
   const donor = make(HELMET, ['AreaDamageSupportedUber3'], { influences: ['elder'] })

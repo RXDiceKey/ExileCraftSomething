@@ -100,6 +100,18 @@ test('재조합기: 배타 옵션(작업대 등)은 결과에 하나만, 영향�
   }
 })
 
+test('재조합기·마법 아이템: 접두어를 못 갖는 반지(미늘톱니 반지 0/6)엔 접두어가 안 붙음', () => {
+  const RATCHET = baseId('Ratcheting Ring')
+  assert.deepEqual(affixLimits({ ...newItem(RATCHET, 86, { s: 1 }), rarity: 'magic' }), { prefix: 0, suffix: 1 })
+  const a = make(RING, ['IncreasedLife7', 'IncreasedMana10', 'FireResist7', 'ColdResist7'])
+  const b = make(RATCHET, ['Dexterity8', 'ChaosResist5', 'LightningResist7'])
+  for (let s = 0; s < 300; s++) {
+    const r = recombine(a, b, { s })
+    legal(r)
+    if (r.base === RATCHET) assert.equal(r.explicits.filter(isPrefix).length, 0)
+  }
+})
+
 test('재조합기 비용: 몇 카오스 수준, 고등급일수록 비싸고 저등급을 섞으면 쌈', () => {
   const top = make(HELMET, ['IncreasedLife10', 'FireResist8'].filter((id) => MODS[id]))
   const low = make(HELMET, ['IncreasedLife1', 'FireResist1'].filter((id) => MODS[id]))

@@ -1,6 +1,6 @@
 // Bench crafts, essences and fossils.
 import craftingJson from '../data/crafting.json' with { type: 'json' }
-import { fracture, rerollRare } from './currency.ts'
+import { fracture, keepLocked, rerollRare } from './currency.ts'
 import { BASES, MODS } from './data.ts'
 import { affixCounts, affixLimits, editable, fractured, metamods, rollMod, type Item } from './item.ts'
 import { int, type Rng } from './rng.ts'
@@ -65,7 +65,14 @@ export function canEssence(item: Item, name: string): boolean {
   const e = CRAFTING.essences[name]
   if (!e || !editable(item) || item.rarity === 'magic' || hasOutcomeMetamod(item)) return false
   if (item.rarity === 'rare' && e.level < ESSENCE_REFORGE_TIER) return false
-  return !!e.mods[BASES[item.base].cls]
+  const id = e.mods[BASES[item.base].cls]
+  if (!id) return false
+  // What survives the reforge (fractured mods) must leave room for the essence mod: no mod of its group, an open side.
+  const kept = keepLocked(item)
+  const c = affixCounts(kept)
+  const l = affixLimits({ ...kept, rarity: 'rare' })
+  return !kept.explicits.some((m) => MODS[m.id].grp.some((g) => MODS[id].grp.includes(g)))
+    && (MODS[id].gen === 'prefix' ? c.prefix < l.prefix : c.suffix < l.suffix)
 }
 
 export function applyEssence(item: Item, name: string, rng: Rng): Item {

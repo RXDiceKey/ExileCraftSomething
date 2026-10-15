@@ -107,6 +107,15 @@ test('분열의 오브는 제작 옵션도 분열시키고, 분열된 제작 옵
   assert.equal(removeCrafted(hits[0]).explicits.length, 4, '분열된 제작 옵션은 남음')
 })
 
+test('에센스: 분열된 옵션과 같은 옵션 그룹이면 못 씀 (분열된 생명력 + 탐욕의 에센스)', () => {
+  const item = rare(REGALIA, ['IncreasedLife8', 'FireResist7', 'ColdResist7', 'LightningResist7'])
+  item.explicits[0] = { ...item.explicits[0], fractured: true }
+  assert.equal(canEssence(item, 'Screaming Essence of Greed'), false, '생명력 옵션이 둘이 될 수 없음')
+  assert.ok(canEssence(item, 'Screaming Essence of Hatred'), '그룹이 안 겹치는 에센스는 됨')
+  const plain = rare(REGALIA, ['FireResist7', 'ColdResist7', 'LightningResist7', 'IncreasedLife8'])
+  assert.ok(canEssence(plain, 'Screaming Essence of Greed'), '분열이 아니면 재련되니 됨')
+})
+
 test('정제: 분열 옵션만 남으면 1개는 마법, 2개 이상은 희귀', () => {
   const lock = (i: Item, n: number): Item => ({ ...i, explicits: i.explicits.map((m, k) => (k < n ? { ...m, fractured: true as const } : m)) })
   const item = rare(REGALIA, ['IncreasedLife10', 'FireResist7', 'ColdResist7', 'LightningResist7'])

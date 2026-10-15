@@ -4,7 +4,7 @@
 import { keepLocked, magicModCount, rareModCount } from './currency.ts'
 import { MODS, type Influence } from './data.ts'
 import { INFLUENCES, modInfluence } from './influence.ts'
-import { addRandomMod, changeable, editable, itemTags, modPool, rollMod, spawnWeight, type Item, type RollOptions } from './item.ts'
+import { addRandomMod, changeable, editable, itemTags, modPool, rollMod, spawnWeight, type Item, type RolledMod, type RollOptions } from './item.ts'
 import { int, type Rng } from './rng.ts'
 
 export type Lifeforce = 'wild' | 'vivid' | 'primal' | 'sacred' | 'rancour'
@@ -96,7 +96,14 @@ const swap = (kind: 'res' | 'dmg', from: string, to: string, cost: Cost): Harves
   const fits = (id: string) => kind === 'res'
     ? (MODS[id].tags ?? []).includes('resistance')
     : (MODS[id].tags ?? []).includes('damage') && !(MODS[id].tags ?? []).includes('resistance')
-  const targets = (i: Item) => i.explicits.filter((m) => changeable(i, m) && !m.crafted && fits(m.id) && swapTarget(i, m.id, from, to))
+  // The new mod can't share a mod group with another mod on the item (no second cold resistance mod, user-reported).
+  const clashes = (i: Item, m: RolledMod, id: string) =>
+    i.explicits.some((x) => x !== m && MODS[x.id].grp.some((g) => MODS[id].grp.includes(g)))
+  const targets = (i: Item) => i.explicits.filter((m) => {
+    if (!changeable(i, m) || m.crafted || !fits(m.id)) return false
+    const id = swapTarget(i, m.id, from, to)
+    return !!id && !clashes(i, m, id)
+  })
   return {
     id: `Change${from}To${to}${kind === 'res' ? 'Resist' : 'Damage'}`, cost,
     can: (i) => editable(i) && (i.rarity === 'magic' || i.rarity === 'rare') && targets(i).length > 0,

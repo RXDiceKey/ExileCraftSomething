@@ -2,7 +2,7 @@
 // Butsicles' 3.25 measurements + 3.26 changes, PoE Wiki "Recombinator".
 import { BASES, MODS } from './data.ts'
 import { modInfluence } from './influence.ts'
-import { editable, isPrefix, itemTags, rollMod, spawnWeight, type Item, type RolledMod } from './item.ts'
+import { affixLimits, editable, isPrefix, itemTags, rollMod, spawnWeight, type Item, type RolledMod } from './item.ts'
 import { next, pickWeighted, type Rng } from './rng.ts'
 
 // Two magic/rare items of the same item class; corrupted, mirrored and veiled ones can't go in.
@@ -58,6 +58,10 @@ export function recombine(a: Item, b: Item, rng: Rng): Item {
       ns = keepCount(poolSize(suf), rng)
     } while (np + ns === 0 && pre.length + suf.length > 0)
   }
+  // Never more than the result's base allows (Geodesic Ring 4/2, Helical Ring 1/4, ...).
+  const limits = affixLimits(result)
+  np = Math.min(np, limits.prefix)
+  ns = Math.min(ns, limits.suffix)
 
   // The result can't hold mods its base couldn't roll (influence mods on a plain base, ...): such a pick is just lost.
   // Bench crafts and essence mods never roll but fit any base of the class; elevated mods need their influence.

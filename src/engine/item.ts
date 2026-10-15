@@ -65,10 +65,10 @@ export function affixCounts(item: Item) {
   return { prefix, suffix: item.explicits.length - prefix }
 }
 
-// Some bases change the limits through their implicit (e.g. Simplex Amulet: 1 prefix / 2 suffixes).
+// Some bases change the limits through their implicit (e.g. Simplex Amulet: 1 prefix / 2 suffixes). A magic item has
+// at most one of each, and none on a side its base allows none of (Ratcheting Ring 0/6, Composite Ring 6/0).
 export function affixLimits(item: Item) {
   if (item.rarity === 'normal') return { prefix: 0, suffix: 0 }
-  if (item.rarity === 'magic') return { prefix: 1, suffix: 1 }
   let prefix = 3
   let suffix = 3
   for (const m of item.implicits) {
@@ -77,7 +77,7 @@ export function affixLimits(item: Item) {
       if (sid === 'local_maximum_suffixes_allowed_+') suffix += m.values[i]
     })
   }
-  return { prefix, suffix }
+  return item.rarity === 'magic' ? { prefix: Math.min(1, prefix), suffix: Math.min(1, suffix) } : { prefix, suffix }
 }
 
 export function hasOpenAffix(item: Item) {

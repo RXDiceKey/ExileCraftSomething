@@ -77,7 +77,7 @@ const STRATEGIES: Strategy[] = [
     act: (r, spent) => spam(r, spent, () => step(r, doFossils(r.s, r.uid, ['Pristine Fossil'])), 50, 150),
   },
   {
-    name: '하베스트 생명력 재련 연타 → 50c 이상 (갑옷, 예산 150c)', base: 'Vaal Regalia',
+    name: '수확 생명력 재련 연타 → 50c 이상 (갑옷, 예산 150c)', base: 'Vaal Regalia',
     act: (r, spent) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, doHarvest(r.s, r.uid, 'ReforgeLife')), 50, 150) },
   },
   // ---- How a player who knows what they want plays: stop once enough good options line up, then finish on the bench.
@@ -113,7 +113,7 @@ const STRATEGIES: Strategy[] = [
     },
   },
   {
-    name: '[실력] 하베스트 생명력 재련 → S≥2.5 멈춤 → 작업대 (방어도 갑옷, 예산 100c)', base: 'Glorious Plate',
+    name: '[실력] 수확 생명력 재련 → S≥2.5 멈춤 → 작업대 (방어도 갑옷, 예산 100c)', base: 'Glorious Plate',
     act: (r, spent) => {
       step(r, doCurrency(r.s, r.uid, 'alchemy'))
       until(r, spent, () => step(r, doHarvest(r.s, r.uid, 'ReforgeLife')), 2.5, 100)

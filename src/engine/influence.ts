@@ -48,11 +48,12 @@ export const applyInfluenceExalt = (item: Item, inf: Influence, rng: Rng): Item 
   addRandomMod({ ...item, influences: [inf] }, rng, { weight: influenceOnly(item, inf) }) ?? item
 
 // ---- Awakener's Orb: destroys the donor, the target becomes a rare with both influences.
-// Same item class, exactly one influence each and different, neither corrupted. The target keeps base, item level,
+// Same item class, exactly one influence each and different, neither corrupted nor fractured. The target keeps base, item level,
 // quality and implicits. One random influence mod from each survives (if both share a mod group, one is dropped at
 // random), keeping its tier with a fresh roll; everything else is rerolled, ignoring meta-crafts.
 export function canAwaken(donor: Item, target: Item): boolean {
-  return donor !== target && editable(donor) && editable(target) && BASES[donor.base].cls === BASES[target.base].cls
+  return donor !== target && editable(donor) && editable(target) && !fractured(donor) && !fractured(target)
+    && BASES[donor.base].cls === BASES[target.base].cls
     && donor.influences.length === 1 && target.influences.length === 1 && donor.influences[0] !== target.influences[0]
 }
 export function applyAwaken(donor: Item, target: Item, rng: Rng): Item {

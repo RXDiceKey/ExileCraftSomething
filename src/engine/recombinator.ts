@@ -32,34 +32,32 @@ interface Entry { m: RolledMod; from: Item }
 const poolSize = (side: Entry[]) => side.filter((e) => !isExclusive(e.m)).length + (side.some((e) => isExclusive(e.m)) ? 1 : 0)
 
 // ponytail: the result is always rare; pick weight is the mod's spawn weight on the item it came from (1000 for mods that
-// never roll naturally), per the post-3.25 measurements, to be tuned; fractured mods of the chosen base always stay.
+// never roll naturally), per the post-3.25 measurements, to be tuned.
+// Fractured mods (PoE Wiki, Recombinator): dropped from the pool before the counts are rolled unless the chosen base is
+// the fractured item; then they're picked like any other mod and stay fractured, so the result keeps the same number of
+// fractured mods or fewer. The other item's fractured mods never come along (no more fractured mods than an input).
 export function recombine(a: Item, b: Item, rng: Rng): Item {
   const base = next(rng) < 0.5 ? a : b
   const result: Item = {
     base: base.base, ilvl: recombinedLevel(a.ilvl, b.ilvl), rarity: 'rare', implicits: base.implicits, explicits: [],
     influences: base.influences, ...(base.quality && { quality: base.quality }),
   }
-  const kept = base.explicits.filter((m) => m.fractured)
-  const entries: Entry[] = [a, b].flatMap((item) => item.explicits.filter((m) => !m.fractured).map((m) => ({ m, from: item })))
+  const entries: Entry[] = [a, b].flatMap((item) => item.explicits.filter((m) => !m.fractured || item === base).map((m) => ({ m, from: item })))
   let pre = entries.filter((e) => isPrefix(e.m))
   let suf = entries.filter((e) => !isPrefix(e.m))
 
-  // How many to keep on each side (fractured mods count toward their side).
-  const fp = kept.filter(isPrefix).length
-  const fs = kept.length - fp
+  // How many to keep on each side.
   let np: number, ns: number
-  if (poolSize(pre) + fp === 1 && poolSize(suf) + fs === 1) {
+  if (poolSize(pre) === 1 && poolSize(suf) === 1) {
     const r = next(rng) * 3 // 1 prefix / 1 suffix / both, a third each
     np = r < 1 || r >= 2 ? 1 : 0
     ns = r >= 1 ? 1 : 0
   } else {
     do {
-      np = keepCount(poolSize(pre) + fp, rng)
-      ns = keepCount(poolSize(suf) + fs, rng)
-    } while (np + ns === 0 && pre.length + suf.length + kept.length > 0)
+      np = keepCount(poolSize(pre), rng)
+      ns = keepCount(poolSize(suf), rng)
+    } while (np + ns === 0 && pre.length + suf.length > 0)
   }
-  np = Math.max(0, np - fp)
-  ns = Math.max(0, ns - fs)
 
   // The result can't hold mods its base couldn't roll (influence mods on a plain base, ...): such a pick is just lost.
   // Bench crafts and essence mods never roll but fit any base of the class; elevated mods need their influence.
@@ -67,8 +65,8 @@ export function recombine(a: Item, b: Item, rng: Rng): Item {
   const fits = (m: RolledMod) => m.crafted || MODS[m.id].essenceOnly ? true
     : MODS[m.id].elev ? result.influences.includes(modInfluence(m.id)!) : spawnWeight(m.id, tags) > 0
   const weight = (e: Entry) => spawnWeight(e.m.id, itemTags({ ...e.from, explicits: [] })) || 1000
-  const out: RolledMod[] = [...kept]
-  const groups = new Set(kept.flatMap((m) => MODS[m.id].grp))
+  const out: RolledMod[] = []
+  const groups = new Set<string>()
   let exclusiveTaken = false
   const take = (side: 'pre' | 'suf') => {
     const pool = side === 'pre' ? pre : suf
@@ -81,8 +79,8 @@ export function recombine(a: Item, b: Item, rng: Rng): Item {
     if (!fits(e.m) || MODS[e.m.id].grp.some((g) => groups.has(g)) || (exclusiveTaken && isExclusive(e.m))) return
     MODS[e.m.id].grp.forEach((g) => groups.add(g))
     exclusiveTaken ||= isExclusive(e.m)
-    // Values keep their tier but roll again; crafted mods stay crafted.
-    out.push({ ...rollMod(e.m.id, rng), ...(e.m.crafted && { crafted: true as const }) })
+    // Values keep their tier but roll again; crafted mods stay crafted, fractured mods stay exactly as they are.
+    out.push(e.m.fractured ? e.m : { ...rollMod(e.m.id, rng), ...(e.m.crafted && { crafted: true as const }) })
   }
   // Fill order: 50/50 when both sides have ordinary mods; a side with only exclusive mods goes last (3.26).
   const onlyExclusive = (pool: Entry[]) => pool.length > 0 && pool.every((e) => isExclusive(e.m))

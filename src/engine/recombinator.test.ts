@@ -109,3 +109,25 @@ test('재조합기 비용: 몇 카오스 수준, 고등급일수록 비싸고 �
   assert.ok(hi <= 30 && mixed >= 3)
   assert.ok(isPrefix(top.explicits[0]))
 })
+
+test('재조합기 분열 옵션: 분열 베이스가 뽑혀야만 남고, 남아도 같거나 줄어듦 (다른 쪽 분열 옵션은 안 넘어옴)', () => {
+  const [p1, p2] = valid(HELMET, 'prefix', 2)
+  const [s1, s2] = valid(HELMET, 'suffix', 2)
+  const a = make(HELMET, [p1, s1])
+  const fa = { ...a, explicits: a.explicits.map((m, k) => (k === 0 ? { ...m, fractured: true as const } : m)) }
+  const b = make(HELMET, [p2, s2])
+  const fb = { ...b, explicits: b.explicits.map((m, k) => (k === 1 ? { ...m, fractured: true as const } : m)) }
+  let kept = 0
+  let lost = 0
+  for (let s = 0; s < 400; s++) {
+    const r = recombine(fa, fb, { s })
+    legal(r)
+    const fr = r.explicits.filter((m) => m.fractured)
+    assert.ok(fr.length <= 1, '분열 옵션이 늘지 않음')
+    for (const m of fr) assert.ok(m === fa.explicits[0] || m === fb.explicits[1], '분열 옵션은 수치까지 그대로')
+    if (fr.length) kept++
+    else lost++
+  }
+  assert.ok(kept > 100 && lost > 100, `남음 ${kept}, 사라짐 ${lost}`)
+  for (let s = 0; s < 100; s++) for (const m of recombine(fa, b, { s }).explicits) if (m.fractured) assert.equal(m, fa.explicits[0])
+})

@@ -169,21 +169,20 @@ export function Bench(p: Props) {
         </>
       )}
 
+      {/* A list, not icons with hover tips (user: phones have no hover): name, guaranteed option and price on each row. */}
       {tab === 'essence' && (
-        <div className="currencies">
-          {ESSENCES.filter((n) => canEssence(item, n)).map((n) => {
-            const forced = rangeText(item, CRAFTING.essences[n].mods[BASES[item.base].cls], lang).join(' / ')
-            return (
-              <button key={n} className="currency" disabled={priceOf(n) > gold}
-                data-tip={`${nameOf(n, lang)} — ${fmtGold(priceOf(n))}
-${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
-                <img src={icon(n)} alt={nameOf(n, lang)} />
-                <small>{fmtGold(priceOf(n))}</small>
+        <ul className="craft-list pick-list">
+          {ESSENCES.filter((n) => canEssence(item, n)).map((n) => (
+            <li key={n}>
+              <button disabled={priceOf(n) > gold} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
+                <img src={icon(n)} alt="" />
+                <span><b>{nameOf(n, lang)}</b><small>{rangeText(item, CRAFTING.essences[n].mods[BASES[item.base].cls], lang).join(' / ')}</small></span>
+                <span className="gold">{fmtGold(priceOf(n))}</span>
               </button>
-            )
-          })}
-          {!ESSENCES.some((n) => canEssence(item, n)) && <p className="hint">{t(lang, 'essenceNone')}</p>}
-        </div>
+            </li>
+          ))}
+          {!ESSENCES.some((n) => canEssence(item, n)) && <li className="hint">{t(lang, 'essenceNone')}</li>}
+        </ul>
       )}
 
       {tab === 'influence' && (

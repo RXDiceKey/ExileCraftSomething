@@ -154,6 +154,17 @@ input[type='number'] { width: 90px; }
 }
 .tip.above { transform: translate(-50%, -100%); }
 
+/* The item being crafted right under the title and pinned there (user: a split view, the item on top, the list under
+   it, on PC too), so every orb / essence / craft shows its result while scrolling the list. */
+.bench { display: flex; flex-direction: column; }
+.bench > h2 { order: -2; }
+.bench-item {
+  order: -1; position: sticky; top: 0; z-index: 5; max-height: 45vh; overflow-y: auto;
+  background: var(--panel); border-bottom: 1px solid var(--accent); padding-bottom: 6px;
+}
+.bench-item .tt-art { max-height: 100px; }
+.bench .craft-list { max-height: none; } /* the page scrolls under the pinned item, not a box inside it */
+
 /* Phones: one column (stash, then the work area, rivals last), tabs wrap, shorter lists. */
 @media (max-width: 760px) {
   .layout { grid-template-columns: 1fr; gap: 6px; padding: 6px; }
@@ -169,10 +180,7 @@ input[type='number'] { width: 90px; }
   .currency img { width: 34px; height: 34px; }
   .craft-list li { flex-wrap: wrap; }
   .lang-switch { position: static; justify-content: flex-end; padding: 4px 6px 0; } /* a fixed corner would cover buttons */
-  /* The item being crafted right under the title, so an orb's result shows without scrolling past the orbs. */
-  .bench { display: flex; flex-direction: column; }
-  .bench > h2 { order: -2; }
-  .bench-item { order: -1; }
+  .bench-item .tt-art { display: none; }
   .tt-art { max-height: 100px; }
   input, select { font-size: 16px; } /* smaller makes iOS zoom in on focus */
   .currency { -webkit-touch-callout: none; user-select: none; } /* held to read its name (Tip.tsx) */
@@ -184,3 +192,8 @@ input[type='number'] { width: 90px; }
 .mod-list .keep { color: var(--gold); font-weight: bold; }
 .partner-list li { align-items: flex-start; }
 .awaken-base { margin: 4px 0 8px; }
+.pick-list li { padding: 2px 0; }
+.pick-list button { flex: 1; display: flex; align-items: center; gap: 8px; text-align: left; }
+.pick-list img { width: 32px; height: 32px; flex: none; }
+.pick-list button > span:first-of-type { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pick-list small { color: var(--mod); }

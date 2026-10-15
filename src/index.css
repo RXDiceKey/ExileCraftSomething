@@ -44,15 +44,16 @@ input[type='number'] { width: 90px; }
 .big { font-size: 22px; color: var(--gold); }
 .best { color: var(--rare); }
 
-/* game */
+/* game: no need to fill a wide screen; rows stay readable */
+.game { max-width: 1200px; margin: 0 auto; }
 .topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
 .menu-wrap { position: relative; margin-left: auto; }
 .dropdown { position: absolute; right: 0; top: 110%; z-index: 10; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--panel); border: 1px solid var(--line); min-width: 200px; }
 .notice { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 20; background: #2a2219; border: 1px solid var(--accent); padding: 8px 14px; border-radius: 4px; }
 .layout { display: grid; grid-template-columns: 300px 1fr; gap: 10px; padding: 10px; }
-@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px; }
-.tabs { display: flex; gap: 4px; margin-bottom: 6px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.main { min-width: 0; }
 .tab.active { border-color: var(--accent); color: var(--gold); }
 
 .stash .search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
@@ -88,6 +89,11 @@ input[type='number'] { width: 90px; }
 .offers, .bases { list-style: none; padding: 0; margin: 0; }
 .offers li, .bases li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid #241e16; }
 .bases { max-height: 60vh; overflow-y: auto; }
+/* The buy button sits right after the name of the base it buys, not at the far edge (user). */
+.bases li { justify-content: flex-start; gap: 10px; }
+.bases li:hover { background: #221c14; }
+.base-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.base-title button { padding: 2px 8px; }
 .bases small { color: var(--dim); }
 
 .faustus .quote { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -115,7 +121,7 @@ input[type='number'] { width: 90px; }
 .trend.falling { color: #d88; }
 .patch-notes { padding-left: 18px; color: var(--dim); }
 .tabs.sub { margin: 10px 0 6px; }
-.craft-list { list-style: none; padding: 0; margin: 6px 0; max-height: 40vh; overflow-y: auto; }
+.craft-list { list-style: none; padding: 0; margin: 6px 0; max-height: 40vh; overflow-y: auto; max-width: 760px; }
 .craft-list li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid #241e16; color: var(--mod); }
 .currency.picked { border-color: var(--gold); background: #3a2a14; }
 
@@ -147,3 +153,20 @@ input[type='number'] { width: 90px; }
   background: #000; border: 1px solid #555; color: var(--text); font-size: 13px;
 }
 .tip.above { transform: translate(-50%, -100%); }
+
+/* Phones: one column (stash, then the work area, rivals last), tabs wrap, shorter lists. */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; gap: 6px; padding: 6px; }
+  .side { display: contents; }
+  .stash { order: 1; }
+  .main { order: 2; }
+  .rivals { order: 3; }
+  .stash ul { max-height: 28vh; }
+  .topbar { gap: 6px 10px; padding: 6px 8px; }
+  .tooltip { max-width: none; }
+  .bases { max-height: 55vh; }
+  .currency { width: 54px; }
+  .currency img { width: 34px; height: 34px; }
+  .craft-list li { flex-wrap: wrap; }
+  .lang-switch { position: static; justify-content: flex-end; padding: 4px 6px 0; } /* a fixed corner would cover buttons */
+}

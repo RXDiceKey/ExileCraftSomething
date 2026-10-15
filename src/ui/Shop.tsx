@@ -62,10 +62,12 @@ export function Shop({ lang, state, view, onView, onBuy }: Props) {
           <li key={id}>
             <img src={`${import.meta.env.BASE_URL}${baseArt(id)}`} alt="" loading="lazy" />
             <span className="base-name">
-              {baseName(id, lang)}
+              <span className="base-title">
+                {baseName(id, lang)}
+                <button disabled={price > state.gold} onClick={() => onBuy(id, ilvl)}>{t(lang, 'buy')} {fmtGold(price)}</button>
+              </span>
               <small>{className(BASES[id].cls, lang)} · {baseKind(id, lang) || '—'} · lv {BASES[id].lvl}</small>
             </span>
-            <button disabled={price > state.gold} onClick={() => onBuy(id, ilvl)}>{t(lang, 'buy')} {fmtGold(price)}</button>
           </li>
         ))}
       </ul>

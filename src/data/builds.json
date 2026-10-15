@@ -669,7 +669,6 @@
   "slots": {
    "weapon": {
     "wants": {
-     "local_attribute_requirements_+%": 1.0,
      "spell_critical_strike_chance_+%": 1.0,
      "physical_spell_skill_gem_level_+": 1.0,
      "mine_laying_speed_+%": 1.0
@@ -2040,8 +2039,7 @@
      "base_spell_suppression_chance_%": 0.6,
      "local_base_physical_damage_reduction_rating": 0.6,
      "base_stun_recovery_+%": 0.6,
-     "base_additional_physical_damage_reduction_%": 0.6,
-     "local_attribute_requirements_+%": 0.6
+     "base_additional_physical_damage_reduction_%": 0.6
     },
     "defence": [
      "armour",
@@ -3617,7 +3615,6 @@
      "base_lightning_damage_resistance_%": 1.0,
      "local_energy_shield": 0.7,
      "base_cold_damage_resistance_%": 0.7,
-     "local_attribute_requirements_+%": 0.7,
      "additional_intelligence": 0.7,
      "base_maximum_mana": 0.7
     },

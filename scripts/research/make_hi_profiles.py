@@ -8,7 +8,8 @@ starters = [b for b in json.load(open(R + 'src/data/builds.json', encoding='utf-
 stats = json.load(open(R + 'src/data/stats.json', encoding='utf-8'))
 en = json.load(open(R + 'src/data/text.en.json', encoding='utf-8'))['stats']
 mods = json.load(open(R + 'src/data/mods.json', encoding='utf-8'))
-rollable = {s for m in mods.values() if m['gen'] in ('prefix', 'suffix') and not m.get('dom') for s, _, _ in m['stats']}
+# Lower attribute requirements: rolls often, rarely what a build is after (user).
+rollable = {s for m in mods.values() if m['gen'] in ('prefix', 'suffix') and not m.get('dom') for s, _, _ in m['stats']} - {'local_attribute_requirements_+%'}
 bases = json.load(open(R + 'data-raw/repoe/base_items.json', encoding='utf-8'))
 
 

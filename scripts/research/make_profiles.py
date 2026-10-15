@@ -4,7 +4,8 @@ top=json.load(open('yt/top_builds.json',encoding='utf-8'))
 pob=json.load(open('pob/summary.json',encoding='utf-8'))
 bases=json.load(open(R+'data-raw/repoe/base_items.json',encoding='utf-8'))
 mods=json.load(open(R+'src/data/mods.json',encoding='utf-8'))
-rollable={s for m in mods.values() if m['gen'] in('prefix','suffix') for s,_,_ in m['stats']}
+# Lower attribute requirements: rolls often, rarely what a build is after (user).
+rollable={s for m in mods.values() if m['gen'] in('prefix','suffix') for s,_,_ in m['stats']}-{'local_attribute_requirements_+%'}
 def dat(lang,t): return {r['Id']:r['Name'] for r in json.load(open(R+f'data-raw/dat/tables/{lang}/{t}.json',encoding='utf-8'))}
 gem_en, gem_ko = dat('English','BaseItemTypes'), dat('Korean','BaseItemTypes')
 asc_ko = {r['Name']: k for r in json.load(open(R+'data-raw/dat/tables/English/Ascendancy.json',encoding='utf-8')) for k in [dat('Korean','Ascendancy')[r['Id']]]}

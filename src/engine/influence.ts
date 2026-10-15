@@ -2,7 +2,7 @@
 // Rules follow each orb's PoE Wiki page (PLAN §3.3).
 import { fill, rareModCount } from './currency.ts'
 import { BASES, CLASS_INFLUENCE_TAGS, MODS, type Influence } from './data.ts'
-import { addRandomMod, affixLimits, changeable, editable, isPrefix, itemTags, modPool, rollMod, spawnWeight, type Item, type RolledMod } from './item.ts'
+import { addRandomMod, affixLimits, changeable, editable, fractured, isPrefix, itemTags, modPool, rollMod, spawnWeight, type Item, type RolledMod } from './item.ts'
 import { int, type Rng } from './rng.ts'
 
 // Also the order influences are listed on an item (Awakener's Orb result).
@@ -23,7 +23,6 @@ export function modInfluence(id: string): Influence | undefined {
 }
 export const isInfluenced = (id: string) => modInfluence(id) !== undefined
 
-const fractured = (i: Item) => i.explicits.some((m) => m.fractured)
 const eldritch = (i: Item) => i.implicits.some((m) => /exarch|eater/.test(MODS[m.id]?.gen ?? ''))
 const pick = <T>(rng: Rng, xs: T[]) => xs[int(rng, 0, xs.length - 1)]
 

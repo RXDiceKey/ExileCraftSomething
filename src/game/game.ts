@@ -1,5 +1,5 @@
 // Game state and every player action, as pure functions (state in -> new state out).
-import { applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, craftedCount, CRAFTING, MATRON, matronOptions, removeCrafted, resonatorFor } from '../engine/crafting.ts'
+import { applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, removeCrafted, resonatorFor } from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
 import {
   applyConflict, applyEldritchAnnul, applyEldritchChaos, applyEldritchExalt, applyEldritchImplicit, canConflict, canEldritchAnnul,
@@ -99,7 +99,7 @@ function craft(
   const price = cost(entry.item)
   if (price > s.gold) return fail('noGold')
   const [made, rng] = withRng(s, (r) => f(entry.item, r))
-  const item = key ? record(entry.item, made, { key, cost: price, m: highEffCount(made), ...more }) : made
+  const item = key ? record(entry.item, made, { key, cost: price, ...more }, highEffCount) : made
   return { ok: true, state: { ...s, rng, gold: s.gold - price, stash: replaceItem(s, uid, item) } }
 }
 
@@ -111,7 +111,7 @@ export const useBench = (s: GameState, uid: number, index: number) =>
 
 // The bench's "Remove crafted modifiers" costs an Orb of Scouring.
 export const useRemoveCrafted = (s: GameState, uid: number) =>
-  craft(s, uid, (i) => craftedCount(i) > 0 && editable(i), () => currencyPrice('scouring'), removeCrafted, 'bench:remove')
+  craft(s, uid, (i) => removable(i) && editable(i), () => currencyPrice('scouring'), removeCrafted, 'bench:remove')
 
 export const useEssence = (s: GameState, uid: number, name: string) =>
   craft(s, uid, (i) => canEssence(i, name), () => priceOf(name), (i, r) => applyEssence(i, name, r), `ess:${name}`)
@@ -192,7 +192,7 @@ export function useRecombine(s: GameState, uidA: number, uidB: number): Result {
   const price = recombineCost(a.item, b.item)
   if (price > s.gold) return fail('noGold')
   const [made, rng] = withRng(s, (r) => recombine(a.item, b.item, r))
-  const item = record(a.item, made, { key: 'recomb', cost: price, m: highEffCount(made), other: b.item, extra: itemExpectedCost(b.item, s.day) })
+  const item = record(a.item, made, { key: 'recomb', cost: price, other: b.item, extra: itemExpectedCost(b.item, s.day) }, highEffCount)
   const rest = { ...s, stash: s.stash.filter((x) => x.uid !== uidA && x.uid !== uidB) }
   return { ok: true, state: addItem(rest, item, s.gold - price, rng) }
 }
@@ -204,7 +204,7 @@ export function useMirror(s: GameState, uid: number): Result {
   if (entry.item.mirrored) return fail('cantApply')
   const price = priceOf(MIRROR)
   if (price > s.gold) return fail('noGold')
-  const copy = record(entry.item, { ...entry.item, mirrored: true }, { key: 'mirror', cost: price, m: highEffCount(entry.item), fixed: true })
+  const copy = record(entry.item, { ...entry.item, mirrored: true }, { key: 'mirror', cost: price, fixed: true }, highEffCount)
   return { ok: true, state: addItem(s, copy, s.gold - price, s.rng) }
 }
 
@@ -232,7 +232,7 @@ export function spamAlteration(s: GameState, uid: number, matches: (item: Item) 
   // Same record as clicking by hand.
   const step = (i: Item, c: 'alteration' | 'augmentation') => {
     const made = CURRENCIES[c].apply(i, rng)
-    return record(i, made, { key: `cur:${c}`, cost: currencyPrice(c), m: highEffCount(made) })
+    return record(i, made, { key: `cur:${c}`, cost: currencyPrice(c) }, highEffCount)
   }
   const pay = (price: number): SpamReport['stop'] | null => {
     if (spent + price > o.goldCap) return 'goldCap'

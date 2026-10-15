@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { fractured } from '../engine/item.ts'
 import type { Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, type Meta } from '../game/meta.ts'
@@ -61,7 +62,7 @@ export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onB
             </>
           )}
           {q.boom > 1 && <p className="boom">{t(lang, 'boomNote', Math.round((q.boom - 1) * 100))}</p>}
-          {q.baseResale > 0 && <p className="hint">{t(lang, 'baseResale', fmtGold(q.baseResale))}</p>}
+          {q.baseResale > 0 && <p className="hint">{t(lang, fractured(entry.item) ? 'baseResaleFractured' : 'baseResale', fmtGold(q.baseResale))}</p>}
 
           {meta.notes.length > 0 && (
             <>

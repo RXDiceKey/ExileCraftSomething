@@ -1,8 +1,8 @@
 // Bench crafts, essences and fossils.
 import craftingJson from '../data/crafting.json' with { type: 'json' }
-import { rerollRare } from './currency.ts'
+import { fracture, rerollRare } from './currency.ts'
 import { BASES, MODS } from './data.ts'
-import { affixCounts, affixLimits, editable, metamods, rollMod, type Item } from './item.ts'
+import { affixCounts, affixLimits, editable, fractured, metamods, rollMod, type Item } from './item.ts'
 import { int, type Rng } from './rng.ts'
 
 interface BenchOption { mod: string; classes: string[]; cost: number }
@@ -53,7 +53,9 @@ export function benchOptions(item: Item): number[] {
 export const applyBench = (item: Item, index: number, rng: Rng): Item =>
   ({ ...item, explicits: [...item.explicits, { ...rollMod(CRAFTING.bench[index].mod, rng), crafted: true }] })
 
-export const removeCrafted = (item: Item): Item => ({ ...item, explicits: item.explicits.filter((m) => !m.crafted) })
+// A fractured crafted mod stays (fractured mods can't be removed).
+export const removable = (i: Item) => i.explicits.some((m) => m.crafted && !m.fractured)
+export const removeCrafted = (item: Item): Item => ({ ...item, explicits: item.explicits.filter((m) => !m.crafted || m.fractured) })
 
 // ---- Essences (PoE Wiki: Essence): every essence upgrades a normal item to rare with its guaranteed mod; only
 // Screaming (tier 5) and up, plus the corrupted tier-8 ones, can also reroll a rare. Low tiers cap the level of the
@@ -76,9 +78,12 @@ export const RESONATOR_SIZE = ['Primitive', 'Potent', 'Powerful', 'Prime']
 export const resonatorFor = (count: number, item: Item) =>
   `${RESONATOR_SIZE[count - 1]} ${item.rarity === 'normal' ? 'Alchemical' : 'Chaotic'} Resonator`
 
+// Fractured Fossil (3.29): fractures one of the mods it rolls; not on influenced or fractured items (PoE Wiki).
+export const FRACTURED_FOSSIL = 'Fractured Fossil'
 export function canFossils(item: Item, names: string[]): boolean {
   return names.length >= 1 && names.length <= 4 && new Set(names).size === names.length
     && names.every((n) => CRAFTING.fossils[n]) && editable(item) && item.rarity !== 'magic' && !hasOutcomeMetamod(item)
+    && (!names.includes(FRACTURED_FOSSIL) || (!item.influences.length && !fractured(item)))
 }
 
 export function applyFossils(item: Item, names: string[], rng: Rng): Item {
@@ -94,7 +99,8 @@ export function applyFossils(item: Item, names: string[], rng: Rng): Item {
     }
     return w
   }
-  return rerollRare(item, rng, { extra: fs.flatMap((f) => f.added), weight, lucky: fs.some((f) => f.lucky) })
+  const made = rerollRare(item, rng, { extra: fs.flatMap((f) => f.added), weight, lucky: fs.some((f) => f.lucky) })
+  return names.includes(FRACTURED_FOSSIL) ? fracture(made, made.explicits, rng) : made
 }
 
 // ---- Beastcraft: Wild Bristle Matron (야생 털짐승 어미) adds one random meta-craft that fits an open affix.

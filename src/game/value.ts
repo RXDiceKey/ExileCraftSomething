@@ -2,7 +2,7 @@
 // so high-tier options spread across different builds are cheap and options concentrated on one build are pricey.
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
-import type { Item } from '../engine/item.ts'
+import { fractured, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
@@ -290,8 +290,10 @@ function judge(item: Item, p: Buyer, lang: Lang) {
 
 // ---- High-efficiency useful options (D35): options a buyer values at HIGH_EFF or more before roll and boosts (about
 // tiers 1-3 of a full want; a tier-1 resistance is only 0.5, so common options never count). M = the most any single
-// buyer counts. The expected-cost model measures how lucky a craft was in M; taking the max over every buyer (not the
-// one that ended up buying) keeps "some build finds this rare" from turning every roll into a jackpot.
+// buyer counts, if at least 2: one good option alone is alteration-spam territory (SINGLE_OPTION), not luck, and
+// would let a junk item fetch half a jackpot. The expected-cost model measures how lucky a craft was in M; taking the
+// max over every buyer (not the one that ended up buying) keeps "some build finds this rare" from turning every roll
+// into a jackpot.
 export const HIGH_EFF = 0.6
 const effBuyers = new Map<string, Buyer[]>()
 const effMods = new Map<string, number[]>()
@@ -313,20 +315,26 @@ export function highEffCount(item: Item): number {
     }
     for (const i of who) counts[i]++
   }
-  return Math.max(0, ...counts)
+  const most = Math.max(0, ...counts)
+  return most >= 2 ? most : 0
 }
 // Elevated options are the top of the top: one useful elevated option doubles the price, two x8, three x40.
 export const ELEVATED_SURGE = [1, 2, 8, 40]
 
+// A fractured item is no longer a clean base: its base counts for a tenth, both as the resale floor and in the
+// expected cost (user decision; else (E + V) / 2 would still pay half the base back).
+export const FRACTURED_BASE = 0.1
+const baseShare = (item: Item) => (fractured(item) ? FRACTURED_BASE : 1)
+
 // Expected cost to make the item: today's base price plus its crafting history (history.ts).
 export const itemExpectedCost = (item: Item, day: number) =>
-  expectedCost(item, basePrice(item.base, item.ilvl, day), replay, highEffCount)
+  expectedCost(item, basePrice(item.base, item.ilvl, day) * baseShare(item), replay, highEffCount)
 
 // Deterministic for a given item, day and meta: asking again doesn't reroll the quote.
 // Price (D35): the options' value V, unless the item was expected to cost more to make than that (E > V); then half
 // way between: max(V, (E + V) / 2). A hard-to-make item fetches more, but luck is never paid in full.
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
-  const resale = baseResale(item.base, item.ilvl, day)
+  const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).
   const k = boom(day)
   const judged = buyers(item, lang, meta).map((p) => {

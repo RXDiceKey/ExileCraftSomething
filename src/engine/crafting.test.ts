@@ -94,6 +94,38 @@ test('분열: 분열된 옵션은 카오스·소멸에도 남음, 영향력 아�
     assert.ok(CURRENCIES.annulment.apply(item, { s: k }).explicits.includes(fractured))
   }
   assert.equal(CURRENCIES.fracturing.can({ ...rare(REGALIA, ['IncreasedLife10', 'FireResist7', 'ColdResist7', 'LightningResist7']), influences: ['shaper'] }), false)
+  assert.equal(CURRENCIES.fracturing.can(item), false, '이미 분열된 아이템 불가')
+  assert.equal(CURRENCIES.fracturing.can(rare(REGALIA, ['IncreasedLife10', 'FireResist7', 'ColdResist7'])), false, '옵션 4개 미만 불가')
+})
+
+test('분열의 오브는 제작 옵션도 분열시키고, 분열된 제작 옵션은 작업대로 못 지움', () => {
+  const base = rare(REGALIA, ['FireResist7', 'ColdResist7', 'LightningResist7'])
+  const item = applyBench(base, benchIndex(base, 'base_maximum_life'), { s: 1 })
+  const hits = Array.from({ length: 200 }, (_, k) => CURRENCIES.fracturing.apply(item, { s: k }))
+    .filter((i) => i.explicits.some((m) => m.crafted && m.fractured))
+  assert.ok(hits.length > 20 && hits.length < 90, `제작 옵션이 분열된 횟수 ${hits.length}/200 (약 1/4)`)
+  assert.equal(removeCrafted(hits[0]).explicits.length, 4, '분열된 제작 옵션은 남음')
+})
+
+test('정제: 분열 옵션만 남으면 1개는 마법, 2개 이상은 희귀', () => {
+  const lock = (i: Item, n: number): Item => ({ ...i, explicits: i.explicits.map((m, k) => (k < n ? { ...m, fractured: true as const } : m)) })
+  const item = rare(REGALIA, ['IncreasedLife10', 'FireResist7', 'ColdResist7', 'LightningResist7'])
+  const one = CURRENCIES.scouring.apply(lock(item, 1), { s: 1 })
+  assert.equal(one.rarity, 'magic')
+  assert.equal(one.explicits.length, 1)
+  assert.equal(CURRENCIES.scouring.apply(lock(item, 2), { s: 1 }).rarity, 'rare')
+  assert.equal(CURRENCIES.scouring.apply(item, { s: 1 }).rarity, 'normal')
+})
+
+test('분열된 화석: 굴린 옵션 하나를 분열, 영향력·분열 아이템 불가', () => {
+  for (let k = 0; k < 30; k++) {
+    const made = applyFossils(rare(REGALIA, []), ['Fractured Fossil', 'Dense Fossil'], { s: k })
+    assert.equal(made.explicits.filter((m) => m.fractured).length, 1)
+  }
+  const fresh = rare(REGALIA, ['IncreasedLife10', 'FireResist7', 'ColdResist7', 'LightningResist7'])
+  assert.ok(canFossils(fresh, ['Fractured Fossil']))
+  assert.equal(canFossils({ ...fresh, influences: ['shaper'] }, ['Fractured Fossil']), false)
+  assert.equal(canFossils(CURRENCIES.fracturing.apply(fresh, { s: 1 }), ['Fractured Fossil']), false)
 })
 
 test('바알: 항상 타락, 약 절반은 변화 없음, 희귀 재련은 옵션 6개', () => {

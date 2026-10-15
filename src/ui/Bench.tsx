@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { sfx } from '../audio.ts'
-import { benchOptions, canEssence, canFossils, craftedCount, CRAFTING, MATRON, matronOptions, resonatorFor } from '../engine/crafting.ts'
+import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor } from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
 import { BASES } from '../engine/data.ts'
 import { BEAST_RECIPES, canImprint, canRestore, IMPRINT, IMPRINT_BEAST, IMPRINT_RECIPE } from '../engine/beasts.ts'
@@ -141,7 +141,7 @@ export function Bench(p: Props) {
 
       {tab === 'bench' && (
         <>
-          {craftedCount(item) > 0 && (
+          {removable(item) && (
             <button disabled={currencyPrice('scouring') > gold} onClick={() => { sfx('button'); p.onRemoveCrafted() }}>
               {t(lang, 'removeCrafted')} — {fmtGold(currencyPrice('scouring'))}
             </button>

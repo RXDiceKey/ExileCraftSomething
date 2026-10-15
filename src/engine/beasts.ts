@@ -6,7 +6,7 @@
 import { craftedCount } from './crafting.ts'
 import { MODS, type Influence } from './data.ts'
 import { influenceOnly } from './influence.ts'
-import { addRandomMod, affixCounts, affixLimits, changeable, editable, isPrefix, metamods, modPool, rollMod, type Item } from './item.ts'
+import { addRandomMod, affixCounts, affixLimits, changeable, editable, fractured, isPrefix, metamods, modPool, rollMod, type Item } from './item.ts'
 import { int, type Rng } from './rng.ts'
 
 export interface BeastRecipe {
@@ -91,7 +91,6 @@ export const beastRecipe = (id: string) => BEAST_RECIPES.find((r) => r.id === id
 export const IMPRINT_BEAST = 'Craicic Croaker'
 export const IMPRINT_RECIPE = 'EinharMasterCraft27' // "Create an Imprint: Of a Magic Item"
 export const IMPRINT = 'Imprint'
-const fractured = (i: Item) => i.explicits.some((m) => m.fractured)
 export const canImprint = (i: Item) => editable(i) && i.rarity === 'magic' && !fractured(i)
 export const imprint = (i: Item): Item => {
   const { imprint: _old, ...snapshot } = i

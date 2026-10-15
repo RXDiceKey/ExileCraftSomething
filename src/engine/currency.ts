@@ -1,5 +1,5 @@
 import { BASES, MODS } from './data.ts'
-import { addRandomMod, changeable, editable, hasOpenAffix, itemTags, rollMod, spawnWeight, type Item, type RollOptions } from './item.ts'
+import { addRandomMod, changeable, editable, fractured, hasOpenAffix, itemTags, rollMod, spawnWeight, type Item, type RolledMod, type RollOptions } from './item.ts'
 import { int, next, pickWeighted, type Rng } from './rng.ts'
 
 export type CurrencyId =
@@ -56,6 +56,12 @@ export function qualityStep(ilvl: number, rng: Rng): number {
 }
 const addQuality = (i: Item, rng: Rng): Item => ({ ...i, quality: Math.min(20, (i.quality ?? 0) + qualityStep(i.ilvl, rng)) })
 
+// Fracture one of `options` (mods of `i`) at random.
+export const fracture = (i: Item, options: RolledMod[], rng: Rng): Item => {
+  const pick = options[int(rng, 0, options.length - 1)]
+  return { ...i, explicits: i.explicits.map((m) => (m === pick ? { ...m, fractured: true as const } : m)) }
+}
+
 export const CURRENCIES: Record<CurrencyId, Currency> = {
   transmutation: {
     can: is('normal'),
@@ -109,11 +115,14 @@ export const CURRENCIES: Record<CurrencyId, Currency> = {
     can: (i) => editable(i) && i.implicits.some((m) => MODS[m.id].stats.some(([, a, b]) => a !== b)),
     apply: (i, rng) => ({ ...i, implicits: i.implicits.map((m) => rollMod(m.id, rng)) }),
   },
+  // Only fractured mods left: one makes the item magic, two or more rare (PoE Wiki, Fractured item). A side locked by
+  // a meta-craft keeps the rarity.
   scouring: {
     can: (i) => is('magic', 'rare')(i) && i.explicits.some((m) => changeable(i, m)),
     apply: (i) => {
       const explicits = i.explicits.filter((m) => !changeable(i, m))
-      return { ...i, explicits, rarity: explicits.length ? i.rarity : 'normal' }
+      const rarity = !explicits.length ? 'normal' : !explicits.every((m) => m.fractured) ? i.rarity : explicits.length === 1 ? 'magic' : 'rare'
+      return { ...i, explicits, rarity }
     },
   },
   // Vaal Orb (sockets aren't modelled, so the socket outcome is "nothing happens"):
@@ -137,15 +146,12 @@ export const CURRENCIES: Record<CurrencyId, Currency> = {
       return { ...fill(brick, 6 - brick.explicits.length, rng), corrupted: true }
     },
   },
+  // "Fracture a random modifier on a rare item with at least 4 modifiers, locking it in place. Cannot be used on
+  // Influenced or Fractured items." Any explicit mod: crafted ones too, and meta-crafts aren't respected (PoE Wiki,
+  // Fracturing Orb; official forum thread 3589504). Eldritch implicits don't matter.
   fracturing: {
-    // "Cannot Fracture Influenced or Fractured Items"
-    can: (i) => is('rare')(i) && i.explicits.length >= 4 && !i.explicits.some((m) => m.fractured) && !i.influences.length
-      && i.explicits.some((m) => !m.crafted),
-    apply: (i, rng) => {
-      const options = i.explicits.filter((m) => !m.crafted)
-      const pick = options[int(rng, 0, options.length - 1)]
-      return { ...i, explicits: i.explicits.map((m) => (m === pick ? { ...m, fractured: true as const } : m)) }
-    },
+    can: (i) => is('rare')(i) && i.explicits.length >= 4 && !fractured(i) && !i.influences.length,
+    apply: (i, rng) => fracture(i, i.explicits, rng),
   },
   whetstone: {
     can: (i) => editable(i) && WEAPON(BASES[i.base].cls) && (i.quality ?? 0) < 20,

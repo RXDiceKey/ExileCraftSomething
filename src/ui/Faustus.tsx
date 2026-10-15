@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
+import { BASES } from '../engine/data.ts'
 import { fractured } from '../engine/item.ts'
 import type { Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
-import { buildName, type Meta } from '../game/meta.ts'
-import { ELEVATED_SURGE, FINISHED, quote } from '../game/value.ts'
+import { buildName, saturation, type Meta } from '../game/meta.ts'
+import { ELEVATED_SURGE, FINISHED, quote, slotOf } from '../game/value.ts'
 import { fmtGold, t, tierText } from '../i18n.ts'
 import { Tooltip } from './Tooltip.tsx'
 
@@ -21,6 +22,7 @@ interface Props {
 export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onBack }: Props) {
   const q = useMemo(() => (entry ? quote(entry.item, lang, day, meta) : null), [entry, lang, day, meta])
   const byCost = !!q && q.expectedCost > q.optionValue && (q.best?.usefulCount ?? 0) >= FINISHED && q.price > q.optionValue
+  const sat = entry && q?.best ? saturation(meta, q.best.id, slotOf(BASES[entry.item.base].cls)) : 1
   const elevated = Math.min(3, q?.best?.mods.filter((m) => m.useful && m.tier === 0).length ?? 0)
   return (
     <section className="panel faustus">
@@ -62,6 +64,7 @@ export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onB
             </>
           )}
           {q.boom > 1 && <p className="boom">{t(lang, 'boomNote', Math.round((q.boom - 1) * 100))}</p>}
+          {sat < 1 && <p className="hint">{t(lang, 'saturationNote', Math.round((1 - sat) * 100))}</p>}
           {q.baseResale > 0 && <p className="hint">{t(lang, fractured(entry.item) ? 'baseResaleFractured' : 'baseResale', fmtGold(q.baseResale))}</p>}
 
           {meta.notes.length > 0 && (

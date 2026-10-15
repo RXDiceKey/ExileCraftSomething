@@ -100,10 +100,16 @@ test('하루 행동: 판매·사냥 4번, 골드는 다음 날, 14일차 후 종
 })
 
 test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같음', () => {
-  let s = ok(buyBase(newGame(9), RING, 84))
-  const uid = s.stash[0].uid
-  s = ok(useCurrency(s, uid, 'transmutation'))
   const wantsLife = (item: Item) => compileSearch('생명력 최대치')!(searchText(item, 'ko'))
+  // 진화 결과가 이미 생명력이면 스팸할 게 없으니, 아닌 판을 고름
+  let s = newGame(9)
+  let uid = 0
+  for (let seed = 9; ; seed++) {
+    s = ok(buyBase(newGame(seed), RING, 84))
+    uid = s.stash[0].uid
+    s = ok(useCurrency(s, uid, 'transmutation'))
+    if (!wantsLife(s.stash[0].item)) break
+  }
   const r = spamAlteration(s, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000, goldCap: 1e9 })
   assert.equal(r.stop, 'matched')
   assert.ok(wantsLife(r.state.stash[0].item))

@@ -3,7 +3,7 @@ import { FAUSTUS_INTRO, faustusFarewell, faustusGreeting, faustusIntro, sfx } fr
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, closeDay, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, useBench, useCurrency, useEssence,
+  ACTIONS_PER_DAY, buyBase, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, useBench, useCurrency, useEssence,
   useAwaken, useBeast, useDominance, useEldritchImplicit, useEldritchOrb, useHarvest, useRecombine, useImprint, useRestore, useReveal, useUnveil, useVeiledOrb, useFossils, useInfluenceExalt, useMatron, useMirror, useRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -12,6 +12,7 @@ import { compileSearch } from '../game/search.ts'
 import { fmtGold, t } from '../i18n.ts'
 import { exportFile, importFile, type Settings } from '../save.ts'
 import { Bench } from './Bench.tsx'
+import { Board } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
 import { Shop } from './Shop.tsx'
@@ -29,7 +30,7 @@ interface Props {
   codex: CodexData
 }
 
-type View = 'bench' | 'shop' | 'faustus' | 'codex'
+type View = 'bench' | 'shop' | 'faustus' | 'board' | 'codex'
 
 const boomPct = (day: number) => Math.round((boom(day) - 1) * 100)
 
@@ -114,6 +115,16 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     faustusFarewell()
     setSelected(r.state.state.stash[0]?.uid ?? null)
   }
+  const onDeliver = (id: number) => {
+    if (selected === null) return
+    const reward = state.board?.find((c) => c.id === id)?.reward ?? 0
+    const r = deliver(state, selected, id)
+    if (!r.ok) return setNotice(errorText(r.error))
+    sfx('button')
+    setState(r.state)
+    setNotice(t(lang, 'delivered', fmtGold(reward)))
+    setSelected(r.state.stash[0]?.uid ?? null)
+  }
   const onHunt = () => {
     sfx('button')
     const r = hunt(state)
@@ -133,6 +144,11 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     }
     if (!next.finished && boom(next.day) > 1 && boom(state.day) === 1) lines.push(t(lang, 'boomStart', boomPct(next.day)))
     if (!next.finished && boom(next.day) === 1 && boom(state.day) > 1) lines.push(t(lang, 'boomEnd'))
+    for (const r of (next.meta.rumors ?? []).slice(state.meta.rumors?.length ?? 0)) {
+      lines.push(t(lang, 'rumorLine', r.day, buildName(r.note.build, lang), r.note.day, t(lang, r.note.factor > 1 ? 'patchBuff' : 'patchNerf')))
+    }
+    const fresh2 = (next.board ?? []).filter((c) => !state.board?.some((x) => x.id === c.id)).length
+    if (!next.finished && fresh2) lines.push(t(lang, 'newCommissions', fresh2))
     lines.push(...(next.rivalNews ?? []).map((n) => rivalNewsText(lang, n)))
     if (lines.length) setNotice(lines.join(' / '))
   }
@@ -193,6 +209,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
             {tab('bench', t(lang, 'bench'))}
             {tab('shop', t(lang, 'shop'))}
             {tab('faustus', t(lang, 'faustus'))}
+            {tab('board', t(lang, 'board'))}
             {tab('codex', t(lang, 'codex'))}
           </nav>
           {view === 'bench' && (
@@ -205,6 +222,9 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
           )}
           {view === 'shop' && <Shop lang={lang} state={state} onBuy={onBuy} />}
+          {view === 'board' && (
+            <Board lang={lang} board={state.board ?? []} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
+          )}
           {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} />}
           {view === 'faustus' && (
             <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} subtitle={subtitle}

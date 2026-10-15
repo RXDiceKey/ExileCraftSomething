@@ -15,13 +15,15 @@ import {
 import {
   applyAwaken, applyDominance, applyInfluenceExalt, AWAKENER, canAwaken, canDominance, canInfluenceExalt, DOMINANCE, INFLUENCE_EXALTS,
 } from '../engine/influence.ts'
+import { BASES } from '../engine/data.ts'
 import { affixCounts, editable, newItem, type Item } from '../engine/item.ts'
 import { int, type Rng } from '../engine/rng.ts'
-import { advanceMeta, rollMeta, type Meta } from './meta.ts'
+import { canDeliver, refreshBoard, type Commission } from './commissions.ts'
+import { advanceMeta, rollMeta, saturate, type Meta } from './meta.ts'
 import { advanceRivals, newRivals, type Rival, type RivalNews } from './rivals.ts'
 import { basePrice, currencyPrice, GOLD_PER_CHAOS, MIRROR, priceOf } from './shop.ts'
 import { record, type StepInfo } from './history.ts'
-import { highEffCount, itemExpectedCost, quote } from './value.ts'
+import { highEffCount, itemExpectedCost, quote, slotOf } from './value.ts'
 
 export const LAST_DAY = 14
 export const ACTIONS_PER_DAY = 4 // sales + hunts
@@ -44,6 +46,7 @@ export interface GameState {
   meta: Meta // build popularity this run
   rivals: Rival[] // trade rivals (D34)
   rivalNews?: RivalNews[] // what they did at the last day close
+  board?: Commission[] // commission board (D38); older saves get one on load
   finished?: { score: number }
 }
 
@@ -59,7 +62,8 @@ function withRng<T>(s: GameState, f: (rng: Rng) => T): [T, Rng] {
 export function newGame(seed: number): GameState {
   const rng = { s: seed }
   const meta = rollMeta(rng)
-  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD) }
+  const board = refreshBoard([], 1, LAST_DAY, meta, rng)
+  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD), board }
 }
 
 // Older saves get what they're missing on load: build popularity (rolled now), trade rivals (starting at the start gold).
@@ -70,6 +74,10 @@ export function upgradeSave(s: GameState): GameState {
     out = { ...out, meta: rollMeta(rng), rng }
   }
   if (!out.rivals) out = { ...out, rivals: newRivals(START_GOLD) }
+  if (!out.board) {
+    const rng = { ...out.rng }
+    out = { ...out, board: refreshBoard([], out.day, LAST_DAY, out.meta, rng), rng }
+  }
   return out
 }
 
@@ -267,6 +275,22 @@ export function hunt(s: GameState): Result<{ state: GameState; reward: number }>
   return { ok: true, state: { state: { ...s, rng, gold: s.gold + reward, used: s.used + 1 }, reward } }
 }
 
+// Filling a commission: the item goes, the reward comes at the next day close, like a sale (and uses one).
+export function deliver(s: GameState, uid: number, id: number): Result {
+  if (s.used >= ACTIONS_PER_DAY) return fail('noActions')
+  const entry = findItem(s, uid)
+  const c = s.board?.find((x) => x.id === id)
+  if (!entry || !c) return fail('gone')
+  if (!canDeliver(entry.item, c)) return fail('cantApply')
+  return {
+    ok: true,
+    state: {
+      ...s, used: s.used + 1, pending: s.pending + c.reward, stash: s.stash.filter((x) => x.uid !== uid),
+      sales: [...s.sales, { day: s.day, item: entry.item, price: c.reward, buyer: c.build }], board: s.board!.filter((x) => x !== c),
+    },
+  }
+}
+
 // Selling at Faustus's quote; the gold arrives at the next day close.
 export function sell(s: GameState, uid: number): Result<{ state: GameState; price: number }> {
   if (s.used >= ACTIONS_PER_DAY) return fail('noActions')
@@ -274,11 +298,12 @@ export function sell(s: GameState, uid: number): Result<{ state: GameState; pric
   if (!entry) return fail('gone')
   const q = quote(entry.item, 'en', s.day, s.meta)
   const price = q.price
+  const meta = q.best ? saturate(s.meta, q.best.id, slotOf(BASES[entry.item.base].cls)) : s.meta
   return {
     ok: true,
     state: {
       state: {
-        ...s, used: s.used + 1, pending: s.pending + price,
+        ...s, meta, used: s.used + 1, pending: s.pending + price,
         stash: s.stash.filter((x) => x.uid !== uid), sales: [...s.sales, { day: s.day, item: entry.item, price, ...(q.best && { buyer: q.best.id }) }],
       },
       price,
@@ -294,5 +319,6 @@ export function closeDay(s: GameState): GameState {
   if (s.day >= LAST_DAY) return { ...withRivals, finished: { score: settled.gold } }
   const rng = { ...rng0 }
   const meta = advanceMeta(s.meta, s.day + 1, rng)
-  return { ...withRivals, rng, meta, day: s.day + 1 }
+  const board = refreshBoard(s.board ?? [], s.day + 1, LAST_DAY, meta, rng)
+  return { ...withRivals, rng, meta, board, day: s.day + 1 }
 }

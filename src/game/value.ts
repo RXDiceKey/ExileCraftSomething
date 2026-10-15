@@ -4,7 +4,7 @@
 import { BASES, MODS } from '../engine/data.ts'
 import { fractured, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
-import { boom, BUILDS, popularity, trend, type Meta, type Slot } from './meta.ts'
+import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
 import { replay } from './replay.ts'
 import { basePrice, baseResale, GOLD_PER_CHAOS } from './shop.ts'
@@ -234,7 +234,7 @@ function buyers(item: Item, lang: Lang, meta?: Meta): Buyer[] {
   const slot = slotOf(base.cls)
   const defences = baseKindKeys(item.base).defences
   const generic = PROFILES.map((p): Buyer => ({
-    id: p.id, name: p.name[lang], budget: p.budget, fit: p.fit(base.cls, base.tags), wants: p.wants, pop: 1, maxTier: 99, build: false,
+    id: p.id, name: p.name[lang], budget: p.budget, fit: p.fit(base.cls, base.tags), wants: p.wants, pop: saturation(meta, p.id, slot), maxTier: 99, build: false,
     stacks: new Set(),
   }))
   const builds = BUILDS.flatMap((b): Buyer[] => {
@@ -246,7 +246,7 @@ function buyers(item: Item, lang: Lang, meta?: Meta): Buyer[] {
     const t = BUILD_TIER[b.tier]
     return [{
       id: b.id, name: b.name[lang], budget: SLOT_BUDGET[slot] * t.budget, fit, wants: want.wants,
-      pop: popularity(meta, b.id), maxTier: t.maxTier, build: true, stacks: STACKS.get(b.id)!,
+      pop: popularity(meta, b.id) * saturation(meta, b.id, slot), maxTier: t.maxTier, build: true, stacks: STACKS.get(b.id)!,
     }]
   })
   return [...builds, ...generic]

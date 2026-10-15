@@ -14,21 +14,52 @@ export interface BuildProfile {
 export const BUILDS = buildsJson as BuildProfile[]
 
 export interface PatchNote { day: number; build: string; factor: number }
+export interface Rumor { day: number; note: PatchNote } // heard on `day` about a coming patch change (always true)
 export interface Meta {
   m: Record<string, number> // popularity multiplier per build, around 1
   patchDays: number[]
-  notes: PatchNote[]
+  notes: PatchNote[] // patch changes so far
+  plan?: PatchNote[] // every patch change of the run, rolled at the start so rumors can leak them (older saves: none)
+  rumors?: Rumor[]
+  sat?: Record<string, Saturation> // demand saturation per "buyer|slot" (D37)
 }
 
 const gauss = (rng: Rng) => Math.sqrt(-2 * Math.log(1 - next(rng))) * Math.cos(2 * Math.PI * next(rng))
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 export function rollMeta(rng: Rng): Meta {
-  return {
-    m: Object.fromEntries(BUILDS.map((b) => [b.id, clamp(Math.exp(0.35 * gauss(rng)), 0.4, 2.5)])),
-    patchDays: [int(rng, 4, 6), int(rng, 9, 11)],
-    notes: [],
-  }
+  const m = Object.fromEntries(BUILDS.map((b) => [b.id, clamp(Math.exp(0.35 * gauss(rng)), 0.4, 2.5)]))
+  const patchDays = [int(rng, 4, 6), int(rng, 9, 11)]
+  return { m, patchDays, notes: [], plan: patchDays.flatMap((day) => rollPatch(day, rng)), rumors: [], sat: {} }
+}
+
+// A patch: three builds, one or two buffed, the rest nerfed.
+function rollPatch(day: number, rng: Rng): PatchNote[] {
+  const pool = [...BUILDS]
+  const buffs = int(rng, 1, 2)
+  return [0, 1, 2].map((k) => ({ day, build: pool.splice(int(rng, 0, pool.length - 1), 1)[0].id, factor: k < buffs ? PATCH_BUFF : PATCH_NERF }))
+}
+
+// Rumors (D38): RUMOR_LEAD days before a patch, word gets out about one of its changes.
+export const RUMOR_LEAD = 2
+
+// Demand saturation (D37, "recipe spread", user's numbers): NPC crafters copy what sells. After selling one item to a
+// buyer for a slot, that buyer pays 15% less for that slot; two the same day 40% less, three 60%, four 80%. What's left
+// carries over and recovers 5 points a day; today's drop adds on top of it, never past 80%.
+export const SATURATION_DROP = [0, 0.15, 0.4, 0.6, 0.8] // by sales of that buyer/slot today
+export const SATURATION_MAX = 0.8
+export const SATURATION_RECOVERY = 0.05
+export interface Saturation { r: number; k: number } // drop carried from earlier days, sales today
+const satKey = (buyer: string, slot: Slot) => `${buyer}|${slot}`
+const drop = ({ r, k }: Saturation) => Math.min(SATURATION_MAX, r + SATURATION_DROP[Math.min(k, SATURATION_DROP.length - 1)])
+// Multiplier on what that buyer pays for that slot.
+export const saturation = (meta: Meta | undefined, buyer: string, slot: Slot) => {
+  const s = meta?.sat?.[satKey(buyer, slot)]
+  return s ? 1 - drop(s) : 1
+}
+export const saturate = (meta: Meta, buyer: string, slot: Slot): Meta => {
+  const s = meta.sat?.[satKey(buyer, slot)] ?? { r: 0, k: 0 }
+  return { ...meta, sat: { ...meta.sat, [satKey(buyer, slot)]: { ...s, k: s.k + 1 } } }
 }
 
 export const PATCH_BUFF = 2
@@ -39,16 +70,16 @@ export function advanceMeta(meta: Meta, day: number, rng: Rng): Meta {
   const m = Object.fromEntries(Object.entries(meta.m).map(([id, v]) => [id, clamp(v * Math.exp(0.08 * gauss(rng)), 0.3, 3)]))
   const notes = [...meta.notes]
   if (meta.patchDays.includes(day)) {
-    const pool = [...BUILDS]
-    const buffs = int(rng, 1, 2)
-    for (let k = 0; k < 3; k++) {
-      const b = pool.splice(int(rng, 0, pool.length - 1), 1)[0]
-      const factor = k < buffs ? PATCH_BUFF : PATCH_NERF
-      m[b.id] = clamp(m[b.id] * factor, 0.15, 5)
-      notes.push({ day, build: b.id, factor })
+    for (const n of meta.plan ? meta.plan.filter((x) => x.day === day) : rollPatch(day, rng)) {
+      m[n.build] = clamp(m[n.build] * n.factor, 0.15, 5)
+      notes.push(n)
     }
   }
-  return { ...meta, m, notes }
+  const coming = (meta.plan ?? []).filter((n) => n.day === day + RUMOR_LEAD)
+  const rumors = coming.length ? [...(meta.rumors ?? []), { day, note: coming[int(rng, 0, coming.length - 1)] }] : meta.rumors
+  const sat = Object.fromEntries(Object.entries(meta.sat ?? {})
+    .map(([key, s]): [string, Saturation] => [key, { r: Math.max(0, drop(s) - SATURATION_RECOVERY), k: 0 }]).filter(([, s]) => s.r > 0))
+  return { ...meta, m, notes, rumors, sat }
 }
 
 const MEAN_SHARE = 1 / BUILDS.length

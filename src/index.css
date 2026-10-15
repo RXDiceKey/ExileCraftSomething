@@ -93,10 +93,14 @@ input[type='number'] { width: 90px; }
 
 .faustus .quote { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .quote-price strong { color: var(--gold); font-size: 18px; }
-.subtitle { border-left: 3px solid var(--accent); margin: 0 0 10px; padding: 6px 10px; color: #d8cfc0; font-style: italic; white-space: pre-line; }
 .verdicts { padding-left: 18px; }
 .verdicts .useful { color: #9fdc9f; }
 .verdicts .useless { color: var(--dim); }
+.price-factors { list-style: none; padding: 0; margin: 4px 0; }
+.popular { margin-bottom: 8px; }
+.popular summary { cursor: pointer; color: var(--gold); }
+.popular ol { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 6px 0 0; padding-left: 0; list-style-position: inside; }
+.price-factors:empty { display: none; }
 
 /* item art */
 .tt-art { display: block; margin: 4px auto 6px; max-height: 180px; }

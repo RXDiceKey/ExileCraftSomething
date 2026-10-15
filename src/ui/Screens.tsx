@@ -79,7 +79,7 @@ export function RunOver({ lang, score, isBest, rivals, onNew, onMenu }: RunOverP
       <h3>{t(lang, 'finalRanking')}</h3>
       <ol className="final-ranking">
         {rankRows(lang, score, rivals).map((r) => (
-          <li key={r.key} className={r.key === 'you' ? 'you' : ''}>{r.name}{r.note && <small> · {r.note}</small>} — {fmtGold(r.gold)}</li>
+          <li key={r.key} className={r.key === 'you' ? 'you' : ''}>{r.name} — {fmtGold(r.gold)}</li>
         ))}
       </ol>
       <div className="menu">

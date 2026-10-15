@@ -18,7 +18,6 @@ export function Board({ lang, board, meta, entry, canSell, onDeliver }: Props) {
   return (
     <section className="panel board">
       <h2>{t(lang, 'board')}</h2>
-      <p className="hint">{t(lang, 'boardNote')}</p>
       {!board.length && <p>{t(lang, 'boardEmpty')}</p>}
       <ul className="commissions">
         {board.map((c) => {

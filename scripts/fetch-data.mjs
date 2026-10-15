@@ -30,7 +30,7 @@ await save('trade/stats.ko.json', await get('https://poe.kakaogames.com/api/trad
 
 // 3. Affix names and base names (English + Korean) straight from the game's patch server
 const patch = (await get('https://raw.githubusercontent.com/poe-tool-dev/latest-patch-version/main/latest.txt', 'text')).trim()
-// Faustus voice: greetings (opening his window), farewells (sale done), his "fence" line (first visit, has subtitles)
+// Faustus voice: greetings (opening his window), farewells (sale done)
 const letters = (n) => [...'abcdefghijklmnopqrstuvwxyz'].slice(0, n)
 const FAUSTUS = 'audio/dialogue/npc/faustus/'
 await save('dat/config.json', {
@@ -39,7 +39,6 @@ await save('dat/config.json', {
   tables: [
     { name: 'Mods', columns: ['Id', 'Name'] },
     { name: 'BaseItemTypes', columns: ['Id', 'Name'] },
-    { name: 'NPCTextAudio', columns: ['Id', 'Text', 'Mono_AudioFile'] },
     { name: 'ItemClasses', columns: ['Id', 'Name'] },
     { name: 'Ascendancy', columns: ['Id', 'Name'] },
     { name: 'ClientStrings', columns: ['Id', 'Text'] }, // UI wording, to use the game's own terms
@@ -50,7 +49,6 @@ await save('dat/config.json', {
   files: [
     ...letters(13).map((l) => `${FAUSTUS}faustus_greeting_${l}.ogg`),
     ...letters(14).map((l) => `${FAUSTUS}faustus_farewell_${l}.ogg`),
-    `${FAUSTUS}faustus_03.ogg`,
     // Every language's stat text: Korean for the few stats the trade site doesn't list
     'metadata/statdescriptions/stat_descriptions.txt',
   ],

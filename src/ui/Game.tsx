@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { FAUSTUS_INTRO, faustusFarewell, faustusGreeting, faustusIntro, sfx } from '../audio.ts'
+import { faustusFarewell, faustusGreeting, sfx } from '../audio.ts'
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
@@ -16,6 +16,7 @@ import { Board } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
 import { Shop, type ShopView } from './Shop.tsx'
+import { Popular } from './Popular.tsx'
 import { Rivals } from './Rivals.tsx'
 import { rivalNewsText } from './rivalText.ts'
 import { playerRank } from '../game/rivals.ts'
@@ -41,7 +42,6 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   const [selected, setSelected] = useState<number | null>(state.stash[0]?.uid ?? null)
   const [shopView, setShopView] = useState<ShopView>({ cls: 'Body Armour', query: '', ilvl: 84, scroll: 0 })
   const [notice, setNotice] = useState<string | null>(null)
-  const [subtitle, setSubtitle] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -100,14 +100,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
 
   const openFaustus = () => {
     setView('faustus')
-    if (!settings.seenIntro) {
-      faustusIntro()
-      setSubtitle(FAUSTUS_INTRO[lang])
-      setSettings({ ...settings, seenIntro: true })
-    } else {
-      faustusGreeting()
-      setSubtitle(null)
-    }
+    faustusGreeting()
   }
   const onSell = () => {
     if (selected === null) return
@@ -171,7 +164,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
         {state.pending > 0 && <span>{t(lang, 'pending')}: {fmtGold(state.pending)}</span>}
         <span>{t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}</span>
         <span>{t(lang, 'rank', playerRank(state.gold + state.pending, state.rivals), state.rivals.length + 1)}</span>
-        <button disabled={actionsLeft <= 0} data-tip={t(lang, 'huntHint')} onClick={onHunt}>{t(lang, 'hunt')}</button>
+        <button disabled={actionsLeft <= 0} onClick={onHunt}>{t(lang, 'hunt')}</button>
         <button className="primary" onClick={onCloseDay}>{t(lang, state.day >= LAST_DAY ? 'closeLastDay' : 'closeDay')}</button>
         <div className="menu-wrap">
           <button onClick={() => setMenuOpen(!menuOpen)}>{t(lang, 'menu')}</button>
@@ -210,6 +203,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           <Rivals lang={lang} gold={state.gold + state.pending} rivals={state.rivals} />
         </div>
         <div className="main">
+          <Popular lang={lang} meta={state.meta} day={state.day} open={settings.popularOpen ?? true}
+            onToggle={(open) => setSettings({ ...settings, popularOpen: open })} />
           <nav className="tabs">
             {tab('bench', t(lang, 'bench'))}
             {tab('shop', t(lang, 'shop'))}
@@ -232,7 +227,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           )}
           {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
           {view === 'faustus' && (
-            <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} subtitle={subtitle}
+            <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0}
               onSell={onSell} onBack={() => setView('bench')} />
           )}
         </div>

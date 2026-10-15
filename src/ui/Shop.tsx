@@ -43,7 +43,6 @@ export function Shop({ lang, state, view, onView, onBuy }: Props) {
   return (
     <section className="panel shop">
       <h2>{t(lang, 'shop')}</h2>
-      <p className="hint">{t(lang, 'premiumNote')}</p>
 
       <div className="shop-filters">
         <select value={cls} onChange={(e) => set({ cls: e.target.value })}>

@@ -124,7 +124,6 @@ export function Bench(p: Props) {
 
           <fieldset className="spam">
             <legend>{t(lang, 'spam')}</legend>
-            <p className="hint">{t(lang, 'spamNote')}</p>
             <label><input type="checkbox" checked={opts.augPrefix} onChange={(e) => setOpts({ ...opts, augPrefix: e.target.checked })} /> {t(lang, 'augPrefix')}</label>
             <label><input type="checkbox" checked={opts.augSuffix} onChange={(e) => setOpts({ ...opts, augSuffix: e.target.checked })} /> {t(lang, 'augSuffix')}</label>
             <label>{t(lang, 'maxTries')} <input type="number" min={1} value={opts.maxTries} onChange={(e) => setOpts({ ...opts, maxTries: Math.max(1, +e.target.value) })} /></label>
@@ -134,7 +133,6 @@ export function Bench(p: Props) {
               onClick={() => { sfx('button'); setReport(p.onSpam(opts)) }}>
               {t(lang, 'start')}
             </button>
-            {!p.canSpam && <small className="hint">{t(lang, 'spamNeedSearch')}</small>}
             {report && <p>{t(lang, 'spamResult', report.alts, report.augs, fmtGold(report.spent), t(lang, `stop_${report.stop}`))}</p>}
           </fieldset>
         </>
@@ -181,13 +179,11 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
 
       {tab === 'influence' && (
         <>
-          <p className="hint">{t(lang, 'influenceNote')}</p>
           <div className="currencies">
             {Object.entries(INFLUENCE_EXALTS).map(([en, inf]) => orb(en, canInfluenceExalt(item, inf), () => p.onInfluenceExalt(en)))}
             {orb(DOMINANCE, canDominance(item), p.onDominance)}
           </div>
           <h3><img className="inline-icon" src={icon(AWAKENER)} alt="" /> {nameOf(AWAKENER, lang)} — {fmtGold(priceOf(AWAKENER))}</h3>
-          <p className="hint">{t(lang, 'awakenNote')}</p>
           {donors.length === 0 ? <p className="hint">{t(lang, 'awakenNone')}</p> : (
             <ul className="craft-list">
               {donors.map((d) => (
@@ -208,7 +204,6 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
         const dom = dominance(item)
         return (
           <>
-            <p className="hint">{t(lang, 'eldritchNote')}</p>
             <p>
               {gameText(lang, 'exarchItem')}: {tierName(x)} · {gameText(lang, 'eaterItem')}: {tierName(y)} · {t(lang, 'dominant')}: {dom ? gameText(lang, `${dom}Item`) + (dom === 'exarch' ? ` (${t(lang, 'prefix')})` : ` (${t(lang, 'suffix')})`) : t(lang, 'noDominance')}
               {x > 0 && y > 0 && ` · ${t(lang, 'conflictOdds', Math.round(conflictChance(item) * 100))}`}
@@ -230,7 +225,6 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
         const usable = HARVEST.filter((c) => c.can(item))
         return (
           <>
-            <p className="hint">{t(lang, 'harvestNote')}</p>
             {usable.length === 0 && <p className="hint">{t(lang, 'harvestNone')}</p>}
             <ul className="craft-list">
               {usable.map((c) => {
@@ -257,11 +251,10 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
 
       {tab === 'beast' && (
         <>
-          <p className="hint">{t(lang, 'beastNote')}</p>
           <ul className="craft-list">
             <li>
               <span>{nameOf(IMPRINT, lang)}: {bestiaryText(IMPRINT_RECIPE, lang)} — {nameOf(IMPRINT_BEAST, lang)}</span>
-              <button disabled={!canImprint(item) || priceOf(IMPRINT_BEAST) > gold} data-tip={t(lang, 'imprintHint')}
+              <button disabled={!canImprint(item) || priceOf(IMPRINT_BEAST) > gold}
                 onClick={() => { sfx('currencyApply'); p.onImprint() }}>{fmtGold(priceOf(IMPRINT_BEAST))}</button>
             </li>
             {item.imprint && (
@@ -272,7 +265,7 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
             )}
             <li>
               <span>{bestiaryText('EinharMasterCraftMemoryLine1', lang)} — {nameOf(MATRON, lang)}</span>
-              <button disabled={!matronOptions(item).length || priceOf(MATRON) > gold} data-tip={t(lang, 'matronHint')}
+              <button disabled={!matronOptions(item).length || priceOf(MATRON) > gold}
                 onClick={() => { sfx('currencyApply'); p.onMatron() }}>{fmtGold(priceOf(MATRON))}</button>
             </li>
             {BEAST_RECIPES.filter((r) => r.can(item)).map((r) => (
@@ -289,7 +282,6 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
         const choices = item.explicits.find((m) => m.unveil)?.unveil ?? []
         return (
           <>
-            <p className="hint">{t(lang, 'veiledNote')}</p>
             <div className="currencies">
               {Object.entries(VEILED_ORBS).map(([en, o]) => orb(en, o.can(item), () => p.onVeiledOrb(en)))}
             </div>
@@ -314,7 +306,6 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
         const partners = p.stash.filter((d) => d.uid !== entry!.uid && canRecombine(item, d.item))
         return (
           <>
-            <p className="hint">{t(lang, 'recombineNote')}</p>
             {partners.length === 0 ? <p className="hint">{t(lang, 'recombineNone')}</p> : (
               <ul className="craft-list">
                 {partners.map((d) => {
@@ -334,7 +325,6 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
 
       {tab === 'fossil' && (
         <>
-          <p className="hint">{t(lang, 'fossilNote')}</p>
           <div className="currencies">
             {FOSSILS.map((n) => {
               const on = fossils.includes(n)

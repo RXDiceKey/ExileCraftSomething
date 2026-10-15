@@ -364,28 +364,16 @@ for (let i = 0; i < needArt.length; i += 4) { // a few at a time, to be gentle w
 }
 if (needArt.length) console.log(`downloaded ${needArt.length} item images`)
 
-// ---- Faustus voice lines -> assets/voice/faustus/ (served as-is), with subtitles where the game has them
+// ---- Faustus voice lines -> assets/voice/faustus/ (served as-is)
 const VOICE_DIR = 'assets/voice/faustus'
 await mkdir(VOICE_DIR, { recursive: true })
 const voiceFiles = (await readdir('data-raw/dat/files')).filter((f) => f.startsWith('audio@dialogue@npc@faustus@'))
 for (const f of voiceFiles) await copyFile(`data-raw/dat/files/${f}`, `${VOICE_DIR}/${f.split('@').pop()}`)
 const voiceNames = voiceFiles.map((f) => f.split('@').pop())
-// The first meeting's fence speech runs a minute (user: too long, cut it). Only its first two English sentences play
-// ("…in this case, markers. I take those goods … coin and prestige."): the voice pauses there at 17.9 s (ffmpeg
-// silencedetect), and the Korean text says the same in three sentences.
-const INTRO_END = 18.1
-const INTRO_SENTENCES = { en: 2, ko: 3 }
-const fenceText = (rows, lang) => rows.find((r) => r.Id === 'FaustusFence').Text
-  .split(/(?<=[.?!])\s+/).slice(0, INTRO_SENTENCES[lang]).join(' ')
+// No first-meeting speech (user): greetings when his window opens, farewells after a sale.
 const faustus = {
   greeting: voiceNames.filter((n) => n.includes('greeting')),
   farewell: voiceNames.filter((n) => n.includes('farewell')),
-  intro: {
-    file: 'faustus_03.ogg',
-    end: INTRO_END,
-    en: fenceText(await raw('dat/tables/English/NPCTextAudio.json'), 'en'),
-    ko: fenceText(await raw('dat/tables/Korean/NPCTextAudio.json'), 'ko'),
-  },
 }
 
 await out('meta.json', meta)

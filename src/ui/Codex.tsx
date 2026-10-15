@@ -27,7 +27,6 @@ export function Codex({ lang, codex, meta, day, onBack }: Props) {
   return (
     <section className="panel codex">
       <h2>{t(lang, 'codex')} <span className="hint">{t(lang, 'codexProgress', open.length, BUILDS.length)}</span></h2>
-      <p className="hint">{t(lang, 'codexNote')}</p>
       {open.map((b) => {
         const tr = meta && day ? trend(meta, b.id, day) : null
         return (
@@ -46,7 +45,6 @@ export function Codex({ lang, codex, meta, day, onBack }: Props) {
           </details>
         )
       })}
-      {open.length < BUILDS.length && <p className="hint">{t(lang, 'codexLocked', BUILDS.length - open.length)}</p>}
       {onBack && <div className="menu"><button onClick={onBack}>{t(lang, 'back')}</button></div>}
     </section>
   )

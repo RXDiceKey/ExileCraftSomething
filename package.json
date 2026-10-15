@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "data:fetch": "node scripts/fetch-data.mjs",
     "data:build": "node scripts/build-data.mjs",
-    "test": "node --test src/**/*.test.ts"
+    "test": "node --test src/**/*.test.ts",
+    "sim": "node scripts/sim.ts"
   },
   "dependencies": {
     "react": "^19.2.8",

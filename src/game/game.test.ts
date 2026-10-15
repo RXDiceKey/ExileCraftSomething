@@ -173,7 +173,7 @@ test('모일수록 급등: 1·2·2등급이 1·1등급+잡옵보다 비싸고, �
   const five = synergy([1, 1, 1, 1, 1])
   const six = synergy([1, 1, 1, 1, 1, 1])
   assert.ok(six / five > 3.5, `${six / five}`)
-  assert.equal(six, 1, 'six tier-1 options = full budget')
+  assert.equal(five, 1, '1등급 옵션 5개 = 슬롯 예산 (P7 기준점)')
 })
 
 test('우버 빌드는 1–2등급만 쳐 주지만 훨씬 비싸게 삼', () => {

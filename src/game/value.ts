@@ -75,7 +75,7 @@ export const PROFILES: Profile[] = [
   },
 ]
 
-// Chaos a build pays for a top item in each slot (6 useful tier-1 options on a fitting base), before popularity.
+// Chaos a build pays for an item with PRICE_ANCHOR (5) tier-1 options it wants, on a fitting base, before popularity.
 const SLOT_BUDGET: Record<Slot, number> = {
   weapon: 1200, offhand: 400, helmet: 400, body: 600, gloves: 400, boots: 400, ring: 350, amulet: 450, belt: 350,
 }
@@ -94,9 +94,12 @@ const FLOOR = GOLD_PER_CHAOS // junk still fetches a chaos
 // Concentration is what makes items expensive. Each wanted option adds its contribution (0..1, ~1 for a tier-1 roll)
 // to a total S, and the price grows exponentially in S: every extra good option multiplies the price by e^1.4 (~4x).
 // So tiers 1,2,2 beat 1,1 plus junk, and a 6-option item on one build is worth vastly more than two 3-option items.
+// P7 sim: random rares sit at S 1-2 and a strong targeted craft around 3-4, so the slot budget is anchored at S = 5
+// (S 2 ~ a few chaos, 3 ~ 20c, 4 ~ 100c, 5 ~ budget, 6 ~ 4x budget). FULL_ITEM (6 options) is only for "completeness".
 export const SYNERGY = 1.4
+export const PRICE_ANCHOR = 5
 export const FULL_ITEM = 6
-export const synergy = (contributions: number[]) => Math.exp(SYNERGY * (contributions.reduce((a, b) => a + b, 0) - FULL_ITEM))
+export const synergy = (contributions: number[]) => Math.exp(SYNERGY * (contributions.reduce((a, b) => a + b, 0) - PRICE_ANCHOR))
 
 // ---- Base quality: tier 1 options on a weak base can't beat tier 2 options on a top base.
 // Armour: base defence vs the best base of the same class and defence type. Weapons: base physical DPS vs the best

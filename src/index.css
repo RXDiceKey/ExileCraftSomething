@@ -169,6 +169,14 @@ input[type='number'] { width: 90px; }
   .currency img { width: 34px; height: 34px; }
   .craft-list li { flex-wrap: wrap; }
   .lang-switch { position: static; justify-content: flex-end; padding: 4px 6px 0; } /* a fixed corner would cover buttons */
+  /* The item being crafted right under the title, so an orb's result shows without scrolling past the orbs. */
+  .bench { display: flex; flex-direction: column; }
+  .bench > h2 { order: -2; }
+  .bench-item { order: -1; }
+  .tt-art { max-height: 100px; }
+  input, select { font-size: 16px; } /* smaller makes iOS zoom in on focus */
+  .currency { -webkit-touch-callout: none; user-select: none; } /* held to read its name (Tip.tsx) */
+  .commissions .hint { white-space: nowrap; }
 }
 .drop-options summary { cursor: pointer; color: var(--dim); font-size: 12px; }
 .drop-options ul { margin: 2px 0 4px; padding-left: 16px; color: var(--mod); font-size: 12px; }

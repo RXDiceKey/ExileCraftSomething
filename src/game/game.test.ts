@@ -5,7 +5,7 @@ import { CURRENCIES } from '../engine/currency.ts'
 import { MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
-import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, useCurrency, type GameState } from './game.ts'
+import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, premium } from './shop.ts'
 import { BUILDS, mergeCodex, weekday, WEEKEND_BOOM } from './meta.ts'
@@ -78,7 +78,7 @@ test('하루 행동: 판매·사냥 4번, 골드는 다음 날, 14일차 후 종
   s = ok(buyBase(s, RING, 84))
   assert.ok(s.gold < START_GOLD)
   const uid = s.stash[0].uid
-  s = ok(useCurrency(s, uid, 'alchemy'))
+  s = ok(doCurrency(s, uid, 'alchemy'))
   const sold = ok(sell(s, uid))
   s = sold.state
   assert.equal(s.pending, sold.price)
@@ -107,7 +107,7 @@ test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같
   for (let seed = 9; ; seed++) {
     s = ok(buyBase(newGame(seed), RING, 84))
     uid = s.stash[0].uid
-    s = ok(useCurrency(s, uid, 'transmutation'))
+    s = ok(doCurrency(s, uid, 'transmutation'))
     if (!wantsLife(s.stash[0].item)) break
   }
   const r = spamAlteration(s, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000, goldCap: 1e9 })

@@ -5,7 +5,7 @@ import { BASES, MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { canDeliver, rewardScale, type Commission } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
-import { buyBase, closeDay, deliver, newGame, sell, useCurrency, type GameState, type Result } from './game.ts'
+import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
 import { buyableBases } from './shop.ts'
 import { quote, slotOf } from './value.ts'
@@ -52,7 +52,7 @@ test('수요 포화: 같은 빌드·부위를 하루에 1/2/3/4개 팔면 -15/-4
 test('수요 포화: 판매하면 1위 구매자의 그 부위 값이 내려감', () => {
   let s: GameState = { ...newGame(5), gold: 1e9 }
   for (let k = 0; k < 2; k++) s = ok(buyBase(s, RING, 84))
-  for (const e of s.stash) s = ok(useCurrency(s, e.uid, 'alchemy'))
+  for (const e of s.stash) s = ok(doCurrency(s, e.uid, 'alchemy'))
   const e = s.stash.find((x) => quote(x.item, 'en', s.day, s.meta).best)
   if (!e) return // 쓸모 있는 옵션이 없는 판이면 생략
   const best = quote(e.item, 'en', s.day, s.meta).best!

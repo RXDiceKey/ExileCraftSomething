@@ -111,34 +111,34 @@ function craft(
   return { ok: true, state: { ...s, rng, gold: s.gold - price, stash: replaceItem(s, uid, item) } }
 }
 
-export const useCurrency = (s: GameState, uid: number, c: CurrencyId) =>
+export const doCurrency = (s: GameState, uid: number, c: CurrencyId) =>
   craft(s, uid, CURRENCIES[c].can, () => currencyPrice(c), CURRENCIES[c].apply, `cur:${c}`)
 
-export const useBench = (s: GameState, uid: number, index: number) =>
+export const doBench = (s: GameState, uid: number, index: number) =>
   craft(s, uid, (i) => benchOptions(i).includes(index), () => CRAFTING.bench[index].cost, (i, r) => applyBench(i, index, r), `bench:${index}`)
 
 // The bench's "Remove crafted modifiers" costs an Orb of Scouring.
-export const useRemoveCrafted = (s: GameState, uid: number) =>
+export const doRemoveCrafted = (s: GameState, uid: number) =>
   craft(s, uid, (i) => removable(i) && editable(i), () => currencyPrice('scouring'), removeCrafted, 'bench:remove')
 
-export const useEssence = (s: GameState, uid: number, name: string) =>
+export const doEssence = (s: GameState, uid: number, name: string) =>
   craft(s, uid, (i) => canEssence(i, name), () => priceOf(name), (i, r) => applyEssence(i, name, r), `ess:${name}`)
 
 export const fossilCost = (item: Item, names: string[]) =>
   names.reduce((sum, n) => sum + priceOf(n), 0) + priceOf(resonatorFor(names.length, item))
-export const useFossils = (s: GameState, uid: number, names: string[]) =>
+export const doFossils = (s: GameState, uid: number, names: string[]) =>
   craft(s, uid, (i) => canFossils(i, names), (i) => fossilCost(i, names), (i, r) => applyFossils(i, names, r), `fos:${names.join('+')}`)
 
-export const useMatron = (s: GameState, uid: number) =>
+export const doMatron = (s: GameState, uid: number) =>
   craft(s, uid, (i) => matronOptions(i).length > 0, () => priceOf(MATRON), applyMatron, 'matron')
 
-export const useInfluenceExalt = (s: GameState, uid: number, name: string) =>
+export const doInfluenceExalt = (s: GameState, uid: number, name: string) =>
   craft(s, uid, (i) => canInfluenceExalt(i, INFLUENCE_EXALTS[name]), () => priceOf(name), (i, r) => applyInfluenceExalt(i, INFLUENCE_EXALTS[name], r), `infx:${name}`)
 
-export const useDominance = (s: GameState, uid: number) => craft(s, uid, canDominance, () => priceOf(DOMINANCE), applyDominance, 'dom')
+export const doDominance = (s: GameState, uid: number) => craft(s, uid, canDominance, () => priceOf(DOMINANCE), applyDominance, 'dom')
 
 // Awakener's Orb: the donor is destroyed and the target reforged with both influences.
-export function useAwaken(s: GameState, donorUid: number, targetUid: number): Result {
+export function doAwaken(s: GameState, donorUid: number, targetUid: number): Result {
   const donor = findItem(s, donorUid)
   if (!donor || donorUid === targetUid) return fail('gone')
   const r = craft(s, targetUid, (i) => canAwaken(donor.item, i), () => priceOf(AWAKENER), (i, rng) => applyAwaken(donor.item, i, rng),
@@ -147,7 +147,7 @@ export function useAwaken(s: GameState, donorUid: number, targetUid: number): Re
 }
 
 // Embers (Searing Exarch) and Ichors (Eater of Worlds), by currency name.
-export function useEldritchImplicit(s: GameState, uid: number, name: string): Result {
+export function doEldritchImplicit(s: GameState, uid: number, name: string): Result {
   const side = name in EMBERS ? 'exarch' : 'eater'
   const tier = EMBERS[name] ?? ICHORS[name]
   return craft(s, uid, (i) => canEldritchImplicit(i, side, tier), () => priceOf(name), (i, r) => applyEldritchImplicit(i, side, tier, r), `eld:${name}`)
@@ -158,41 +158,41 @@ export const ELDRITCH_ORBS: Record<string, { can: (i: Item) => boolean; apply: (
   [ELDRITCH_ANNUL]: { can: canEldritchAnnul, apply: applyEldritchAnnul },
   [CONFLICT]: { can: canConflict, apply: applyConflict },
 }
-export const useEldritchOrb = (s: GameState, uid: number, name: string) =>
+export const doEldritchOrb = (s: GameState, uid: number, name: string) =>
   craft(s, uid, ELDRITCH_ORBS[name].can, () => priceOf(name), ELDRITCH_ORBS[name].apply, `eldorb:${name}`)
 
 // Harvest crafts, paid in Crystallised Lifeforce at market price.
 export const harvestCost = (cost: Cost) =>
   Object.entries(cost).reduce((sum, [k, n]) => sum + n * priceOf(LIFEFORCE[k as keyof typeof LIFEFORCE]), 0)
-export function useHarvest(s: GameState, uid: number, id: string): Result {
+export function doHarvest(s: GameState, uid: number, id: string): Result {
   const c = harvestCraft(id)
   return craft(s, uid, c.can, () => harvestCost(c.cost), c.apply, `harv:${id}`)
 }
 
 // Beastcrafting: a recipe costs its named beasts.
 export const beastCost = (beasts: string[]) => beasts.reduce((sum, b) => sum + priceOf(b), 0)
-export function useBeast(s: GameState, uid: number, id: string): Result {
+export function doBeast(s: GameState, uid: number, id: string): Result {
   const r = beastRecipe(id)
   return craft(s, uid, r.can, () => beastCost(r.beasts), r.apply, `beast:${id}`)
 }
 // The Craicic Croaker makes the imprint; using the imprint later costs nothing more.
-export const useImprint = (s: GameState, uid: number) => craft(s, uid, canImprint, () => priceOf(IMPRINT_BEAST), imprint, 'imprint')
-export const useRestore = (s: GameState, uid: number) => craft(s, uid, canRestore, () => 0, restore, null) // back to the imprint's own history
+export const doImprint = (s: GameState, uid: number) => craft(s, uid, canImprint, () => priceOf(IMPRINT_BEAST), imprint, 'imprint')
+export const doRestore = (s: GameState, uid: number) => craft(s, uid, canRestore, () => 0, restore, null) // back to the imprint's own history
 
 export const VEILED_ORBS: Record<string, { can: (i: Item) => boolean; apply: (i: Item, r: Rng) => Item }> = {
   [VEILED_CHAOS]: { can: canVeiledChaos, apply: applyVeiledChaos },
   [VEILED_EXALT]: { can: canVeiledExalt, apply: applyVeiledExalt },
 }
-export const useVeiledOrb = (s: GameState, uid: number, name: string) =>
+export const doVeiledOrb = (s: GameState, uid: number, name: string) =>
   craft(s, uid, VEILED_ORBS[name].can, () => priceOf(name), VEILED_ORBS[name].apply, `veil:${name}`)
 // Unveiling is free: first look rolls the three choices (kept), then pick one.
-export const useReveal = (s: GameState, uid: number) => craft(s, uid, canReveal, () => 0, reveal, null)
-export const useUnveil = (s: GameState, uid: number, choice: string) =>
+export const doReveal = (s: GameState, uid: number) => craft(s, uid, canReveal, () => 0, reveal, null)
+export const doUnveil = (s: GameState, uid: number, choice: string) =>
   craft(s, uid, (i) => canUnveil(i, choice), () => 0, (i, r) => unveil(i, choice, r), `unveil:${choice}`)
 
 // Kingsmarch recombinator (random mode): both items are used up, the result joins the stash as a new item.
 export const recombineCost = (a: Item, b: Item) => recombineCostChaos(a, b, tierOf) * GOLD_PER_CHAOS
-export function useRecombine(s: GameState, uidA: number, uidB: number): Result {
+export function doRecombine(s: GameState, uidA: number, uidB: number): Result {
   const a = findItem(s, uidA)
   const b = findItem(s, uidB)
   if (!a || !b) return fail('gone')
@@ -206,7 +206,7 @@ export function useRecombine(s: GameState, uidA: number, uidB: number): Result {
 }
 
 // Mirror of Kalandra: a mirrored (unmodifiable) copy joins the stash; the original stays as it is.
-export function useMirror(s: GameState, uid: number): Result {
+export function doMirror(s: GameState, uid: number): Result {
   const entry = findItem(s, uid)
   if (!entry) return fail('gone')
   if (entry.item.mirrored) return fail('cantApply')

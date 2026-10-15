@@ -7,7 +7,7 @@ import { MODS } from '../src/engine/data.ts'
 import type { Item } from '../src/engine/item.ts'
 import { tierOf } from '../src/game/describe.ts'
 import {
-  buyBase, newGame, useBench, useCurrency, useEssence, useEldritchImplicit, useFossils, useHarvest, useInfluenceExalt, type GameState, type Result,
+  buyBase, newGame, doBench, doCurrency, doEssence, doEldritchImplicit, doFossils, doHarvest, doInfluenceExalt, type GameState, type Result,
 } from '../src/game/game.ts'
 import { GOLD_PER_CHAOS } from '../src/game/shop.ts'
 import { quote } from '../src/game/value.ts'
@@ -44,89 +44,89 @@ function benchFinish(r: Run) {
     const g = quote(applyBench(item(r), i, { s: 1 }), 'ko', DAY).price - before - CRAFTING.bench[i].cost
     if (g > gain) { gain = g; best = i }
   }
-  if (best >= 0) step(r, useBench(r.s, r.uid, best))
+  if (best >= 0) step(r, doBench(r.s, r.uid, best))
 }
 
 const STRATEGIES: Strategy[] = [
   { name: '베이스 사서 되팔기 (기준)', base: 'Vaal Regalia', act: () => {} },
-  { name: '연금술 1번 (갑옷)', base: 'Vaal Regalia', act: (r) => { step(r, useCurrency(r.s, r.uid, 'alchemy')) } },
-  { name: '연금술 1번 (반지)', base: 'Two-Stone Ring', act: (r) => { step(r, useCurrency(r.s, r.uid, 'alchemy')) } },
+  { name: '연금술 1번 (갑옷)', base: 'Vaal Regalia', act: (r) => { step(r, doCurrency(r.s, r.uid, 'alchemy')) } },
+  { name: '연금술 1번 (반지)', base: 'Two-Stone Ring', act: (r) => { step(r, doCurrency(r.s, r.uid, 'alchemy')) } },
   {
     name: '카오스 연타 → 50c 이상 (반지, 예산 100c)', base: 'Two-Stone Ring',
-    act: (r, spent) => { step(r, useCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, useCurrency(r.s, r.uid, 'chaos')), 50, 100) },
+    act: (r, spent) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, doCurrency(r.s, r.uid, 'chaos')), 50, 100) },
   },
   {
     name: '카오스 연타 → 50c 이상 (ES 갑옷, 예산 100c)', base: 'Vaal Regalia',
-    act: (r, spent) => { step(r, useCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, useCurrency(r.s, r.uid, 'chaos')), 50, 100) },
+    act: (r, spent) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, doCurrency(r.s, r.uid, 'chaos')), 50, 100) },
   },
   {
     name: '변화 스팸 → 생명력 1–2등급 → 제왕 → 엑잘 채우기 (반지)', base: 'Two-Stone Ring',
     act: (r, spent) => {
-      step(r, useCurrency(r.s, r.uid, 'transmutation'))
-      while (spent() < target(60) && !wanted(item(r), 'base_maximum_life', 2)) step(r, useCurrency(r.s, r.uid, 'alteration'))
-      step(r, useCurrency(r.s, r.uid, 'regal'))
-      while (step(r, useCurrency(r.s, r.uid, 'exalted')));
+      step(r, doCurrency(r.s, r.uid, 'transmutation'))
+      while (spent() < target(60) && !wanted(item(r), 'base_maximum_life', 2)) step(r, doCurrency(r.s, r.uid, 'alteration'))
+      step(r, doCurrency(r.s, r.uid, 'regal'))
+      while (step(r, doCurrency(r.s, r.uid, 'exalted')));
     },
   },
   {
     name: '절규 탐욕 에센스 연타 → 50c 이상 (갑옷, 예산 150c)', base: 'Vaal Regalia',
-    act: (r, spent) => spam(r, spent, () => step(r, useEssence(r.s, r.uid, 'Deafening Essence of Greed')), 50, 150),
+    act: (r, spent) => spam(r, spent, () => step(r, doEssence(r.s, r.uid, 'Deafening Essence of Greed')), 50, 150),
   },
   {
     name: '원시 화석 연타 → 50c 이상 (방어도 갑옷, 예산 150c)', base: 'Glorious Plate',
-    act: (r, spent) => spam(r, spent, () => step(r, useFossils(r.s, r.uid, ['Pristine Fossil'])), 50, 150),
+    act: (r, spent) => spam(r, spent, () => step(r, doFossils(r.s, r.uid, ['Pristine Fossil'])), 50, 150),
   },
   {
     name: '하베스트 생명력 재련 연타 → 50c 이상 (갑옷, 예산 150c)', base: 'Vaal Regalia',
-    act: (r, spent) => { step(r, useCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, useHarvest(r.s, r.uid, 'ReforgeLife')), 50, 150) },
+    act: (r, spent) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); spam(r, spent, () => step(r, doHarvest(r.s, r.uid, 'ReforgeLife')), 50, 150) },
   },
   // ---- How a player who knows what they want plays: stop once enough good options line up, then finish on the bench.
   {
     name: '[실력] 카오스 → 좋은 옵션 S≥2.5에서 멈춤 → 작업대 (ES 갑옷, 예산 100c)', base: 'Vaal Regalia',
     act: (r, spent) => {
-      step(r, useCurrency(r.s, r.uid, 'alchemy'))
-      until(r, spent, () => step(r, useCurrency(r.s, r.uid, 'chaos')), 2.5, 100)
+      step(r, doCurrency(r.s, r.uid, 'alchemy'))
+      until(r, spent, () => step(r, doCurrency(r.s, r.uid, 'chaos')), 2.5, 100)
       benchFinish(r)
     },
   },
   {
     name: '[실력] 절망 에센스(ES) → S≥2.5 멈춤 → 작업대 (ES 갑옷, 예산 100c)', base: 'Vaal Regalia',
-    act: (r, spent) => { until(r, spent, () => step(r, useEssence(r.s, r.uid, 'Deafening Essence of Woe')), 2.5, 100); benchFinish(r) },
+    act: (r, spent) => { until(r, spent, () => step(r, doEssence(r.s, r.uid, 'Deafening Essence of Woe')), 2.5, 100); benchFinish(r) },
   },
   {
     name: '[실력] 탐욕 에센스(생명력) → S≥2.5 멈춤 → 작업대 (방어도 갑옷, 예산 100c)', base: 'Glorious Plate',
-    act: (r, spent) => { until(r, spent, () => step(r, useEssence(r.s, r.uid, 'Deafening Essence of Greed')), 2.5, 100); benchFinish(r) },
+    act: (r, spent) => { until(r, spent, () => step(r, doEssence(r.s, r.uid, 'Deafening Essence of Greed')), 2.5, 100); benchFinish(r) },
   },
   {
     name: '[실력] 변화 → 생명력·저항 둘 다 1–2등급 → 제왕 → 작업대 (반지)', base: 'Two-Stone Ring',
     act: (r, spent) => {
-      step(r, useCurrency(r.s, r.uid, 'transmutation'))
+      step(r, doCurrency(r.s, r.uid, 'transmutation'))
       const res = (i: Item) => ['base_fire_damage_resistance_%', 'base_cold_damage_resistance_%', 'base_lightning_damage_resistance_%',
         'base_chaos_damage_resistance_%'].some((st) => wanted(i, st, 2))
       while (spent() < target(60) && !(wanted(item(r), 'base_maximum_life', 2) && res(item(r)))) {
         const a = item(r).explicits.length
-        step(r, useCurrency(r.s, r.uid, a < 2 ? 'augmentation' : 'alteration'))
-        if (a < 2 && !(wanted(item(r), 'base_maximum_life', 2) || res(item(r)))) step(r, useCurrency(r.s, r.uid, 'alteration'))
+        step(r, doCurrency(r.s, r.uid, a < 2 ? 'augmentation' : 'alteration'))
+        if (a < 2 && !(wanted(item(r), 'base_maximum_life', 2) || res(item(r)))) step(r, doCurrency(r.s, r.uid, 'alteration'))
       }
-      step(r, useCurrency(r.s, r.uid, 'regal'))
+      step(r, doCurrency(r.s, r.uid, 'regal'))
       benchFinish(r)
     },
   },
   {
     name: '[실력] 하베스트 생명력 재련 → S≥2.5 멈춤 → 작업대 (방어도 갑옷, 예산 100c)', base: 'Glorious Plate',
     act: (r, spent) => {
-      step(r, useCurrency(r.s, r.uid, 'alchemy'))
-      until(r, spent, () => step(r, useHarvest(r.s, r.uid, 'ReforgeLife')), 2.5, 100)
+      step(r, doCurrency(r.s, r.uid, 'alchemy'))
+      until(r, spent, () => step(r, doHarvest(r.s, r.uid, 'ReforgeLife')), 2.5, 100)
       benchFinish(r)
     },
   },
   {
     name: '연금술 → 사냥꾼 엑잘 (투구)', base: 'Hubris Circlet',
-    act: (r) => { step(r, useCurrency(r.s, r.uid, 'alchemy')); step(r, useInfluenceExalt(r.s, r.uid, "Hunter's Exalted Orb")) },
+    act: (r) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); step(r, doInfluenceExalt(r.s, r.uid, "Hunter's Exalted Orb")) },
   },
   {
     name: '연금술 → 우수한 불씨 (갑옷)', base: 'Vaal Regalia',
-    act: (r) => { step(r, useCurrency(r.s, r.uid, 'alchemy')); step(r, useEldritchImplicit(r.s, r.uid, 'Grand Eldritch Ember')) },
+    act: (r) => { step(r, doCurrency(r.s, r.uid, 'alchemy')); step(r, doEldritchImplicit(r.s, r.uid, 'Grand Eldritch Ember')) },
   },
 ]
 

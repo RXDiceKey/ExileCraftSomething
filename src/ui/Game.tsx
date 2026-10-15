@@ -3,8 +3,8 @@ import { FAUSTUS_INTRO, faustusFarewell, faustusGreeting, faustusIntro, sfx } fr
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, useBench, useCurrency, useEssence,
-  useAwaken, useBeast, useDominance, useEldritchImplicit, useEldritchOrb, useHarvest, useRecombine, useImprint, useRestore, useReveal, useUnveil, useVeiledOrb, useFossils, useInfluenceExalt, useMatron, useMirror, useRemoveCrafted,
+  ACTIONS_PER_DAY, buyBase, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
+  doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
 import { boom, buildName, weekday, type Codex as CodexData } from '../game/meta.ts'
@@ -16,7 +16,8 @@ import { Board } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
 import { Shop } from './Shop.tsx'
-import { Rivals, rivalNewsText } from './Rivals.tsx'
+import { Rivals } from './Rivals.tsx'
+import { rivalNewsText } from './rivalText.ts'
 import { playerRank } from '../game/rivals.ts'
 import { Stash } from './Stash.tsx'
 
@@ -64,30 +65,30 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     const uid = state.nextUid
     if (run(buyBase(state, base, ilvl))) { setSelected(uid); setView('bench') }
   }
-  const onCurrency = (c: CurrencyId) => selected !== null && run(useCurrency(state, selected, c))
-  const onBench = (i: number) => selected !== null && run(useBench(state, selected, i))
-  const onRemoveCrafted = () => selected !== null && run(useRemoveCrafted(state, selected))
-  const onEssence = (n: string) => selected !== null && run(useEssence(state, selected, n))
-  const onFossils = (ns: string[]) => selected !== null && run(useFossils(state, selected, ns))
-  const onMirror = () => selected !== null && run(useMirror(state, selected))
-  const onMatron = () => selected !== null && run(useMatron(state, selected))
-  const onInfluenceExalt = (n: string) => selected !== null && run(useInfluenceExalt(state, selected, n))
-  const onDominance = () => selected !== null && run(useDominance(state, selected))
-  const onAwaken = (donor: number) => selected !== null && run(useAwaken(state, donor, selected))
-  const onEldritchImplicit = (n: string) => selected !== null && run(useEldritchImplicit(state, selected, n))
-  const onEldritchOrb = (n: string) => selected !== null && run(useEldritchOrb(state, selected, n))
-  const onHarvest = (id: string) => selected !== null && run(useHarvest(state, selected, id))
-  const onBeast = (id: string) => selected !== null && run(useBeast(state, selected, id))
-  const onImprint = () => selected !== null && run(useImprint(state, selected))
-  const onRestore = () => selected !== null && run(useRestore(state, selected))
-  const onVeiledOrb = (n: string) => selected !== null && run(useVeiledOrb(state, selected, n))
+  const onCurrency = (c: CurrencyId) => selected !== null && run(doCurrency(state, selected, c))
+  const onBench = (i: number) => selected !== null && run(doBench(state, selected, i))
+  const onRemoveCrafted = () => selected !== null && run(doRemoveCrafted(state, selected))
+  const onEssence = (n: string) => selected !== null && run(doEssence(state, selected, n))
+  const onFossils = (ns: string[]) => selected !== null && run(doFossils(state, selected, ns))
+  const onMirror = () => selected !== null && run(doMirror(state, selected))
+  const onMatron = () => selected !== null && run(doMatron(state, selected))
+  const onInfluenceExalt = (n: string) => selected !== null && run(doInfluenceExalt(state, selected, n))
+  const onDominance = () => selected !== null && run(doDominance(state, selected))
+  const onAwaken = (donor: number) => selected !== null && run(doAwaken(state, donor, selected))
+  const onEldritchImplicit = (n: string) => selected !== null && run(doEldritchImplicit(state, selected, n))
+  const onEldritchOrb = (n: string) => selected !== null && run(doEldritchOrb(state, selected, n))
+  const onHarvest = (id: string) => selected !== null && run(doHarvest(state, selected, id))
+  const onBeast = (id: string) => selected !== null && run(doBeast(state, selected, id))
+  const onImprint = () => selected !== null && run(doImprint(state, selected))
+  const onRestore = () => selected !== null && run(doRestore(state, selected))
+  const onVeiledOrb = (n: string) => selected !== null && run(doVeiledOrb(state, selected, n))
   const onRecombine = (other: number) => {
     if (selected === null) return
     const uid = state.nextUid
-    if (run(useRecombine(state, selected, other))) setSelected(uid)
+    if (run(doRecombine(state, selected, other))) setSelected(uid)
   }
-  const onReveal = () => selected !== null && run(useReveal(state, selected))
-  const onUnveil = (id: string) => selected !== null && run(useUnveil(state, selected, id))
+  const onReveal = () => selected !== null && run(doReveal(state, selected))
+  const onUnveil = (id: string) => selected !== null && run(doUnveil(state, selected, id))
   const onSpam = (o: SpamOptions) => {
     if (!match || selected === null) return null
     const r = spamAlteration(state, selected, (item) => match(searchText(item, lang)), o)

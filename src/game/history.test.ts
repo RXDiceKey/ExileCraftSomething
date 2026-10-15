@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { CURRENCIES } from '../engine/currency.ts'
 import { newItem, rollMod, type Item } from '../engine/item.ts'
-import { buyBase, newGame, useCurrency, useImprint, useRestore, type GameState, type Result } from './game.ts'
+import { buyBase, newGame, doCurrency, doImprint, doRestore, type GameState, type Result } from './game.ts'
 import { record, stepProbability } from './history.ts'
 import { replay } from './replay.ts'
 import { basePrice, baseResale, currencyPrice } from './shop.ts'
@@ -21,10 +21,10 @@ const make = (base: string, ids: string[], o: Partial<Item> = {}): Item =>
 
 test('제작 이력: 카오스를 여러 번 굴려도 연금술과 마지막 카오스만 남고, 정제하면 리셋', () => {
   let { s, uid } = start(RING)
-  s = ok(useCurrency(s, uid, 'alchemy'))
-  for (let k = 0; k < 30; k++) s = ok(useCurrency(s, uid, 'chaos'))
+  s = ok(doCurrency(s, uid, 'alchemy'))
+  for (let k = 0; k < 30; k++) s = ok(doCurrency(s, uid, 'chaos'))
   assert.deepEqual(keys(s), ['cur:alchemy', 'cur:chaos'])
-  s = ok(useCurrency(s, uid, 'scouring'))
+  s = ok(doCurrency(s, uid, 'scouring'))
   assert.deepEqual(keys(s), [], '일반 베이스로 돌아가면 이력 없음')
 })
 
@@ -41,21 +41,21 @@ test('제작 이력: 다시 굴려 같은 옵션이 나와도 새 단계 몫, �
 
 test('각인으로 되돌리면 이력도 각인 때로', () => {
   let { s, uid } = start(RING)
-  s = ok(useCurrency(s, uid, 'transmutation'))
+  s = ok(doCurrency(s, uid, 'transmutation'))
   const atImprint = keys(s)
-  s = ok(useImprint(s, uid))
-  s = ok(useCurrency(s, uid, 'regal'))
+  s = ok(doImprint(s, uid))
+  s = ok(doCurrency(s, uid, 'regal'))
   assert.ok(keys(s).includes('cur:regal'))
-  s = ok(useRestore(s, uid))
+  s = ok(doRestore(s, uid))
   assert.deepEqual(keys(s), atImprint)
 })
 
 test('분열된 아이템: 되팔기 최저선과 기대 비용의 베이스 값은 1/10, 분열의 오브 값은 기대 비용에 안 들어감', () => {
   let { s, uid } = start(RING)
-  s = ok(useCurrency(s, uid, 'alchemy'))
-  while (!CURRENCIES.fracturing.can(s.stash[0].item)) s = ok(useCurrency(s, uid, 'chaos'))
+  s = ok(doCurrency(s, uid, 'alchemy'))
+  while (!CURRENCIES.fracturing.can(s.stash[0].item)) s = ok(doCurrency(s, uid, 'chaos'))
   const before = s.stash[0].item
-  s = ok(useCurrency(s, uid, 'fracturing'))
+  s = ok(doCurrency(s, uid, 'fracturing'))
   const after = s.stash[0].item
   assert.equal(quote(before, 'ko', 7).baseResale, baseResale(RING, 84, 7))
   assert.equal(quote(after, 'ko', 7).baseResale, Math.round(baseResale(RING, 84, 7) * 0.1))
@@ -74,11 +74,11 @@ test('고효율 유효 옵션: 흔한 옵션(저항)은 세지 않고, 2개 이�
 test('기대 비용: 드문 결과일수록 큼, 견적은 옵션 가치 (기대 비용이 더 커도 올려 주지 않음)', () => {
   // 고효율 옵션이 잘 붙은 카오스 결과를 찾을 때까지 굴림 (같은 시드라 결과는 늘 같음)
   let { s, uid } = start(RING)
-  s = ok(useCurrency(s, uid, 'alchemy'))
+  s = ok(doCurrency(s, uid, 'alchemy'))
   let plain: Item | undefined
   let lucky: Item | undefined
   for (let k = 0; k < 3000 && !lucky; k++) {
-    s = ok(useCurrency(s, uid, 'chaos'))
+    s = ok(doCurrency(s, uid, 'chaos'))
     const m = highEffCount(s.stash[0].item)
     if (m === 0 && !plain) plain = s.stash[0].item
     if (m >= 2) lucky = s.stash[0].item

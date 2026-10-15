@@ -1,7 +1,7 @@
 import type { Lang } from '../game/describe.ts'
 import type { Rival } from '../game/rivals.ts'
 import { fmtGold, t, tList } from '../i18n.ts'
-import { rankRows } from './Rivals.tsx'
+import { rankRows } from './rivalText.ts'
 
 // **bold** only; enough for the credit text
 const rich = (s: string) => s.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))

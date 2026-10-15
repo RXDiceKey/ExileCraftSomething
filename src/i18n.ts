@@ -16,6 +16,7 @@ const ko = {
   popularTop: '현재 인기 빌드 TOP{0}',
   boardEmpty: '지금은 의뢰가 없다.',
   tierRange: '1–{0}등급',
+  atLeast: '{0} 이상',
   commissionLeft: '{0}일 남음', // today counts: a new order shows 3, its last day 1
   commissionReward: '보수',
   commissionOptions: '옵션 {0}개',
@@ -186,6 +187,7 @@ const en: Dict = {
   popularTop: 'Popular builds now: top {0}',
   boardEmpty: 'No commissions right now.',
   tierRange: 'tier 1–{0}',
+  atLeast: '{0} or more',
   commissionLeft: 'days left: {0}',
   commissionReward: 'reward',
   commissionOptions: '{0} options',

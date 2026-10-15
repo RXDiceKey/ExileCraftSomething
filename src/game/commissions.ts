@@ -3,15 +3,23 @@
 // like a sale. Orders ask for 3 options at first and 4 from mid-run on (user).
 // Reward (user): COMMISSION_BONUS x the option value Faustus gives for those options, i.e. for the plainest item that
 // fills the order (its base, each option at the worst tier that still counts), on the day it's posted.
+// Defence orders (user): an armour order where the build wants defence options asks, for each defence of the base, a
+// total instead of options for it, and takes any base of that class and defence. The bar is the top ordinary base of that
+// kind with a flat and an increased local option of that defence at DEFENCE_TIER (starter 4, advanced 3, uber 2; lowest
+// roll, no quality): the top base gets there with those tiers, lower bases need better ones, or quality.
+// A build that doesn't look at defence there (life first, say) still wants a decent base: each defence at least what the
+// second-best ordinary base of the kind has bare, on top of the options asked; any base of the kind will do.
 import { BASES, MODS } from '../engine/data.ts'
-import { affixLimits, itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
+import {
+  affixLimits, baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, rollMod, spawnWeight, type Defence, type Item,
+} from '../engine/item.ts'
 import { int, pickWeighted, type Rng } from '../engine/rng.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { BUILDS, popularity, type Meta, type Slot } from './meta.ts'
-import { buyableBases } from './shop.ts'
+import { baseGroup, buyableBases, isSpecialBase } from './shop.ts'
 import { baseAppeal, quote, slotOf } from './value.ts'
 
-export interface Want { stat: string; maxTier: number }
+export type Want = { stat: string; maxTier: number } | { defence: Defence; min: number }
 export interface Commission {
   id: number
   build: string
@@ -33,11 +41,61 @@ export const WANTS_LATE_FROM = 7 // mid-run
 export const wantsOn = (day: number) => (day >= WANTS_LATE_FROM ? WANTS_LATE : WANTS_EARLY)
 const BASE_TIE = 0.95 // bases within 5% of the build's favourite are just as good: one is picked at random
 const MAX_TIER: Record<string, number> = { starter: 3, advanced: 2, uber: 1 }
+export const DEFENCE_TIER: Record<string, number> = { starter: 4, advanced: 3, uber: 2 }
+const ARMOUR = ['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield']
 const ILVL = 84
 
 const classesOf = (slot: Slot) => [...new Set(buyableBases().map((b) => BASES[b].cls))].filter((c) => slotOf(c) === slot)
 const hasStat = (id: string, stat: string) => MODS[id].stats.some(([s]) => s === stat)
-const meetsWant = (item: Item, w: Want) => item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
+const meetsWant = (item: Item, w: Want) => 'defence' in w ? (defences(item)[w.defence] ?? 0) >= w.min
+  : item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
+
+// The defence bars for this kind of base (see the top): the top ordinary base of the kind (best over its defences), with
+// a flat and an increased option of each defence at that tier (lowest roll, room and groups permitting); the totals it
+// then shows are the bars, so they can always be met.
+export function defenceBars(base: string, defs: Defence[], tier: number): { top: string; mins: Partial<Record<Defence, number>>; mods: string[] } {
+  const kin = buyableBases().filter((b) => baseGroup(b) === baseGroup(base) && !isSpecialBase(b))
+  const best = (d: Defence) => Math.max(1, ...kin.map((b) => baseDefence(b, d)))
+  const score = (b: string) => defs.reduce((s, d) => s + baseDefence(b, d) / best(d), 0)
+  const top = kin.reduce((x, y) => (score(y) > score(x) ? y : x), base)
+  const ref: Item = { ...newItem(top, ILVL, { s: 1 }), rarity: 'rare' }
+  const tags = itemTags(ref)
+  const room = affixLimits(ref)
+  const low = (id: string, stats: string[]) => Math.min(...MODS[id].stats.filter(([s]) => stats.includes(s)).map(([, x, y]) => Math.min(x, y)))
+  // The best option of exactly that tier carrying one of the stats (or the worst tier there is, if the ladder is short).
+  const at = (stats: string[]) => {
+    const all = Object.keys(MODS).filter((id) => {
+      const m = MODS[id]
+      return (m.gen === 'prefix' || m.gen === 'suffix') && !m.dom && !m.essenceOnly && !m.elev && !m.drop && m.lvl <= ILVL
+        && spawnWeight(id, tags) > 0 && m.stats.some(([s]) => stats.includes(s))
+    })
+    if (!all.length) return undefined
+    const worst = Math.max(...all.map((id) => tierOf(ref, id)))
+    return all.filter((id) => tierOf(ref, id) === Math.min(tier, worst)).reduce((x, id) => (low(id, stats) > low(x, stats) ? id : x))
+  }
+  const mods: string[] = []
+  for (const d of defs) {
+    for (const id of [at([defenceFlat(d)]), at(defenceInc(d))]) {
+      if (!id || mods.some((p) => MODS[p].grp.some((g) => MODS[id].grp.includes(g)))) continue
+      if (mods.filter((p) => MODS[p].gen === MODS[id].gen).length >= (MODS[id].gen === 'prefix' ? room.prefix : room.suffix)) continue
+      mods.push(id)
+    }
+  }
+  const lowest = (id: string) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) })
+  const total = defences({ ...ref, explicits: mods.map(lowest) })
+  return { top, mods, mins: Object.fromEntries(defs.map((d) => [d, total[d] ?? 0])) }
+}
+
+// Each defence at least what the second-best ordinary base of this kind has bare (the top two in the shop pass as they
+// are, lower ones need a defence option or quality).
+export function decentBase(base: string, defs: Defence[]): Want[] {
+  const kin = buyableBases().filter((b) => baseGroup(b) === baseGroup(base) && !isSpecialBase(b))
+  const best = (d: Defence) => Math.max(1, ...kin.map((b) => baseDefence(b, d)))
+  const score = (b: string) => defs.reduce((s, d) => s + baseDefence(b, d) / best(d), 0)
+  const ranked = [...kin].sort((x, y) => score(y) - score(x))
+  const second = ranked[Math.min(1, ranked.length - 1)] ?? base
+  return defs.map((d) => ({ defence: d, min: baseDefence(second, d) }))
+}
 
 export function canDeliver(item: Item, c: Commission): boolean {
   if (c.base ? item.base !== c.base : !c.classes.includes(BASES[item.base].cls)) return false
@@ -64,19 +122,26 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   if (!bases.length) return undefined
   const base = favouriteBase(b.id, slot, bases, rng)
   const ref = newItem(base, ILVL, rng)
+  // One or two defences; a three-defence base (Sacrificial Garb, Grasping Mail) is a special case.
+  const kinds = baseKindKeys(base).defences.filter((d): d is Defence => d !== 'ward')
+  const armour = ARMOUR.includes(BASES[base].cls) && !isSpecialBase(base) && kinds.length >= 1 && kinds.length <= 2
+  const caring = armour && Object.entries(want.wants).some(([s, w]) => w >= 0.7 && isDefenceStat(s))
+  const defs = caring ? kinds : []
+  const bars = defs.length ? defenceBars(base, defs, DEFENCE_TIER[b.tier]) : undefined
   const tags = itemTags(ref)
   const maxTier = MAX_TIER[b.tier]
   const count = wantsOn(day)
   const room = affixLimits({ ...ref, rarity: 'rare' })
   // Options the build really wants, in random order; for each, the worst mod that still meets the tier, rolling here,
   // as long as its side has room.
-  const stats = Object.entries(want.wants).filter(([, w]) => w >= 0.7).map(([s]) => s)
+  const stats = Object.entries(want.wants).filter(([s, w]) => w >= 0.7 && !(defs.length && isDefenceStat(s))).map(([s]) => s)
   for (let k = stats.length - 1; k > 0; k--) {
     const j = int(rng, 0, k)
     ;[stats[k], stats[j]] = [stats[j], stats[k]]
   }
-  const picked: string[] = []
-  const wants: Want[] = []
+  // The defence options sit on the reference item too (they take room and count in its value).
+  const picked: string[] = (bars?.mods ?? []).filter((id) => spawnWeight(id, tags) > 0)
+  const wants: Want[] = defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 }))
   for (const stat of stats) {
     if (wants.length === count) break
     const fits = Object.keys(MODS).filter((id) => {
@@ -92,9 +157,11 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     wants.push({ stat, maxTier })
   }
   if (wants.length < count) return undefined
+  if (armour && !caring) wants.push(...decentBase(base, kinds))
   const plainest: Item = { ...ref, rarity: 'rare', explicits: picked.map((m) => rollMod(m, rng)) }
   const c: Commission = {
-    id, build: b.id, slot, classes, ...(want.defence && { defence: want.defence }), base, wants,
+    id, build: b.id, slot, wants,
+    ...(armour ? { classes: [BASES[base].cls], defence: kinds } : { classes, ...(want.defence && { defence: want.defence }), base }),
     until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0,
   }
   return { ...c, reward: Math.round(COMMISSION_BONUS * quote(plainest, 'en', day, meta).optionValue) }

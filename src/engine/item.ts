@@ -28,6 +28,37 @@ export interface Item {
 
 export const fractured = (i: Item) => i.explicits.some((m) => m.fractured)
 
+// ---- Defences on armour pieces: (base + flat local options) x (1 + (increased local options + quality) / 100). The base
+// value is the top of the base's range (user: no base roll, there's no Sacred Orb in this game).
+export type Defence = 'armour' | 'evasion' | 'es' | 'ward'
+const DEFENCE_PROP: Record<Defence, string> = { armour: 'armour', evasion: 'evasion', es: 'energy_shield', ward: 'ward' }
+const DEFENCE_FLAT: Record<Defence, string> = {
+  armour: 'local_base_physical_damage_reduction_rating', evasion: 'local_base_evasion_rating', es: 'local_energy_shield', ward: 'local_ward',
+}
+const DEFENCE_INC: Record<Defence, string[]> = {
+  armour: ['local_physical_damage_reduction_rating_+%', 'local_armour_and_evasion_+%', 'local_armour_and_energy_shield_+%', 'local_armour_and_evasion_and_energy_shield_+%'],
+  evasion: ['local_evasion_rating_+%', 'local_armour_and_evasion_+%', 'local_evasion_and_energy_shield_+%', 'local_armour_and_evasion_and_energy_shield_+%'],
+  es: ['local_energy_shield_+%', 'local_armour_and_energy_shield_+%', 'local_evasion_and_energy_shield_+%', 'local_armour_and_evasion_and_energy_shield_+%'],
+  ward: ['local_ward_+%'],
+}
+export const isDefenceStat = (sid: string) => Object.values(DEFENCE_FLAT).includes(sid) || Object.values(DEFENCE_INC).some((s) => s.includes(sid))
+export const defenceFlat = (d: Defence) => DEFENCE_FLAT[d]
+export const defenceInc = (d: Defence) => DEFENCE_INC[d]
+export const baseDefence = (base: string, d: Defence): number => {
+  const p = BASES[base].props[DEFENCE_PROP[d]]
+  return typeof p === 'object' ? p.max : p ?? 0
+}
+export function defences(item: Item): Partial<Record<Defence, number>> {
+  const sum = (ids: string[]) => [...item.implicits, ...item.explicits]
+    .reduce((s, m) => s + MODS[m.id].stats.reduce((t, [sid], i) => t + (ids.includes(sid) ? m.values[i] : 0), 0), 0)
+  const out: Partial<Record<Defence, number>> = {}
+  for (const d of Object.keys(DEFENCE_PROP) as Defence[]) {
+    const base = baseDefence(item.base, d)
+    if (base > 0) out[d] = Math.round((base + sum([DEFENCE_FLAT[d]])) * (1 + (sum(DEFENCE_INC[d]) + (item.quality ?? 0)) / 100))
+  }
+  return out
+}
+
 // One craft in an item's history (see game/history.ts).
 export interface CraftStep {
   key: string // what was done, e.g. "cur:chaos", "ess:Deafening Essence of Greed"

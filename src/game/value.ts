@@ -2,7 +2,8 @@
 // so high-tier options spread across different builds are cheap and options concentrated on one build are pricey.
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
-import { fractured, rollMod, type Item } from '../engine/item.ts'
+import { modInfluence } from '../engine/influence.ts'
+import { fractured, itemTags, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
@@ -274,6 +275,32 @@ function dropThemeWant(p: Buyer, stats: string[]): number {
   return THEMES.some(([has, gives]) => own.some((s) => has.test(s)) && stats.some((s) => gives.test(s))) ? THEME_WANT : 0
 }
 
+// ---- Rarity (user): an option that comes up less often than a standard one of its tier is worth more, and one that
+// comes up more often less, from the spawn weights. Most tiers here weigh 1000, so a standard option at tier t has
+// t x 1000 of weight at that tier or better; all-attributes tiers weigh 400, a tier-1 attack speed 500, influence
+// options less. Damped hard, a 10x rarer option is not 10x the price: 1 + RARITY_K x ln(ratio) within
+// [RARITY_MIN, RARITY_MAX] per option, and the item takes the geometric mean over its useful options.
+export const RARITY_K = 0.3
+export const RARITY_MIN = 0.7
+export const RARITY_MAX = 2
+const STANDARD_WEIGHT = 1000
+const rarityCache = new Map<string, number>()
+export function rarityOf(item: Item, modId: string): number {
+  const m = MODS[modId]
+  if (m.dom || m.essenceOnly || m.elev || m.drop) return 1 // crafted, guaranteed or drop-only: no roll to be rare in
+  const key = `${item.base}|${item.influences.join()}|${modId}`
+  let r = rarityCache.get(key)
+  if (r === undefined) {
+    const tags = itemTags({ ...item, explicits: [] })
+    const inf = modInfluence(modId)
+    const weight = Object.keys(MODS).filter((id) => MODS[id].type === m.type && MODS[id].gen === m.gen && MODS[id].lvl >= m.lvl
+      && modInfluence(id) === inf).reduce((s, id) => s + spawnWeight(id, tags), 0)
+    r = weight > 0 ? Math.min(RARITY_MAX, Math.max(RARITY_MIN, 1 + RARITY_K * Math.log(tierOf(item, modId) * STANDARD_WEIGHT / weight))) : 1
+    rarityCache.set(key, r)
+  }
+  return r
+}
+
 function judge(item: Item, p: Buyer, lang: Lang) {
   const mods = item.explicits.map((m): ModVerdict => {
     const def = MODS[m.id]
@@ -308,7 +335,9 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const usefulCount = mods.filter((m) => m.useful).length
   const single = shortfall(usefulCount)
   const elevated = ELEVATED_SURGE[Math.min(3, mods.filter((m) => m.useful && MODS[m.id].elev).length)]
-  const value = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
+  const usefulMods = mods.filter((m) => m.useful)
+  const rarity = usefulMods.length ? Math.exp(usefulMods.reduce((s, m) => s + Math.log(rarityOf(item, m.id)), 0) / usefulMods.length) : 1
+  const value = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated * rarity
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
   return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods }
 }

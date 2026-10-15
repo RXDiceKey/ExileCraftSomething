@@ -65,7 +65,7 @@ const SPECIAL_TAGS = ['atlas_base_type', 'experimental_base'] // not 'not_for_sa
 const ARMOUR = ['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield']
 const OTHER = ['Ring', 'Amulet', 'Belt', 'Quiver']
 export const isSpecialBase = (id: string) => BASES[id].tags.some((t) => SPECIAL_TAGS.includes(t))
-const groupOf = (id: string) => {
+export const baseGroup = (id: string) => {
   const b = BASES[id]
   if (OTHER.includes(b.cls)) return null
   if (!ARMOUR.includes(b.cls)) return b.cls
@@ -76,10 +76,10 @@ export function isTopBase(id: string): boolean {
   if (!top) {
     const groups = new Map<string, string[]>()
     for (const b of buyableBases()) {
-      const g = groupOf(b)
+      const g = baseGroup(b)
       if (g !== null && !isSpecialBase(b)) groups.set(g, [...(groups.get(g) ?? []), b])
     }
     top = new Set([...groups.values()].flatMap((bs) => bs.sort((a, b) => BASES[b].lvl - BASES[a].lvl).slice(0, TOP_PER_GROUP)))
   }
-  return groupOf(id) === null || isSpecialBase(id) || top.has(id)
+  return baseGroup(id) === null || isSpecialBase(id) || top.has(id)
 }

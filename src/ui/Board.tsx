@@ -31,9 +31,9 @@ export function Board({ lang, board, day, meta, entry, canSell, onDeliver }: Pro
                   : <>{c.classes.map((x) => className(x, lang)).join('·')}{c.defence && ` (${c.defence.map((d) => defenceName(d, lang)).join('/')})`}</>}
               </div>
               <ul>
-                {c.wants.map((w) => (
-                  <li key={w.stat}>{statLabel(w.stat, lang)?.[1] ?? w.stat} · {w.maxTier > 1 ? t(lang, 'tierRange', w.maxTier) : t(lang, 'tier', 1)}</li>
-                ))}
+                {c.wants.map((w) => ('defence' in w
+                  ? <li key={w.defence}>{defenceName(w.defence, lang)} {t(lang, 'atLeast', w.min)}</li>
+                  : <li key={w.stat}>{statLabel(w.stat, lang)?.[1] ?? w.stat} · {w.maxTier > 1 ? t(lang, 'tierRange', w.maxTier) : t(lang, 'tier', 1)}</li>))}
               </ul>
               <div className="commission-foot">
                 {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>

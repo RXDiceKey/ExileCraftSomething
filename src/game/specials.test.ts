@@ -9,7 +9,7 @@ import { tierOf } from './describe.ts'
 import { buyUnidentified, newGame, type GameState, type Result } from './game.ts'
 import { basePrice, buyableBases, isSpecialBase, isTopBase } from './shop.ts'
 import { dropOptions, GRASPING_MAIL, SPECIAL_ILVL, UNID_MARKUP, unidentifiedPrice } from './specials.ts'
-import { DROP_PREMIUM, quote } from './value.ts'
+import { DROP_PREMIUM, quote, RARITY_MAX, RARITY_MIN, rarityOf } from './value.ts'
 
 const names = (textEn as { bases: Record<string, string> }).bases
 const baseId = (n: string) => Object.keys(names).find((k) => names[k] === n)!
@@ -91,4 +91,18 @@ test('상점: 무기는 종류별, 방어구는 부위·능력치별 최고 등�
   assert.ok(!shown.includes(baseId('Vaal Regalia')) && !shown.includes(baseId('Simple Robe')), '하급 베이스는 숨김')
   assert.ok(shown.includes(baseId('Convoking Wand')), '특수 베이스는 따로 보임')
   assert.ok(buyableBases().filter((b) => BASES[b].cls === 'Ring').every(isTopBase), '반지는 고정 옵션으로 갈려서 전부')
+})
+
+test('희소성: 같은 등급 표준(가중치 1000)보다 드문 옵션은 비싸지만 크게 눌러서 (10배 드물어도 2배 이하)', () => {
+  const ring = newItem(baseId('Vermillion Ring'), 84, { s: 1 })
+  const tier1 = (stat: string) => Object.keys(MODS).find((id) => MODS[id].stats.length === 1 && MODS[id].stats[0][0] === stat
+    && !MODS[id].dom && tierOf(ring, id) === 1 && rarityOf(ring, id) !== undefined)!
+  const life = tier1('base_maximum_life')
+  const allAttr = tier1('additional_all_attributes')
+  assert.equal(rarityOf(ring, life), 1, '생명력 1등급은 표준')
+  assert.ok(Math.abs(rarityOf(ring, allAttr) - (1 + 0.3 * Math.log(1000 / 400))) < 1e-9, '모든 능력치 1등급(가중치 400) ×1.27')
+  for (const id of Object.keys(MODS).filter((x) => MODS[x].gen === 'suffix').slice(0, 300)) {
+    const r = rarityOf(ring, id)
+    assert.ok(r >= RARITY_MIN && r <= RARITY_MAX)
+  }
 })

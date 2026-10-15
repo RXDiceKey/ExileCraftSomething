@@ -29,12 +29,17 @@ function fill(c: Commission): Item {
   const ids: string[] = caring(c) ? [...(totals?.mods ?? [])] : []
   for (const w of c.wants) {
     if ('defence' in w) continue
-    const id = Object.keys(MODS).find((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
-      && MODS[x].stats.some(([s]) => s === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
-      && !ids.some((p) => MODS[p].grp.some((g) => MODS[x].grp.includes(g))))!
+    // The option giving the most of that stat at item level 84 (the asks sit inside the accepted tiers of its family).
+    const most = (x: string) => Math.max(...MODS[x].stats.filter(([s]) => s === w.stat).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
+    const id = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
+      && MODS[x].stats.some(([s]) => s === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0
+      && !ids.some((p) => MODS[p].grp.some((g) => MODS[x].grp.includes(g))))
+      .sort((a, b) => most(b) - most(a))[0]
     ids.push(id)
   }
-  return { ...item, rarity: 'rare', quality: 20, explicits: ids.map((id) => rollMod(id, { s: 2 })) }
+  // Best rolls: the top of each range (the bottom for negative stats).
+  const best = (id: string) => ({ id, values: MODS[id].stats.map(([, a, b]) => (Math.max(a, b) <= 0 ? Math.min(a, b) : Math.max(a, b))) })
+  return { ...item, rarity: 'rare', quality: 20, explicits: ids.map(best) }
 }
 
 test('수요 포화: 같은 빌드·부위를 하루에 1/2/3/4개 팔면 -15/-40/-60/-80%, 남은 하락은 하루 5%p씩 회복', () => {
@@ -210,4 +215,36 @@ test('방어를 안 따지는 빌드의 방어구 의뢰: 옵션은 그대로, �
     }
   }
   assert.ok(found > 0, '그런 의뢰가 나옴')
+})
+
+test('의뢰 옵션은 등급이 아니라 수치로: 1등급 요구는 1등급 최저치, 1–3등급 요구는 3등급 범위 안의 값', () => {
+  let one = 0
+  let range = 0
+  for (let seed = 1; seed < 30; seed++) {
+    for (const c of refreshBoard([], 7, 14, rollMeta({ s: seed }), { s: seed * 5 })) {
+      for (const w of c.wants) {
+        if ('defence' in w) {
+          assert.equal(w.min % 10, 0, '방어 수치는 10단위')
+          continue
+        }
+        assert.ok(w.min !== undefined, '수치로 요구')
+        const item = newItem(c.base ?? buyableBases().find((b) => c.classes.includes(BASES[b].cls))!, 84, { s: 1 })
+        const tags = itemTags(item)
+        const of = (tier: number) => Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom
+          && !MODS[x].essenceOnly && MODS[x].stats.some(([st]) => st === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) === tier)
+        const span = (id: string) => { const [, a, b] = MODS[id].stats.find(([st]) => st === w.stat)!; return [Math.min(a, b), Math.max(a, b)] }
+        const tier = of(w.maxTier)
+        if (!tier.length || w.min === undefined || w.min < 0) continue
+        const min = w.min
+        if (w.maxTier === 1) {
+          one++
+          assert.ok(tier.some((id) => span(id)[0] === min), `1등급 최저치 ${min}`)
+        } else {
+          range++
+          assert.ok(tier.some((id) => span(id)[0] <= min && min <= span(id)[1]), `${w.maxTier}등급 범위 안 ${min}`)
+        }
+      }
+    }
+  }
+  assert.ok(one > 0 && range > 0)
 })

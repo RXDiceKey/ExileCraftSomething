@@ -1,6 +1,6 @@
 // Commission board (D38) and rumors about the coming patches.
 import { canDeliver, type Commission } from '../game/commissions.ts'
-import { baseArt, baseName, className, defenceName, statLabel, type Lang } from '../game/describe.ts'
+import { baseArt, baseName, className, defenceName, statLabel, statLine, type Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, type Meta } from '../game/meta.ts'
 import { fmtGold, t } from '../i18n.ts'
@@ -33,7 +33,9 @@ export function Board({ lang, board, day, meta, entry, canSell, onDeliver }: Pro
               <ul>
                 {c.wants.map((w) => ('defence' in w
                   ? <li key={w.defence}>{defenceName(w.defence, lang)} {t(lang, 'atLeast', w.min)}</li>
-                  : <li key={w.stat}>{statLabel(w.stat, lang)?.[1] ?? w.stat} · {w.maxTier > 1 ? t(lang, 'tierRange', w.maxTier) : t(lang, 'tier', 1)}</li>))}
+                  : <li key={w.stat}>{w.min === undefined
+                    ? <>{statLabel(w.stat, lang)?.[1] ?? w.stat} · {w.maxTier > 1 ? t(lang, 'tierRange', w.maxTier) : t(lang, 'tier', 1)}</>
+                    : <AskLine lang={lang} values={{ [w.stat]: w.min, ...(w.stat2 && { [w.stat2]: w.min2! }) }} />}</li>))}
               </ul>
               <div className="commission-foot">
                 {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
@@ -57,4 +59,11 @@ export function Board({ lang, board, day, meta, entry, canSell, onDeliver }: Pro
       ) : <p className="hint">{t(lang, 'noRumors')}</p>}
     </section>
   )
+}
+
+// A number asked of an option. A line that shows the value with its minus sign ("-7 to Total Mana Cost") is met by going
+// lower; one that turns it into a reduction ("18% reduced") reads as a size, so "or more".
+function AskLine({ lang, values }: { lang: Lang; values: Record<string, number> }) {
+  const line = statLine(values, lang)
+  return <>{line} {t(lang, /-\d/.test(line) ? 'atMost' : 'atLeast', '').trim()}</>
 }

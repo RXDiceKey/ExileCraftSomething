@@ -3,6 +3,9 @@
 // like a sale. Orders ask for 3 options at first and 4 from mid-run on (user).
 // Reward (user): COMMISSION_BONUS x the option value Faustus gives for those options, i.e. for the plainest item that
 // fills the order (its base, each option at the worst tier that still counts), on the day it's posted.
+// Option asks are numbers, not tiers (user): a tier-1 ask wants the lowest tier-1 roll, a "tier 1-3" ask a value inside
+// tier 3's range (30-90% up it, per order), so a good tier 3 passes, a poor one doesn't, tier 2 always does. Paired stats
+// (added damage "a to b") ask both. Judged on the item's explicit options added up.
 // Defence orders (user): an armour order where the build wants defence options asks, for each defence of the base, a
 // total instead of options for it, and takes any base of that class and defence. The bar is the top ordinary base of that
 // kind with a flat and an increased local option of that defence at DEFENCE_TIER (starter 4, advanced 3, uber 2; lowest
@@ -13,13 +16,14 @@ import { BASES, MODS } from '../engine/data.ts'
 import {
   affixLimits, baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, rollMod, spawnWeight, type Defence, type Item,
 } from '../engine/item.ts'
-import { int, pickWeighted, type Rng } from '../engine/rng.ts'
+import { int, next, pickWeighted, type Rng } from '../engine/rng.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { BUILDS, popularity, type Meta, type Slot } from './meta.ts'
 import { baseGroup, buyableBases, isSpecialBase } from './shop.ts'
 import { baseAppeal, quote, slotOf } from './value.ts'
 
-export type Want = { stat: string; maxTier: number } | { defence: Defence; min: number }
+// min/stat2/min2: the numbers asked (older saves: the tier only). maxTier stays for the reference item.
+export type Want = { stat: string; maxTier: number; min?: number; stat2?: string; min2?: number } | { defence: Defence; min: number }
 export interface Commission {
   id: number
   build: string
@@ -47,8 +51,26 @@ const ILVL = 84
 
 const classesOf = (slot: Slot) => [...new Set(buyableBases().map((b) => BASES[b].cls))].filter((c) => slotOf(c) === slot)
 const hasStat = (id: string, stat: string) => MODS[id].stats.some(([s]) => s === stat)
-const meetsWant = (item: Item, w: Want) => 'defence' in w ? (defences(item)[w.defence] ?? 0) >= w.min
-  : item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
+const total = (item: Item, stat: string) =>
+  item.explicits.reduce((s, m) => s + MODS[m.id].stats.reduce((t, [sid], i) => t + (sid === stat ? m.values[i] : 0), 0), 0)
+// A negative ask ("-7 to Total Mana Cost") is met by going lower.
+const reaches = (v: number, ask: number) => (ask < 0 ? v <= ask : v >= ask)
+const meetsWant = (item: Item, w: Want) => {
+  if ('defence' in w) return (defences(item)[w.defence] ?? 0) >= w.min
+  if (w.min === undefined) return item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
+  return reaches(total(item, w.stat), w.min) && (!w.stat2 || reaches(total(item, w.stat2), w.min2!))
+}
+// Paired stats of one line: the minimum and maximum of added damage.
+const partner = (stat: string) => (/minimum/.test(stat) ? stat.replace('minimum', 'maximum') : /maximum/.test(stat) ? stat.replace('maximum', 'minimum') : undefined)
+// The number to ask of one stat of this mod: its lowest roll for tier 1, else `at` of the way up its range (towards
+// "better", which is lower for negative stats).
+function ask(id: string, stat: string, at: number): number {
+  const [, a, b] = MODS[id].stats.find(([s]) => s === stat)!
+  const lo = Math.min(a, b)
+  const hi = Math.max(a, b)
+  return Math.round(hi <= 0 ? hi - at * (hi - lo) : lo + at * (hi - lo))
+}
+export const DEFENCE_STEP = 10 // defence asks in tens (user): rounded down, so they stay reachable
 
 // The defence bars for this kind of base (see the top): the top ordinary base of the kind (best over its defences), with
 // a flat and an increased option of each defence at that tier (lowest roll, room and groups permitting); the totals it
@@ -83,7 +105,7 @@ export function defenceBars(base: string, defs: Defence[], tier: number): { top:
   }
   const lowest = (id: string) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) })
   const total = defences({ ...ref, explicits: mods.map(lowest) })
-  return { top, mods, mins: Object.fromEntries(defs.map((d) => [d, total[d] ?? 0])) }
+  return { top, mods, mins: Object.fromEntries(defs.map((d) => [d, Math.floor((total[d] ?? 0) / DEFENCE_STEP) * DEFENCE_STEP])) }
 }
 
 // Each defence at least what the second-best ordinary base of this kind has bare (the top two in the shop pass as they
@@ -94,7 +116,7 @@ export function decentBase(base: string, defs: Defence[]): Want[] {
   const score = (b: string) => defs.reduce((s, d) => s + baseDefence(b, d) / best(d), 0)
   const ranked = [...kin].sort((x, y) => score(y) - score(x))
   const second = ranked[Math.min(1, ranked.length - 1)] ?? base
-  return defs.map((d) => ({ defence: d, min: baseDefence(second, d) }))
+  return defs.map((d) => ({ defence: d, min: Math.floor(baseDefence(second, d) / DEFENCE_STEP) * DEFENCE_STEP }))
 }
 
 export function canDeliver(item: Item, c: Commission): boolean {
@@ -152,9 +174,17 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
         && picked.filter((p) => MODS[p].gen === m.gen).length < (m.gen === 'prefix' ? room.prefix : room.suffix)
     })
     if (!fits.length) continue
-    const worst = fits.reduce((a, x) => (tierOf(ref, x) > tierOf(ref, a) ? x : a))
+    // The stat's main family (the one giving the most of it, not a hybrid carrying a little), its worst accepted tier.
+    const most = (id: string) => Math.max(...MODS[id].stats.filter(([s]) => s === stat).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
+    const main = MODS[fits.reduce((a, x) => (most(x) > most(a) ? x : a))].type
+    const worst = fits.filter((x) => MODS[x].type === main).reduce((a, x) => (tierOf(ref, x) > tierOf(ref, a) ? x : a))
     picked.push(worst)
-    wants.push({ stat, maxTier })
+    const at = maxTier === 1 ? 0 : 0.3 + 0.6 * next(rng)
+    const pair = partner(stat)
+    const two = pair && hasStat(worst, pair) ? pair : undefined
+    // Ask the pair as minimum then maximum, so the line reads "a to b".
+    const [s1, s2] = two && /maximum/.test(stat) ? [two, stat] : [stat, two]
+    wants.push({ stat: s1, maxTier, min: ask(worst, s1, at), ...(s2 && { stat2: s2, min2: ask(worst, s2, at) }) })
   }
   if (wants.length < count) return undefined
   if (armour && !caring) wants.push(...decentBase(base, kinds))

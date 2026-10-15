@@ -75,6 +75,14 @@ export function statLabel(sid: string, lang: Lang): [number, string] | undefined
   return text ? [idx, text.replace(/\d+(\.\d+)?/g, '#').replace(/\n/g, ' / ')] : undefined
 }
 
+// The game's line for some stats at given values (commission asks: "화염 저항 +40%"); stats sharing a line go together.
+export function statLine(values: Record<string, number>, lang: Lang): string {
+  const first = Object.keys(values)[0]
+  const idx = entriesByStat.get(first)?.[0]
+  if (idx === undefined) return first
+  return render(idx, STATS[idx].ids.map((id) => values[id] ?? 0), lang).replace(/\n/g, ' / ')
+}
+
 // Fixed options like "+100% effect of explicit modifiers" (Simplex Amulet) scale the explicit values.
 export function modEffect(item: Item, gen: string): number {
   let pct = 0
@@ -258,7 +266,8 @@ export function rangeText(item: Item, modId: string, lang: Lang): string[] {
     const a = line.split(/(-?\d+(?:\.\d+)?)/)
     const b = (hi[i] ?? line).split(/(-?\d+(?:\.\d+)?)/)
     // Negative ranges read like the game: "-(8-6)", not "(-8--6)".
-    const range = (x: string, y: string) => (+x < 0 && +y < 0 ? `-(${-x}-${-y})` : `(${x}-${y})`)
+    // A "reduced" line shows magnitudes, which can come out high-to-low: keep them low-to-high.
+    const range = (x: string, y: string) => (+x < 0 && +y < 0 ? `-(${-x}-${-y})` : +x > +y ? `(${y}-${x})` : `(${x}-${y})`)
     return a.map((tok, k) => (k % 2 && b[k] !== undefined && b[k] !== tok ? range(tok, b[k]) : tok)).join('')
   })
 }

@@ -5,7 +5,7 @@
 // rolling a useful one; few possible options that buyers want = dear, many = cheap.
 import { fill, rareModCount } from '../engine/currency.ts'
 import { BASES, MODS } from '../engine/data.ts'
-import { newItem, rollMod, type Item } from '../engine/item.ts'
+import { newItem, onBase, rollMod, type Item } from '../engine/item.ts'
 import { int, pickWeighted, type Rng } from '../engine/rng.ts'
 import { basePrice, GOLD_PER_CHAOS } from './shop.ts'
 import { dropAppeal, slotBudget } from './value.ts'
@@ -19,14 +19,9 @@ export const UNID_MARKUP = 1.5
 export const UNID_VALUE = 0.75 // chaos per point of slot budget for a sure useful option (about half a crafted-up item)
 const BREACH_COUNT = [3, 2, 1] // 1, 2 or 3 Breachlord options: 50 / 33 / 17%
 
-// "Body Armour:dex_armour" -> that class with that armour tag; a plain class name matches any base of the class.
-const fits = (base: string, on: string[]) => on.some((o) => {
-  const [cls, tag] = o.split(':')
-  return BASES[base].cls === cls && (!tag || BASES[base].tags.includes(tag))
-})
 // The drop options a base can come with.
 export const dropOptions = (source: DropSource, base: string) => source === 'breach' && base !== GRASPING_MAIL ? []
-  : Object.keys(MODS).filter((id) => MODS[id].drop === source && (source === 'breach' || fits(base, MODS[id].on ?? [])))
+  : Object.keys(MODS).filter((id) => MODS[id].drop === source && (source === 'breach' || onBase(base, MODS[id].on ?? [])))
 
 // Chance the roll gives at least one option some buyer of this base wants.
 function usefulChance(source: DropSource, base: string): number {

@@ -3,7 +3,7 @@
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
 import { modInfluence } from '../engine/influence.ts'
-import { fractured, itemTags, rollMod, spawnWeight, type Item } from '../engine/item.ts'
+import { fractured, itemTags, onBase, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
@@ -280,6 +280,9 @@ function dropThemeWant(p: Buyer, stats: string[]): number {
 // t x 1000 of weight at that tier or better; all-attributes tiers weigh 400, a tier-1 attack speed 500, influence
 // options less. Damped hard, a 10x rarer option is not 10x the price: 1 + RARITY_K x ln(ratio) within
 // [RARITY_MIN, RARITY_MAX] per option, and the item takes the geometric mean over its useful options.
+// Elevated options count as the tier-1 option they were raised from (user). Drop-only options (user: they need it too,
+// on top of DROP_PREMIUM) count how rare they are among their source's drops: Breachlord ones by their weights, Delve /
+// Incursion ones as one of the n this base can come with.
 export const RARITY_K = 0.3
 export const RARITY_MIN = 0.7
 export const RARITY_MAX = 2
@@ -287,15 +290,27 @@ const STANDARD_WEIGHT = 1000
 const rarityCache = new Map<string, number>()
 export function rarityOf(item: Item, modId: string): number {
   const m = MODS[modId]
-  if (m.dom || m.essenceOnly || m.elev || m.drop) return 1 // crafted, guaranteed or drop-only: no roll to be rare in
+  if (m.dom || m.essenceOnly) return 1 // crafted or guaranteed: no roll to be rare in
   const key = `${item.base}|${item.influences.join()}|${modId}`
   let r = rarityCache.get(key)
   if (r === undefined) {
+    const damp = (ratio: number) => Math.min(RARITY_MAX, Math.max(RARITY_MIN, 1 + RARITY_K * Math.log(ratio)))
     const tags = itemTags({ ...item, explicits: [] })
     const inf = modInfluence(modId)
-    const weight = Object.keys(MODS).filter((id) => MODS[id].type === m.type && MODS[id].gen === m.gen && MODS[id].lvl >= m.lvl
-      && modInfluence(id) === inf).reduce((s, id) => s + spawnWeight(id, tags), 0)
-    r = weight > 0 ? Math.min(RARITY_MAX, Math.max(RARITY_MIN, 1 + RARITY_K * Math.log(tierOf(item, modId) * STANDARD_WEIGHT / weight))) : 1
+    if (m.drop === 'breach') {
+      const total = Object.keys(MODS).reduce((s, id) => s + (MODS[id].drop === 'breach' ? MODS[id].dw ?? 0 : 0), 0)
+      r = m.dw ? damp(total / m.dw) : 1
+    } else if (m.drop) {
+      r = damp(Math.max(1, Object.keys(MODS).filter((id) => MODS[id].drop === m.drop && onBase(item.base, MODS[id].on ?? [])).length))
+    } else if (m.elev) {
+      const from = Object.keys(MODS).filter((id) => MODS[id].type === m.elev && MODS[id].gen === m.gen && !MODS[id].elev
+        && modInfluence(id) === inf && spawnWeight(id, tags) > 0).sort((a, b) => MODS[b].lvl - MODS[a].lvl)[0]
+      r = from ? rarityOf(item, from) : 1
+    } else {
+      const weight = Object.keys(MODS).filter((id) => MODS[id].type === m.type && MODS[id].gen === m.gen && MODS[id].lvl >= m.lvl
+        && modInfluence(id) === inf).reduce((s, id) => s + spawnWeight(id, tags), 0)
+      r = weight > 0 ? damp(tierOf(item, modId) * STANDARD_WEIGHT / weight) : 1
+    }
     rarityCache.set(key, r)
   }
   return r

@@ -28,6 +28,12 @@ export interface Item {
 
 export const fractured = (i: Item) => i.explicits.some((m) => m.fractured)
 
+// Drop-only options (D42): "Body Armour:dex_armour" -> that class with that armour tag; a plain class matches any base.
+export const onBase = (base: string, on: string[]) => on.some((o) => {
+  const [cls, tag] = o.split(':')
+  return BASES[base].cls === cls && (!tag || BASES[base].tags.includes(tag))
+})
+
 // ---- Defences on armour pieces: (base + flat local options) x (1 + (increased local options + quality) / 100). The base
 // value is the top of the base's range (user: no base roll, there's no Sacred Orb in this game).
 export type Defence = 'armour' | 'evasion' | 'es' | 'ward'

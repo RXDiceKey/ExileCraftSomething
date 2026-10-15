@@ -47,6 +47,21 @@ const ko = {
   tabEldritch: '섬뜩한',
   tabHarvest: '하베스트',
   tabBeast: '야수',
+  rivals: '경쟁 상인',
+  you: '나',
+  rank: '순위 {0}/{1}',
+  finalRanking: '최종 순위',
+  rival_highroller: '큰손 오렐',
+  rival_gambler: '도박꾼 미르카',
+  rival_shadow: '그림자 세벤',
+  rivalKind_highroller: '고가 위주 판매',
+  rivalKind_gambler: '들쭉날쭉',
+  rivalKind_shadow: '나를 따라옴',
+  rivalNews_jackpot: '{0}: 고가 아이템 대박 판매 (+{1})',
+  rivalNews_bigWin: '{0}: 제작 도박 대성공 (+{1})',
+  rivalNews_bigLoss: '{0}: 제작 도박 대실패 (-{1})',
+  rivalNews_overtake: '{0}: 나를 앞질렀다 ({1} 앞섬)',
+  rivalNews_close: '{0}: 바짝 따라붙었다 ({1} 차이)',
   tabVeiled: '장막',
   tabRecombine: '재조합기',
   recombineNote: '킹스마치 재조합기 (예측 불가 방식): 같은 종류 마법·희귀 아이템 2개를 넣으면 둘 다 사라지고 새 아이템이 나옴. 베이스는 반반, 아이템 레벨은 min(평균+2, 높은 쪽). 접두어·접미어 개수는 풀 크기에 따라 무작위, 작업대·에센스·장막 같은 배타 옵션은 하나만, 결과 베이스에 못 붙는 옵션은 사라짐. 타락·장막 아이템 불가.',
@@ -205,6 +220,21 @@ const en: Dict = {
   tabEldritch: 'Eldritch',
   tabHarvest: 'Harvest',
   tabBeast: 'Beasts',
+  rivals: 'Rival traders',
+  you: 'You',
+  rank: 'Rank {0}/{1}',
+  finalRanking: 'Final ranking',
+  rival_highroller: 'Orel the High Roller',
+  rival_gambler: 'Mirka the Gambler',
+  rival_shadow: 'Seben the Shadow',
+  rivalKind_highroller: 'sells the top end',
+  rivalKind_gambler: 'boom or bust',
+  rivalKind_shadow: 'follows you',
+  rivalNews_jackpot: '{0}: sold a big-ticket item (+{1})',
+  rivalNews_bigWin: '{0}: a crafting gamble paid off (+{1})',
+  rivalNews_bigLoss: '{0}: a crafting gamble went bust (-{1})',
+  rivalNews_overtake: '{0}: overtook you ({1} ahead)',
+  rivalNews_close: '{0}: right on your heels ({1} behind)',
   tabVeiled: 'Veiled',
   tabRecombine: 'Recombinator',
   recombineNote: 'Kingsmarch recombinator (unpredictable mode): two magic/rare items of the same class are used up for a new one. Base is 50/50, item level min(average+2, higher). Prefix/suffix counts depend on pool size; exclusive mods (bench, essence, veiled...) at most one; mods the result base can\'t have are lost. No corrupted or veiled items.',
@@ -316,7 +346,7 @@ const en: Dict = {
 
 const DICTS: Record<Lang, Dict> = { ko, en }
 
-type StringKey = { [K in keyof Dict]: Dict[K] extends string ? K : never }[keyof Dict]
+export type StringKey = { [K in keyof Dict]: Dict[K] extends string ? K : never }[keyof Dict]
 
 export function t(lang: Lang, key: StringKey, ...args: (string | number)[]): string {
   return DICTS[lang][key].replace(/\{(\d+)\}/g, (_, i) => String(args[+i] ?? ''))

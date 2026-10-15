@@ -3,7 +3,7 @@ import { FAUSTUS_INTRO, faustusFarewell, faustusGreeting, faustusIntro, sfx } fr
 import type { CurrencyId } from '../engine/currency.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, closeDay, ensureMeta, hunt, LAST_DAY, sell, spamAlteration, useBench, useCurrency, useEssence,
+  ACTIONS_PER_DAY, buyBase, closeDay, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, useBench, useCurrency, useEssence,
   useAwaken, useBeast, useDominance, useEldritchImplicit, useEldritchOrb, useHarvest, useRecombine, useImprint, useRestore, useReveal, useUnveil, useVeiledOrb, useFossils, useInfluenceExalt, useMatron, useMirror, useRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -14,6 +14,8 @@ import { exportFile, importFile, type Settings } from '../save.ts'
 import { Bench } from './Bench.tsx'
 import { Faustus } from './Faustus.tsx'
 import { Shop } from './Shop.tsx'
+import { Rivals, rivalNewsText } from './Rivals.tsx'
+import { playerRank } from '../game/rivals.ts'
 import { Stash } from './Stash.tsx'
 
 interface Props {
@@ -129,6 +131,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
     }
     if (!next.finished && boom(next.day) > 1 && boom(state.day) === 1) lines.push(t(lang, 'boomStart', boomPct(next.day)))
     if (!next.finished && boom(next.day) === 1 && boom(state.day) > 1) lines.push(t(lang, 'boomEnd'))
+    lines.push(...(next.rivalNews ?? []).map((n) => rivalNewsText(lang, n)))
     if (lines.length) setNotice(lines.join(' / '))
   }
 
@@ -144,6 +147,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
         <span>{t(lang, 'gold')}: <b className="gold">{fmtGold(state.gold)}</b></span>
         {state.pending > 0 && <span>{t(lang, 'pending')}: {fmtGold(state.pending)}</span>}
         <span>{t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}</span>
+        <span>{t(lang, 'rank', playerRank(state.gold + state.pending, state.rivals), state.rivals.length + 1)}</span>
         <button disabled={actionsLeft <= 0} title={t(lang, 'huntHint')} onClick={onHunt}>{t(lang, 'hunt')}</button>
         <button className="primary" onClick={onCloseDay}>{t(lang, state.day >= LAST_DAY ? 'closeLastDay' : 'closeDay')}</button>
         <div className="menu-wrap">
@@ -162,7 +166,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
             const f = e.target.files?.[0]
             if (!f) return
             const s = await importFile(f)
-            if (s) setState(ensureMeta(s))
+            if (s) setState(upgradeSave(s))
             else setNotice(t(lang, 'importFailed'))
             e.target.value = ''
           }} />
@@ -171,14 +175,17 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu }: P
       {notice && <div className="notice">{notice}</div>}
 
       <div className="layout">
-        <Stash
-          lang={lang}
-          stash={state.stash}
-          selected={selected}
-          onSelect={(uid) => { sfx('itemPickup'); setSelected(uid); if (view === 'shop') setView('bench') }}
-          search={settings.search}
-          onSearch={(q) => setSettings({ ...settings, search: q })}
-        />
+        <div className="side">
+          <Stash
+            lang={lang}
+            stash={state.stash}
+            selected={selected}
+            onSelect={(uid) => { sfx('itemPickup'); setSelected(uid); if (view === 'shop') setView('bench') }}
+            search={settings.search}
+            onSearch={(q) => setSettings({ ...settings, search: q })}
+          />
+          <Rivals lang={lang} gold={state.gold + state.pending} rivals={state.rivals} />
+        </div>
         <div className="main">
           <nav className="tabs">
             {tab('bench', t(lang, 'bench'))}

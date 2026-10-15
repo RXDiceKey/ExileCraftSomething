@@ -1,5 +1,7 @@
 import type { Lang } from '../game/describe.ts'
+import type { Rival } from '../game/rivals.ts'
 import { fmtGold, t, tList } from '../i18n.ts'
+import { rankRows } from './Rivals.tsx'
 
 // **bold** only; enough for the credit text
 const rich = (s: string) => s.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))
@@ -65,12 +67,19 @@ export function Credits({ lang, onBack }: { lang: Lang; onBack: () => void }) {
   )
 }
 
-export function RunOver({ lang, score, isBest, onNew, onMenu }: { lang: Lang; score: number; isBest: boolean; onNew: () => void; onMenu: () => void }) {
+interface RunOverProps { lang: Lang; score: number; isBest: boolean; rivals: Rival[]; onNew: () => void; onMenu: () => void }
+export function RunOver({ lang, score, isBest, rivals, onNew, onMenu }: RunOverProps) {
   return (
     <main className="screen">
       <h1>{t(lang, 'runOver')}</h1>
       <p className="big">{t(lang, 'finalScore', fmtGold(score))}</p>
       {isBest && <p className="best">{t(lang, 'newBest')}</p>}
+      <h3>{t(lang, 'finalRanking')}</h3>
+      <ol className="final-ranking">
+        {rankRows(lang, score, rivals).map((r) => (
+          <li key={r.key} className={r.key === 'you' ? 'you' : ''}>{r.name}{r.note && <small> · {r.note}</small>} — {fmtGold(r.gold)}</li>
+        ))}
+      </ol>
       <div className="menu">
         <button className="primary" onClick={onNew}>{t(lang, 'newRun')}</button>
         <button onClick={onMenu}>{t(lang, 'toStartMenu')}</button>

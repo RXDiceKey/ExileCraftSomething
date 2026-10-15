@@ -18,6 +18,7 @@ import {
 import { affixCounts, editable, newItem, type Item } from '../engine/item.ts'
 import { int, type Rng } from '../engine/rng.ts'
 import { advanceMeta, rollMeta, type Meta } from './meta.ts'
+import { advanceRivals, newRivals, type Rival, type RivalNews } from './rivals.ts'
 import { basePrice, currencyPrice, GOLD_PER_CHAOS, MIRROR, priceOf } from './shop.ts'
 import { quote } from './value.ts'
 
@@ -40,6 +41,8 @@ export interface GameState {
   stash: StashItem[]
   sales: Sale[]
   meta: Meta // build popularity this run
+  rivals: Rival[] // trade rivals (D34)
+  rivalNews?: RivalNews[] // what they did at the last day close
   finished?: { score: number }
 }
 
@@ -55,15 +58,18 @@ function withRng<T>(s: GameState, f: (rng: Rng) => T): [T, Rng] {
 export function newGame(seed: number): GameState {
   const rng = { s: seed }
   const meta = rollMeta(rng)
-  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta }
+  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD) }
 }
 
-// Saves from before build popularity existed get a meta rolled on load.
-export function ensureMeta(s: GameState): GameState {
-  if (s.meta) return s
-  const rng = { ...s.rng }
-  const meta = rollMeta(rng)
-  return { ...s, rng, meta }
+// Older saves get what they're missing on load: build popularity (rolled now), trade rivals (starting at the start gold).
+export function upgradeSave(s: GameState): GameState {
+  let out = s
+  if (!out.meta) {
+    const rng = { ...out.rng }
+    out = { ...out, meta: rollMeta(rng), rng }
+  }
+  if (!out.rivals) out = { ...out, rivals: newRivals(START_GOLD) }
+  return out
 }
 
 const addItem = (s: GameState, item: Item, gold: number, rng: Rng): GameState =>
@@ -267,7 +273,11 @@ export function sell(s: GameState, uid: number): Result<{ state: GameState; pric
 
 export function closeDay(s: GameState): GameState {
   const settled = { ...s, gold: s.gold + s.pending, pending: 0, used: 0 }
-  if (s.day >= LAST_DAY) return { ...settled, finished: { score: settled.gold } }
-  const [meta, rng] = withRng(s, (r) => advanceMeta(s.meta, s.day + 1, r))
-  return { ...settled, rng, meta, day: s.day + 1 }
+  // Rivals close their day too (the last one included), measured against the player's settled gold.
+  const [moved, rng0] = withRng(s, (r) => advanceRivals(s.rivals, settled.gold, START_GOLD, r))
+  const withRivals = { ...settled, rng: rng0, rivals: moved.rivals, rivalNews: moved.news }
+  if (s.day >= LAST_DAY) return { ...withRivals, finished: { score: settled.gold } }
+  const rng = { ...rng0 }
+  const meta = advanceMeta(s.meta, s.day + 1, rng)
+  return { ...withRivals, rng, meta, day: s.day + 1 }
 }

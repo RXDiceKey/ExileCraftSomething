@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { setAudio } from './audio.ts'
 import type { Lang } from './game/describe.ts'
-import { ensureMeta, newGame, type GameState } from './game/game.ts'
+import { newGame, upgradeSave, type GameState } from './game/game.ts'
 import { loadBest, loadGame, loadSettings, saveBest, saveGame, saveSettings, type Settings } from './save.ts'
 import { Game } from './ui/Game.tsx'
 import { Credits, LanguageSelect, LanguageSwitch, RunOver, StartMenu } from './ui/Screens.tsx'
@@ -10,7 +10,7 @@ type Screen = 'lang' | 'start' | 'credits' | 'game'
 
 function App() {
   const [settings, setSettingsState] = useState(loadSettings)
-  const [game, setGameState] = useState<GameState | null>(() => { const g = loadGame(); return g && ensureMeta(g) })
+  const [game, setGameState] = useState<GameState | null>(() => { const g = loadGame(); return g && upgradeSave(g) })
   const [best, setBest] = useState(loadBest)
   const [screen, setScreen] = useState<Screen>(settings.lang ? 'start' : 'lang')
   const lang: Lang = settings.lang ?? 'ko'
@@ -43,7 +43,7 @@ function App() {
   if (screen === 'credits') return <>{switcher}<Credits lang={lang} onBack={() => setScreen('start')} /></>
   if (screen === 'game' && game) {
     if (game.finished) {
-      return <>{switcher}<RunOver lang={lang} score={game.finished.score} isBest={game.finished.score >= best}
+      return <>{switcher}<RunOver lang={lang} score={game.finished.score} isBest={game.finished.score >= best} rivals={game.rivals}
         onNew={startNew} onMenu={() => setScreen('start')} /></>
     }
     return <>{switcher}<Game lang={lang} state={game} setState={setGame} settings={settings} setSettings={setSettings}

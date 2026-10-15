@@ -5,7 +5,9 @@ import { BASES, MODS } from '../engine/data.ts'
 import type { Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, trend, type Meta, type Slot } from './meta.ts'
-import { baseResale, GOLD_PER_CHAOS } from './shop.ts'
+import { expectedCost } from './history.ts'
+import { replay } from './replay.ts'
+import { basePrice, baseResale, GOLD_PER_CHAOS } from './shop.ts'
 
 interface Profile {
   id: string
@@ -219,7 +221,9 @@ export interface ModVerdict { id: string; name: string; tier: number; contributi
 export interface ProfileQuote { id: string; name: string; value: number; trend: 'rising' | 'falling' | null }
 export interface Quote {
   boom: number // weekend boom multiplier on buyer values (1 = none)
-  price: number
+  price: number // max(option value, (expected cost + option value) / 2), never below the floors
+  optionValue: number // what the best buyer pays for the options (V)
+  expectedCost: number // what making it is expected to cost (E, see history.ts)
   top: ProfileQuote[] // best 3 buyers
   best?: { id: string; name: string; fit: number; usefulCount: number; completeness: number; baseQuality: number; mods: ModVerdict[] }
   baseResale: number
@@ -278,12 +282,49 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const quality = baseQuality(item.base, attackBuyer)
   const usefulCount = mods.filter((m) => m.useful).length
   const single = usefulCount <= 1 ? SINGLE_OPTION : 1
-  const value = p.budget * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single
+  const elevated = ELEVATED_SURGE[Math.min(3, mods.filter((m) => m.useful && MODS[m.id].elev).length)]
+  const value = p.budget * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
   return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods }
 }
 
+// ---- High-efficiency useful options (D35): options a buyer values at HIGH_EFF or more before roll and boosts (about
+// tiers 1-3 of a full want; a tier-1 resistance is only 0.5, so common options never count). M = the most any single
+// buyer counts. The expected-cost model measures how lucky a craft was in M; taking the max over every buyer (not the
+// one that ended up buying) keeps "some build finds this rare" from turning every roll into a jackpot.
+export const HIGH_EFF = 0.6
+const effBuyers = new Map<string, Buyer[]>()
+const effMods = new Map<string, number[]>()
+export function highEffCount(item: Item): number {
+  const key = `${item.base}|${item.influences.join()}`
+  let bs = effBuyers.get(key)
+  if (!bs) effBuyers.set(key, (bs = buyers(item, 'en').filter((b) => b.fit > 0)))
+  const counts = bs.map(() => 0)
+  for (const m of item.explicits) {
+    let who = effMods.get(`${key}|${m.id}`)
+    if (!who) {
+      const tier = tierOf(item, m.id)
+      who = []
+      for (const [i, b] of bs.entries()) {
+        const { w, steep } = wantOf(b, MODS[m.id].stats.map(([sid]) => sid))
+        if (tier <= b.maxTier && w * tierQualityOf(tier) ** (steep ? 2 : 1) >= HIGH_EFF) who.push(i)
+      }
+      effMods.set(`${key}|${m.id}`, who)
+    }
+    for (const i of who) counts[i]++
+  }
+  return Math.max(0, ...counts)
+}
+// Elevated options are the top of the top: one useful elevated option doubles the price, two x8, three x40.
+export const ELEVATED_SURGE = [1, 2, 8, 40]
+
+// Expected cost to make the item: today's base price plus its crafting history (history.ts).
+export const itemExpectedCost = (item: Item, day: number) =>
+  expectedCost(item, basePrice(item.base, item.ilvl, day), replay, highEffCount)
+
 // Deterministic for a given item, day and meta: asking again doesn't reroll the quote.
+// Price (D35): the options' value V, unless the item was expected to cost more to make than that (E > V); then half
+// way between: max(V, (E + V) / 2). A hard-to-make item fetches more, but luck is never paid in full.
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
   const resale = baseResale(item.base, item.ilvl, day)
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).
@@ -293,9 +334,12 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
     return { p, ...j, value: Math.round(j.value * k) }
   }).sort((a, b) => b.value - a.value)
   const [best] = judged
+  const cost = Math.round(itemExpectedCost(item, day))
   return {
     boom: k,
-    price: Math.max(FLOOR, resale, best.value),
+    price: Math.max(FLOOR, resale, best.value, Math.round((cost + best.value) / 2)),
+    optionValue: best.value,
+    expectedCost: cost,
     top: judged.slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id) : null })),
     best: best.usefulCount > 0
       ? { id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality, mods: best.mods }

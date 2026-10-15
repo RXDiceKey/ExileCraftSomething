@@ -9,6 +9,7 @@ import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spam
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, premium } from './shop.ts'
 import { BUILDS, weekday, WEEKEND_BOOM } from './meta.ts'
+import { snapshot } from './history.ts'
 import { quote, stackedAttributes, synergy } from './value.ts'
 
 const baseNames = (textEn as { bases: Record<string, string> }).bases
@@ -116,7 +117,8 @@ test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같
     if (wantsLife(item)) break
     if (item.explicits.length === 1 && k < r.alts + r.augs) { item = CURRENCIES.augmentation.apply(item, rng); k++ }
   }
-  assert.deepEqual(item, r.state.stash[0].item)
+  assert.deepEqual(snapshot(item), snapshot(r.state.stash[0].item)) // 이력 제외하고 같은 아이템
+  assert.equal(r.state.stash[0].item.log!.at(-1)!.key.startsWith('cur:'), true, '스팸머신도 이력을 남김')
 
   const capped = spamAlteration(s, uid, () => false, { augPrefix: false, augSuffix: false, maxTries: 10, goldCap: 1e9 })
   assert.equal(capped.stop, 'maxTries')

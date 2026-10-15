@@ -23,6 +23,20 @@ export interface Item {
   corrupted?: true
   mirrored?: true
   imprint?: Item // Craicic Croaker snapshot of this item while it was magic
+  log?: CraftStep[] // crafting history that still matters for the expected cost (game/history.ts)
+}
+
+// One craft in an item's history (see game/history.ts).
+export interface CraftStep {
+  key: string // what was done, e.g. "cur:chaos", "ess:Deafening Essence of Greed"
+  cost: number // gold paid
+  m: number // high-efficiency useful options on the result
+  before: Item // the item it was applied to (no history)
+  created: string[] // mod ids the step added
+  structural: boolean // changed the rarity (transmute, alchemy, regal...)
+  other?: Item // second item of an Awakener's Orb / recombinator
+  extra?: number // expected cost of that second item
+  fixed?: boolean // always counts
 }
 
 // "Lucky" (Sanctified Fossil): roll twice, keep the better one.

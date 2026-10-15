@@ -31,6 +31,7 @@ interface Props {
   gold: number
   day: number // lifeforce prices move with the day
   canSpam: boolean // a search is typed in
+  lit: boolean | null // does the item match the search (null: no search)
   onCurrency: (c: CurrencyId) => void
   onBench: (index: number) => void
   onRemoveCrafted: () => void
@@ -84,10 +85,6 @@ export function Bench(p: Props) {
   return (
     <section className="panel bench">
       <h2>{t(lang, 'bench')}</h2>
-      <Tooltip item={item} lang={lang} />
-      <button className="primary" onClick={p.onFaustus}>{t(lang, 'takeToFaustus')}</button>
-
-      {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
       <nav className="tabs sub">
         {tabButton('orbs', t(lang, 'tabOrbs'))}
         {tabButton('bench', t(lang, 'tabBench'))}
@@ -347,6 +344,12 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
           )}
         </>
       )}
+
+      <div className="bench-item">
+        {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
+        <Tooltip item={item} lang={lang} lit={p.lit} />
+        <button className="primary" onClick={p.onFaustus}>{t(lang, 'takeToFaustus')}</button>
+      </div>
     </section>
   )
 }

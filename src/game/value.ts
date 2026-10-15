@@ -100,6 +100,9 @@ const FLOOR = GOLD_PER_CHAOS // junk still fetches a chaos
 // (S 2 ~ a few chaos, 3 ~ 20c, 4 ~ 100c, 5 ~ budget, 6 ~ 4x budget). FULL_ITEM (6 options) is only for "completeness".
 export const SYNERGY = 1.4
 export const PRICE_ANCHOR = 5
+// Overall price level on top of every budget (user, 2026-10-15: three tier 1-2 options on a Twilight Regalia sold for
+// about 3,000 gold, "at least 2 divine"). x25: one good option ~ a chaos, three ~ 2.5 divine, six on one build ~ 160.
+export const PRICE_LEVEL = 25
 export const FULL_ITEM = 6
 export const synergy = (contributions: number[]) => Math.exp(SYNERGY * (contributions.reduce((a, b) => a + b, 0) - PRICE_ANCHOR))
 
@@ -224,7 +227,7 @@ export interface Quote {
   price: number // max(option value, (expected cost + option value) / 2), never below the floors
   optionValue: number // what the best buyer pays for the options (V)
   expectedCost: number // what making it is expected to cost (E, see history.ts)
-  top: ProfileQuote[] // best 3 buyers
+  top: ProfileQuote[] // best 3 buyers that pay anything
   best?: { id: string; name: string; fit: number; usefulCount: number; completeness: number; baseQuality: number; mods: ModVerdict[] }
   baseResale: number
 }
@@ -281,9 +284,11 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const attackBuyer = Object.keys(p.wants).some((sid) => ATTACK_STATS.includes(sid))
   const quality = baseQuality(item.base, attackBuyer)
   const usefulCount = mods.filter((m) => m.useful).length
-  const single = usefulCount <= 1 ? SINGLE_OPTION : 1
+  // Nothing useful among the explicit options: fixed options alone don't sell, only the base does (else buying a white
+  // Two-Stone Ring and selling it straight back would pay).
+  const single = usefulCount === 0 ? 0 : usefulCount === 1 ? SINGLE_OPTION : 1
   const elevated = ELEVATED_SURGE[Math.min(3, mods.filter((m) => m.useful && MODS[m.id].elev).length)]
-  const value = p.budget * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
+  const value = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
   return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods }
 }
@@ -365,7 +370,7 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
     price: Math.max(FLOOR, resale, finalPrice(cost, best.value, best.usefulCount)),
     optionValue: best.value,
     expectedCost: cost,
-    top: judged.slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id, day) : null })),
+    top: judged.filter((j) => j.value > 0).slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id, day) : null })),
     best: best.usefulCount > 0
       ? { id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality, mods: best.mods }
       : undefined,

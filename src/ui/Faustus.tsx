@@ -14,12 +14,13 @@ interface Props {
   day: number
   meta: Meta
   canSell: boolean
+  lit: boolean | null // search highlight on the item
   onSell: () => void
   onBack: () => void
 }
 
 // The quote, who pays it, and only what moves the price (user: no other explanation anywhere).
-export function Faustus({ lang, entry, day, meta, canSell, onSell, onBack }: Props) {
+export function Faustus({ lang, entry, day, meta, canSell, lit, onSell, onBack }: Props) {
   const q = useMemo(() => (entry ? quote(entry.item, lang, day, meta) : null), [entry, lang, day, meta])
   const sat = entry && q?.best ? saturation(meta, q.best.id, slotOf(BASES[entry.item.base].cls)) : 1
   const elevated = Math.min(3, q?.best?.mods.filter((m) => m.useful && m.tier === 0).length ?? 0)
@@ -30,17 +31,21 @@ export function Faustus({ lang, entry, day, meta, canSell, onSell, onBack }: Pro
         <p className="hint">{t(lang, 'selectItem')}</p>
       ) : (
         <>
-          <Tooltip item={entry.item} lang={lang} />
+          <Tooltip item={entry.item} lang={lang} lit={lit} />
           <div className="quote">
             <div className="quote-price">{t(lang, 'quote')}: <strong>{fmtGold(q.price)}</strong></div>
             <button className="primary" disabled={!canSell} onClick={onSell}>{t(lang, 'sell')}</button>
             <button onClick={onBack}>{t(lang, 'back')}</button>
           </div>
 
-          <h3>{t(lang, 'whoUses')}</h3>
-          <ol>{q.top.map((p) => (
-            <li key={p.id}>{p.name} — {fmtGold(p.value)}{p.trend && <span className={`trend ${p.trend}`}> {t(lang, p.trend === 'rising' ? 'trendRising' : 'trendFalling')}</span>}</li>
-          ))}</ol>
+          {q.top.length > 0 && (
+            <>
+              <h3>{t(lang, 'whoUses')}</h3>
+              <ol>{q.top.map((p) => (
+                <li key={p.id}>{p.name} — {fmtGold(p.value)}{p.trend && <span className={`trend ${p.trend}`}> {t(lang, p.trend === 'rising' ? 'trendRising' : 'trendFalling')}</span>}</li>
+              ))}</ol>
+            </>
+          )}
 
           <h3>{t(lang, 'why')}</h3>
           {!q.best ? <p>{t(lang, 'noBuyer')}</p> : (

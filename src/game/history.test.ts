@@ -71,7 +71,7 @@ test('고효율 유효 옵션: 흔한 옵션(저항)은 세지 않고, 2개 이�
   assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'AddedPhysicalDamage5', 'FireResist8'])), 2)
 })
 
-test('기대 비용: 드문 결과일수록 큼, 견적은 옵션 가치 (기대 비용이 더 커도 올려 주지 않음)', () => {
+test('기대 비용: 드문 결과일수록 큼, 견적은 공식대로 (기대 비용이 더 커도 올려 주지 않는 건 아래 공식 테스트)', () => {
   // 고효율 옵션이 잘 붙은 카오스 결과를 찾을 때까지 굴림 (같은 시드라 결과는 늘 같음)
   let { s, uid } = start(RING)
   s = ok(doCurrency(s, uid, 'alchemy'))
@@ -93,7 +93,6 @@ test('기대 비용: 드문 결과일수록 큼, 견적은 옵션 가치 (기대
   assert.ok(Math.abs(eLucky - ePlain - (chaos / p - chaos)) < 1e-6, `${eLucky} vs ${ePlain}`)
   const q = quote(lucky, 'ko', 7)
   assert.equal(q.expectedCost, Math.round(eLucky))
-  assert.ok(q.expectedCost > q.optionValue, '드문 결과라 기대 비용이 옵션 가치보다 큼')
   assert.equal(q.price, Math.max(finalPrice(q.expectedCost, q.optionValue, q.best?.usefulCount ?? 0), q.baseResale))
 })
 

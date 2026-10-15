@@ -62,7 +62,6 @@ input[type='number'] { width: 90px; }
 .stash-item.magic span { color: var(--magic); }
 .stash-item.rare span { color: var(--rare); }
 .stash-item.selected { border-color: var(--gold); }
-.stash-item.dim { opacity: 0.25; }
 .stash-item small { color: var(--dim); white-space: nowrap; }
 
 /* PoE-like item tooltip */
@@ -97,6 +96,9 @@ input[type='number'] { width: 90px; }
 .verdicts .useful { color: #9fdc9f; }
 .verdicts .useless { color: var(--dim); }
 .price-factors { list-style: none; padding: 0; margin: 4px 0; }
+.bench-item { margin-top: 12px; }
+.tooltip.lit { box-shadow: 0 0 0 2px var(--gold), 0 0 16px rgba(230, 197, 110, 0.55); }
+.tooltip.unlit { opacity: 0.35; }
 .popular { margin-bottom: 8px; }
 .popular summary { cursor: pointer; color: var(--gold); }
 .popular ol { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 6px 0 0; padding-left: 0; list-style-position: inside; }

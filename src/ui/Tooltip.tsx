@@ -2,12 +2,13 @@ import type { Item } from '../engine/item.ts'
 import { baseArt, baseKind, eldritchItemLines, eldritchLabel, influenceName, itemName, modLines, type Lang } from '../game/describe.ts'
 import { t, tierText } from '../i18n.ts'
 
-export function Tooltip({ item, lang }: { item: Item; lang: Lang }) {
+// lit: the search's bright/dim look (true matches, false doesn't, null/undefined no search).
+export function Tooltip({ item, lang, lit }: { item: Item; lang: Lang; lit?: boolean | null }) {
   const lines = modLines(item, lang)
   const implicits = lines.filter((l) => l.kind === 'implicit')
   const explicits = lines.filter((l) => l.kind !== 'implicit')
   return (
-    <div className={`tooltip ${item.rarity}`}>
+    <div className={`tooltip ${item.rarity}${lit === true ? ' lit' : lit === false ? ' unlit' : ''}`}>
       <div className="tt-head">{itemName(item, lang)}</div>
       <div className="tt-body">
         <img className="tt-art" src={`${import.meta.env.BASE_URL}${baseArt(item.base)}`} alt="" />

@@ -47,6 +47,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
 
   const entry = state.stash.find((x) => x.uid === selected)
   const match = useMemo(() => compileSearch(settings.search), [settings.search])
+  // The search lights up (or dims) the item shown in the middle, not the stash list (user).
+  const lit = match && entry ? match(searchText(entry.item, lang)) : null
   const actionsLeft = ACTIONS_PER_DAY - state.used
 
   useEffect(() => {
@@ -213,7 +215,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
             {tab('codex', t(lang, 'codex'))}
           </nav>
           {view === 'bench' && (
-            <Bench lang={lang} entry={entry} gold={state.gold} day={state.day} canSpam={!!match}
+            <Bench lang={lang} entry={entry} gold={state.gold} day={state.day} canSpam={!!match} lit={lit}
               onCurrency={onCurrency} onBench={onBench} onRemoveCrafted={onRemoveCrafted} onMatron={onMatron} onEssence={onEssence}
               onFossils={onFossils} onMirror={onMirror} onSpam={onSpam} onFaustus={openFaustus}
               stash={state.stash} onInfluenceExalt={onInfluenceExalt} onDominance={onDominance} onAwaken={onAwaken}
@@ -227,7 +229,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           )}
           {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
           {view === 'faustus' && (
-            <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0}
+            <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} lit={lit}
               onSell={onSell} onBack={() => setView('bench')} />
           )}
         </div>

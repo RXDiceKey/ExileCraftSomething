@@ -140,6 +140,11 @@ test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같
   const capped = spamAlteration(s, uid, () => false, { augPrefix: false, augSuffix: false, maxTries: 10, goldCap: 1e9 })
   assert.equal(capped.stop, 'maxTries')
   assert.equal(capped.alts, 10)
+
+  // 이미 맞는 아이템에서 다시 누르면 다시 돌림 (사용자)
+  const again = spamAlteration(r.state, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000, goldCap: 1e9 })
+  assert.ok(again.alts >= 1, '적어도 한 번은 굴림')
+  assert.equal(again.stop, 'matched')
 })
 
 test('평범한 목걸이(옵션 효과 +100%)면 같은 옵션도 더 비쌈', () => {

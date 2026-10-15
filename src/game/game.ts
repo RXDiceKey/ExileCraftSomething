@@ -222,7 +222,7 @@ export interface SpamReport {
   alts: number
   augs: number
   spent: number
-  stop: 'matched' | 'already' | 'maxTries' | 'goldCap' | 'noGold' | 'notMagic'
+  stop: 'matched' | 'maxTries' | 'goldCap' | 'noGold' | 'notMagic'
 }
 
 // "변옵 스팸머신": Alteration until the item matches the search (optionally Augmenting an empty side).
@@ -235,8 +235,8 @@ export function spamAlteration(s: GameState, uid: number, matches: (item: Item) 
   const rng = { ...s.rng }
   const done = (stop: SpamReport['stop']): SpamReport =>
     ({ state: item ? { ...s, rng, gold, stash: replaceItem(s, uid, item) } : s, alts, augs, spent, stop })
+  // A press always rolls, even on an item that already matches (user: pressing again runs it again).
   if (!item || !CURRENCIES.alteration.can(item)) return done('notMagic')
-  if (matches(item)) return done('already')
   // Same record as clicking by hand.
   const step = (i: Item, c: 'alteration' | 'augmentation') => {
     const made = CURRENCIES[c].apply(i, rng)

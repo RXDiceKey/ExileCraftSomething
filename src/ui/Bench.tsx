@@ -8,8 +8,9 @@ import { canRecombine } from '../engine/recombinator.ts'
 import { HARVEST, LIFEFORCE, type Lifeforce } from '../engine/harvest.ts'
 import { canReveal, canUnveil, isVeiled } from '../engine/veiled.ts'
 import { canEldritchImplicit, conflictChance, dominance, eldritchTier, EMBERS, ICHORS } from '../engine/eldritch.ts'
-import { AWAKENER, canAwaken, canDominance, canInfluenceExalt, DOMINANCE, INFLUENCE_EXALTS } from '../engine/influence.ts'
-import { bestiaryText, gameText, harvestText, influenceName, itemName, rangeText, type Lang } from '../game/describe.ts'
+import { AWAKENER, canAwaken, canDominance, canInfluenceExalt, DOMINANCE, INFLUENCE_EXALTS, isInfluenced } from '../engine/influence.ts'
+import type { Item } from '../engine/item.ts'
+import { bestiaryText, gameText, harvestText, influenceName, itemName, modLines, rangeText, type Lang } from '../game/describe.ts'
 import { beastCost, ELDRITCH_ORBS, fossilCost, harvestCost, recombineCost, VEILED_ORBS, type SpamOptions, type SpamReport, type StashItem } from '../game/game.ts'
 import { CURRENCY_EN, currencyPrice, iconOf, MIRROR, nameOf, priceOf } from '../game/shop.ts'
 import { fmtGold, t } from '../i18n.ts'
@@ -20,6 +21,17 @@ const ORBS: CurrencyId[] = [
   'annulment', 'divine', 'blessed', 'scouring', 'vaal', 'fracturing', 'whetstone', 'scrap',
 ]
 const ESSENCES = Object.keys(CRAFTING.essences)
+
+// An item's options, one per line (recombinator / Awakener lists); `keep` marks the ones that can carry over.
+function ModList({ item, lang, keep }: { item: Item; lang: Lang; keep?: (id: string) => boolean }) {
+  return (
+    <ul className="mod-list">
+      {modLines(item, lang).filter((l) => l.kind !== 'implicit').map((l, k) => (
+        <li key={k} className={keep?.(l.id) ? 'keep' : undefined}>{l.text.join(' / ')}</li>
+      ))}
+    </ul>
+  )
+}
 const FOSSILS = Object.keys(CRAFTING.fossils)
 
 type Tab = 'orbs' | 'bench' | 'essence' | 'fossil' | 'influence' | 'eldritch' | 'harvest' | 'beast' | 'veiled' | 'recombine'
@@ -182,14 +194,25 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
           </div>
           <h3><img className="inline-icon" src={icon(AWAKENER)} alt="" /> {nameOf(AWAKENER, lang)} — {fmtGold(priceOf(AWAKENER))}</h3>
           {donors.length === 0 ? <p className="hint">{t(lang, 'awakenNone')}</p> : (
-            <ul className="craft-list">
-              {donors.map((d) => (
-                <li key={d.uid}>
-                  <span>{itemName(d.item, lang)} · {d.item.influences.map((i) => influenceName(i, lang)).join(', ')} · ilvl {d.item.ilvl}</span>
-                  <button disabled={priceOf(AWAKENER) > gold} onClick={() => { sfx('currencyApply'); p.onAwaken(d.uid) }}>{t(lang, 'awakenUse')}</button>
-                </li>
-              ))}
-            </ul>
+            <>
+              {/* The selected item is the base; one highlighted (influence) option from each item stays. */}
+              <div className="awaken-base">
+                <b>{t(lang, 'awakenBase')}: {itemName(item, lang)}</b> · {item.influences.map((i) => influenceName(i, lang)).join(', ')}
+                <ModList item={item} lang={lang} keep={isInfluenced} />
+                <span className="hint">{t(lang, 'awakenKeep')}</span>
+              </div>
+              <ul className="craft-list partner-list">
+                {donors.map((d) => (
+                  <li key={d.uid}>
+                    <div>
+                      <span>{itemName(d.item, lang)} · {d.item.influences.map((i) => influenceName(i, lang)).join(', ')} · ilvl {d.item.ilvl}</span>
+                      <ModList item={d.item} lang={lang} keep={isInfluenced} />
+                    </div>
+                    <button disabled={priceOf(AWAKENER) > gold} onClick={() => { sfx('currencyApply'); p.onAwaken(d.uid) }}>{t(lang, 'awakenUse')}</button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </>
       )}
@@ -304,12 +327,15 @@ ${forced}`} onClick={() => { sfx('currencyApply'); p.onEssence(n) }}>
         return (
           <>
             {partners.length === 0 ? <p className="hint">{t(lang, 'recombineNone')}</p> : (
-              <ul className="craft-list">
+              <ul className="craft-list partner-list">
                 {partners.map((d) => {
                   const price = recombineCost(item, d.item)
                   return (
                     <li key={d.uid}>
-                      <span>{itemName(d.item, lang)} · ilvl {d.item.ilvl} · {t(lang, 'modCount', d.item.explicits.length)}</span>
+                      <div>
+                        <span>{itemName(d.item, lang)} · ilvl {d.item.ilvl}</span>
+                        <ModList item={d.item} lang={lang} />
+                      </div>
                       <button disabled={price > gold} onClick={() => { sfx('currencyApply'); p.onRecombine(d.uid) }}>{t(lang, 'recombine')} {fmtGold(price)}</button>
                     </li>
                   )

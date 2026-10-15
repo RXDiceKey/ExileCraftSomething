@@ -172,3 +172,7 @@ input[type='number'] { width: 90px; }
 }
 .drop-options summary { cursor: pointer; color: var(--dim); font-size: 12px; }
 .drop-options ul { margin: 2px 0 4px; padding-left: 16px; color: var(--mod); font-size: 12px; }
+.mod-list { list-style: none; padding: 0; margin: 2px 0 0; font-size: 12px; color: var(--mod); }
+.mod-list .keep { color: var(--gold); font-weight: bold; }
+.partner-list li { align-items: flex-start; }
+.awaken-base { margin: 4px 0 8px; }

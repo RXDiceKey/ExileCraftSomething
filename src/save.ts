@@ -42,7 +42,7 @@ export function exportFile(s: GameState) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(s)], { type: 'application/json' }))
   const a = document.createElement('a')
   a.href = url
-  a.download = `craftingisfun-day${s.day}.json`
+  a.download = `exilecraftsomething-day${s.day}.json`
   a.click()
   URL.revokeObjectURL(url)
 }

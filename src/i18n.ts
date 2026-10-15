@@ -1,7 +1,7 @@
 import type { Lang } from './game/describe.ts'
 
 const ko = {
-  title: 'CraftingIsFun',
+  title: 'ExileCraftSomething',
   chooseLang: '언어를 선택하세요',
   newRun: '새로 시작',
   continue: '이어하기',
@@ -144,7 +144,7 @@ const ko = {
   mute: '음소거',
   toStartMenu: '시작 메뉴로',
   creditsBody: [
-    '**CraftingIsFun**은 Path of Exile의 제작 시스템을 바탕으로 만든 **비공식 팬 프로젝트**입니다.',
+    '**ExileCraftSomething**은 Path of Exile의 제작 시스템을 바탕으로 만든 **비공식 팬 프로젝트**입니다.',
     '- Grinding Gear Games(GGG)와 관련이 없으며, GGG의 승인이나 후원을 받지 않았습니다.',
     '- Path of Exile과 관련된 이름, 이미지, 음성, 게임 데이터의 권리는 모두 GGG에 있습니다.',
     '- 이 게임은 무료이며, 이 게임으로 수익을 얻지 않습니다.',
@@ -159,7 +159,7 @@ const ko = {
 type Dict = typeof ko
 
 const en: Dict = {
-  title: 'CraftingIsFun',
+  title: 'ExileCraftSomething',
   chooseLang: 'Choose your language',
   newRun: 'New Game',
   continue: 'Continue',
@@ -302,7 +302,7 @@ const en: Dict = {
   mute: 'Mute',
   toStartMenu: 'Start menu',
   creditsBody: [
-    '**CraftingIsFun** is an **unofficial, non-commercial fan project** based on the crafting systems of Path of Exile.',
+    '**ExileCraftSomething** is an **unofficial, non-commercial fan project** based on the crafting systems of Path of Exile.',
     '- Not affiliated with or endorsed by Grinding Gear Games (GGG).',
     '- Path of Exile and all related names, images, audio and game data are property of GGG.',
     '- This game is free and makes no money.',

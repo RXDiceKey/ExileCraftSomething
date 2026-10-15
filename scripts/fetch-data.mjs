@@ -5,7 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
 const RAW = resolve('data-raw')
-const UA = 'CraftingIsFun data snapshot (https://github.com/RXDiceKey/ExileCraftSomething)'
+const UA = 'ExileCraftSomething data snapshot (https://github.com/RXDiceKey/ExileCraftSomething)'
 
 async function get(url, as = 'json') {
   const res = await fetch(url, { headers: { 'User-Agent': UA } })

@@ -7,7 +7,7 @@ const rich = (s: string) => s.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? 
 export function LanguageSelect({ onPick }: { onPick: (l: Lang) => void }) {
   return (
     <main className="screen">
-      <h1>CraftingIsFun</h1>
+      <h1>ExileCraftSomething</h1>
       <p>언어를 선택하세요 · Choose your language</p>
       <div className="menu">
         <button onClick={() => onPick('ko')}>한국어</button>

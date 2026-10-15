@@ -20,7 +20,6 @@ interface Props {
 
 export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onBack }: Props) {
   const q = useMemo(() => (entry ? quote(entry.item, lang, day, meta) : null), [entry, lang, day, meta])
-  const byCost = !!q && q.expectedCost > q.optionValue && q.price === Math.round((q.expectedCost + q.optionValue) / 2)
   const elevated = Math.min(3, q?.best?.mods.filter((m) => m.useful && m.tier === 0).length ?? 0)
   return (
     <section className="panel faustus">
@@ -36,7 +35,7 @@ export function Faustus({ lang, entry, day, meta, canSell, subtitle, onSell, onB
             <button className="primary" disabled={!canSell} onClick={onSell}>{t(lang, 'sell')}</button>
             <button onClick={onBack}>{t(lang, 'back')}</button>
           </div>
-          <p className="hint">{t(lang, 'costNote', fmtGold(q.optionValue), fmtGold(q.expectedCost))}{byCost && <><br />{t(lang, 'costRule')}</>}</p>
+          <p className="hint">{t(lang, 'costNote', fmtGold(q.optionValue), fmtGold(q.expectedCost))}</p>
 
           <h3>{t(lang, 'whoUses')}</h3>
           <ol>{q.top.map((p) => (

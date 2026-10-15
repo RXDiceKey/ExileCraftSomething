@@ -7,7 +7,7 @@ import { buyBase, newGame, useCurrency, useImprint, useRestore, type GameState, 
 import { record, stepProbability } from './history.ts'
 import { replay } from './replay.ts'
 import { basePrice, baseResale, currencyPrice } from './shop.ts'
-import { ELEVATED_SURGE, highEffCount, itemExpectedCost, quote } from './value.ts'
+import { ELEVATED_SURGE, finalPrice, highEffCount, itemExpectedCost, quote } from './value.ts'
 
 const names = (textEn as { bases: Record<string, string> }).bases
 const baseId = (n: string) => Object.keys(names).find((k) => names[k] === n)!
@@ -71,7 +71,7 @@ test('고효율 유효 옵션: 흔한 옵션(저항)은 세지 않고, 2개 이�
   assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'AddedPhysicalDamage5', 'FireResist8'])), 2)
 })
 
-test('기대 비용: 드문 결과일수록 크고, 견적은 max(옵션 가치, (기대 비용 + 옵션 가치) / 2)', () => {
+test('기대 비용: 드문 결과일수록 큼, 견적은 옵션 가치 (기대 비용이 더 커도 올려 주지 않음)', () => {
   // 고효율 옵션이 잘 붙은 카오스 결과를 찾을 때까지 굴림 (같은 시드라 결과는 늘 같음)
   let { s, uid } = start(RING)
   s = ok(useCurrency(s, uid, 'alchemy'))
@@ -93,8 +93,14 @@ test('기대 비용: 드문 결과일수록 크고, 견적은 max(옵션 가치,
   assert.ok(Math.abs(eLucky - ePlain - (chaos / p - chaos)) < 1e-6, `${eLucky} vs ${ePlain}`)
   const q = quote(lucky, 'ko', 7)
   assert.equal(q.expectedCost, Math.round(eLucky))
-  assert.ok(q.price >= Math.max(q.optionValue, Math.round((q.expectedCost + q.optionValue) / 2)))
-  assert.ok(q.price < q.expectedCost || q.price === q.optionValue, '운은 절반만 쳐 줌')
+  assert.ok(q.expectedCost > q.optionValue, '드문 결과라 기대 비용이 옵션 가치보다 큼')
+  assert.equal(q.price, Math.max(q.optionValue, q.baseResale))
+})
+
+test('견적 공식: A(기대 비용) < B(옵션 가치)면 max((A + B) / 2, B), 아니면 B', () => {
+  assert.equal(finalPrice(100, 300), 300)
+  assert.equal(finalPrice(300, 100), 100, '옵션 가치가 더 작으면 그 값')
+  assert.equal(finalPrice(200, 200), 200)
 })
 
 test('고양 옵션: 유효한 고양 옵션이 많을수록 폭등 (1개 2배, 2개 8배, 3개 40배)', () => {

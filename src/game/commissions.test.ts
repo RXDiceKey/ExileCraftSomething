@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
-import { canDeliver, type Commission } from './commissions.ts'
+import { canDeliver, rewardScale, type Commission } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, newGame, sell, useCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
@@ -100,4 +100,11 @@ test('의뢰 게시판: 기한이 지나면 사라지고, 마감마다 새 의�
     assert.ok(s.board!.every((c) => c.until >= s.day), '기한 지난 의뢰 없음')
     assert.ok(s.board!.length <= 5)
   }
+})
+
+test('의뢰 보수: 초반엔 낮고 뒤로 갈수록 높음 (1일차 ×0.6 → 14일차 ×1.5)', () => {
+  assert.equal(rewardScale(1, 14), 0.6)
+  assert.equal(rewardScale(14, 14), 1.5)
+  assert.ok(Math.abs(rewardScale(7, 14) - (0.6 + 0.9 * 6 / 13)) < 1e-12)
+  assert.ok(rewardScale(5, 14) < rewardScale(6, 14))
 })

@@ -1,8 +1,9 @@
 // Commission board (D38): builds post orders for one slot — a few options they want at a tier or better, a deadline and
 // a fixed reward. Delivering uses one of the day's sales and pays at the next day close, like a sale.
-// Reward: the larger of COMMISSION_BONUS x Faustus's quote for the plainest item that fills it, and SPAM_BONUS x what
-// filling it is expected to cost by the cheapest plain spam (alteration + augmentation, alchemy + scouring, or chaos):
-// base + cost per try / P, with P measured by rolling it as in history.ts. Plain spam pays a little; smarter pays more.
+// Reward: the larger of COMMISSION_BONUS x Faustus's quote for the plainest item that fills it, and what filling it is
+// expected to cost by the cheapest plain spam (alteration + augmentation, alchemy + scouring, or chaos): base + cost per
+// try / P, with P measured by rolling it as in history.ts. Times rewardScale(day), low early and high late (user):
+// early on only smart crafting pays, by the end even plain spam does.
 import { CURRENCIES } from '../engine/currency.ts'
 import { BASES, MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
@@ -27,7 +28,9 @@ export interface Commission {
 export const BOARD_MAX = 5
 export const COMMISSION_DAYS = 3 // today and the next two
 export const COMMISSION_BONUS = 1.5
-export const SPAM_BONUS = 1.2
+export const REWARD_FIRST = 0.6 // day 1
+export const REWARD_LAST = 1.5 // last day; straight line between
+export const rewardScale = (day: number, lastDay: number) => REWARD_FIRST + (REWARD_LAST - REWARD_FIRST) * (day - 1) / (lastDay - 1)
 const HITS = 20
 const MAX_ROLLS = 1500 // rarer orders hit the Laplace cap: they are hard anyway, and day close stays quick
 const WANTS = 2
@@ -81,7 +84,8 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   const c: Commission = { id, build: b.id, slot, classes, ...(want.defence && { defence: want.defence }), wants, until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0 }
   const sides = new Set(picked.map((m) => MODS[m].gen))
   const bySpam = basePrice(ref.base, ILVL, day) + spamCost(ref, c, sides.size === 2)
-  return { ...c, reward: Math.round(Math.max(COMMISSION_BONUS * quote(plainest, 'en', day, meta).price, SPAM_BONUS * bySpam)) }
+  const reward = Math.max(COMMISSION_BONUS * quote(plainest, 'en', day, meta).price, bySpam) * rewardScale(day, lastDay)
+  return { ...c, reward: Math.round(reward) }
 }
 
 // Expected spend to fill the order from a plain base by the cheapest plain spam (fixed seed: same order, same reward).

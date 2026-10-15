@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
-import { canDeliver, rewardScale, type Commission } from './commissions.ts'
+import { canDeliver, COMMISSION_BONUS, refreshBoard, WANTS_LATE_FROM, type Commission } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
@@ -14,9 +14,9 @@ const ok = <T>(r: Result<T>): T => { assert.ok(r.ok, r.ok ? '' : r.error); retur
 const names = (textEn as { bases: Record<string, string> }).bases
 const RING = Object.keys(names).find((k) => names[k] === 'Two-Stone Ring')!
 
-// The plainest item that fills a commission (first fitting base, worst tier that still counts).
+// An item that fills a commission (its base, the first mod of each wanted option that meets the tier).
 function fill(c: Commission): Item {
-  const base = buyableBases().find((b) => c.classes.includes(BASES[b].cls)
+  const base = c.base ?? buyableBases().find((b) => c.classes.includes(BASES[b].cls)
     && (!c.defence || c.defence.some((d) => baseKindKeys(b).defences.includes(d))))!
   const item = newItem(base, 84, { s: 1 })
   const tags = itemTags(item)
@@ -102,9 +102,41 @@ test('의뢰 게시판: 기한이 지나면 사라지고, 마감마다 새 의�
   }
 })
 
-test('의뢰 보수: 초반엔 낮고 뒤로 갈수록 높음 (1일차 ×0.6 → 14일차 ×1.5)', () => {
-  assert.equal(rewardScale(1, 14), 0.6)
-  assert.equal(rewardScale(14, 14), 1.5)
-  assert.ok(Math.abs(rewardScale(7, 14) - (0.6 + 0.9 * 6 / 13)) < 1e-12)
-  assert.ok(rewardScale(5, 14) < rewardScale(6, 14))
+test('의뢰 보수 = 같은 옵션을 파우스투스에게 보였을 때의 옵션 가치 × 1.5 (조건을 겨우 채운 아이템 기준)', () => {
+  for (const day of [1, 7, 12]) {
+    const meta = rollMeta({ s: day })
+    for (const c of refreshBoard([], day, 14, meta, { s: day * 13 })) {
+      // Each option at the worst tier that still counts, like the order's own reference item.
+      const item = newItem(c.base!, 84, { s: 1 })
+      const tags = itemTags(item)
+      const ids: string[] = []
+      for (const w of c.wants) {
+        const fits = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
+          && !MODS[x].elev && MODS[x].stats.some(([st]) => st === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
+          && !ids.some((q) => MODS[q].grp.some((g) => MODS[x].grp.includes(g))))
+        ids.push(fits.reduce((a, x) => (tierOf(item, x) > tierOf(item, a) ? x : a)))
+      }
+      const plain: Item = { ...item, rarity: 'rare', explicits: ids.map((id) => rollMod(id, { s: 2 })) }
+      const v = quote(plain, 'en', day, meta).optionValue
+      // Only the rolled values differ from the order's own item (a roll moves a contribution by up to 15%).
+      const ratio = c.reward / (COMMISSION_BONUS * v)
+      assert.ok(ratio > 0.6 && ratio < 1.7, `${day}일차 ${c.build}: 보수 ${c.reward}, 옵션 가치 ${v}`)
+    }
+  }
+})
+
+test('의뢰: 처음부터 옵션 3개, 중반(7일차)부터 4개, 빌드가 가장 좋아하는 베이스를 지정', () => {
+  for (const day of [1, 3, 6, 7, 10, 14]) {
+    for (let seed = 1; seed <= 4; seed++) {
+      for (const c of refreshBoard([], day, 14, rollMeta({ s: seed }), { s: seed * 31 + day })) {
+        assert.equal(c.wants.length, day >= WANTS_LATE_FROM ? 4 : 3, `${day}일차 옵션 수`)
+        assert.ok(c.base && c.classes.includes(BASES[c.base].cls), '베이스 지정')
+        const item = fill(c)
+        assert.ok(canDeliver(item, c), '그 베이스에 조건 옵션을 다 붙이면 납품 가능')
+        const other = buyableBases().find((b) => b !== c.base && BASES[b].cls === BASES[c.base!].cls)
+        if (other) assert.equal(canDeliver({ ...item, base: other }, c), false, '다른 베이스는 안 받음')
+        assert.ok(c.reward > 0 && Number.isFinite(c.reward))
+      }
+    }
+  }
 })

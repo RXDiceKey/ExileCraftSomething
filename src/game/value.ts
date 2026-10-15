@@ -175,7 +175,7 @@ export const stackedAttributes = (buildId: string) => [...(STACKS.get(buildId) ?
 
 // How much a buyer wants a mod: its best stat. A hybrid mod (two stats, e.g. minimum frenzy charges + frenzy charge on
 // kill) is still one option, so it never counts twice. `steep`: only high tiers count (stacked attributes).
-function wantOf(p: Buyer, stats: string[]): { w: number; note?: ModNote; steep: boolean } {
+function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: number; note?: ModNote; steep: boolean } {
   let best: { w: number; note?: ModNote; steep: boolean } = { w: 0, steep: false }
   for (const sid of stats) {
     let want = p.wants[sid] ?? 0
@@ -286,6 +286,17 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const value = p.budget * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
   return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods }
+}
+
+// How much a build likes a base before any explicit option: base quality and the fixed options it wants, as in judge().
+// Commissions ask for the base their build likes best.
+export function baseAppeal(buildId: string, slot: Slot, base: string): number {
+  const want = BUILDS.find((b) => b.id === buildId)?.slots[slot]
+  if (!want) return 0
+  const p = { wants: want.wants, stacks: STACKS.get(buildId)! }
+  const implicit = BASES[base].imp.reduce((s, id) => s + IMPLICIT_WEIGHT * wantOf(p, MODS[id].stats.map(([sid]) => sid)).w, 0)
+  const attackBuyer = Object.keys(want.wants).some((sid) => ATTACK_STATS.includes(sid))
+  return baseQuality(base, attackBuyer) ** BASE_POWER * Math.exp(SYNERGY * implicit)
 }
 
 // ---- High-efficiency useful options (D35): options a buyer values at HIGH_EFF or more before roll and boosts (about

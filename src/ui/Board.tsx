@@ -1,6 +1,6 @@
 // Commission board (D38) and rumors about the coming patches.
 import { canDeliver, type Commission } from '../game/commissions.ts'
-import { className, defenceName, statLabel, type Lang } from '../game/describe.ts'
+import { baseArt, baseName, className, defenceName, statLabel, type Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, type Meta } from '../game/meta.ts'
 import { fmtGold, t } from '../i18n.ts'
@@ -26,8 +26,9 @@ export function Board({ lang, board, meta, entry, canSell, onDeliver }: Props) {
           return (
             <li key={c.id}>
               <div>
-                <b>{buildName(c.build, lang)}</b> — {c.classes.map((x) => className(x, lang)).join('·')}
-                {c.defence && ` (${c.defence.map((d) => defenceName(d, lang)).join('/')})`}
+                <b>{buildName(c.build, lang)}</b> — {c.base
+                  ? <><img className="inline-icon" src={`${import.meta.env.BASE_URL}${baseArt(c.base)}`} alt="" /> {baseName(c.base, lang)} <span className="hint">({t(lang, 'commissionOptions', c.wants.length)})</span></>
+                  : <>{c.classes.map((x) => className(x, lang)).join('·')}{c.defence && ` (${c.defence.map((d) => defenceName(d, lang)).join('/')})`}</>}
               </div>
               <ul>
                 {c.wants.map((w) => (

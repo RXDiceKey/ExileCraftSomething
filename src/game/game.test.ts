@@ -10,7 +10,7 @@ import { compileSearch } from './search.ts'
 import { basePrice, baseResale, lifeforcePrice, premium, priceOf } from './shop.ts'
 import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
-import { quote, stackedAttributes, synergy } from './value.ts'
+import { quote, shortfall, stackedAttributes, synergy } from './value.ts'
 
 const baseNames = (textEn as { bases: Record<string, string> }).bases
 const baseId = (name: string) => Object.keys(baseNames).find((id) => baseNames[id] === name)!
@@ -281,11 +281,16 @@ test('세트 옵션: 정의의 화염 투구의 보조 젬 옵션은 하나만 �
   assert.ok(rf(both) > rf(one) * 8, `${rf(both)} vs ${rf(one)}`)
 })
 
-test('단일 옵션 아이템은 변화의 오브로 누구나 만들 수 있어 크게 할인', () => {
+test('쓸모 있는 옵션 3개부터 제값: 2개면 ×0.1, 1개면 ×0.01 (변화·제왕·엑잘로 쉽게 나오는 아이템)', () => {
+  assert.deepEqual([0, 1, 2, 3, 4].map(shortfall).map((x) => +x.toFixed(4)), [0, 0.01, 0.1, 1, 1])
   const one = quote(withMods(RING, ['IncreasedLife7']), 'ko', 8)
   const two = quote(withMods(RING, ['IncreasedLife7', 'ChaosResist5']), 'ko', 8)
+  const three = quote(withMods(RING, ['IncreasedLife7', 'ChaosResist5', 'FireResist7']), 'ko', 8)
   assert.equal(one.best?.usefulCount, 1)
   assert.ok(two.top[0].value > one.top[0].value * 6, `${two.top[0].value} vs ${one.top[0].value}`)
+  assert.equal(three.best?.usefulCount, 3)
+  // 2개짜리는 예산 큰 우버 빌드가 ×0.1로 사고, 3개짜리는 스타터 빌드가 제값에 삼
+  assert.ok(three.top[0].value > two.top[0].value * 3, `세 번째 좋은 옵션에서 크게 오름: ${three.top[0].value} vs ${two.top[0].value}`)
 })
 
 test('토요일 시작, 다음 주말(8·9일차)에 붐, 월요일에 거품 꺼짐', () => {

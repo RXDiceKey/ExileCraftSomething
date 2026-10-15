@@ -202,7 +202,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
             search={settings.search}
             onSearch={(q) => setSettings({ ...settings, search: q })}
           />
-          <Rivals lang={lang} gold={state.gold + state.pending} rivals={state.rivals} />
+          <Rivals lang={lang} gold={state.gold} pending={state.pending} rivals={state.rivals} />
         </div>
         <div className="main">
           <Popular lang={lang} meta={state.meta} day={state.day} open={settings.popularOpen ?? true}

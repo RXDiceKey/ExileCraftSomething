@@ -194,11 +194,15 @@ function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: numbe
 // Some options only work as a package: Righteous Fire's helmet needs several "Socketed Gems are Supported by" options
 // together, one alone is nearly worthless. Every socketed-gem option a buyer wants in a slot forms the set.
 const SET_STAT = /^local_display_socketed_/
-// One good option (or none) is an alteration spam away, so nobody pays much for it.
-export const SINGLE_OPTION = 0.2
+// Full price from FULL_FROM useful options on; each one short x SHORT (user, 2026-10-15). One or two good options are an
+// alteration + regal + exalt away (a Coral Ring with tier 1-3 life and two exalts sold at ~15x its cost after the x25
+// price level), three good ones are a real result. None at all: no option value, only the base.
+export const FULL_FROM = 3
+export const SHORT = 0.1
+export const shortfall = (useful: number) => (useful === 0 ? 0 : useful >= FULL_FROM ? 1 : SHORT ** (FULL_FROM - useful))
 
 const BASE_POWER = 1.5
-const IMPLICIT_WEIGHT = 0.5 // fixed options count, at half weight
+const IMPLICIT_WEIGHT = 0.1 // fixed options barely count (user: a slot the base's implicit fills isn't a crafted option)
 
 // Advanced / uber builds only count high tiers but pay much more for a near-complete item.
 const BUILD_TIER: Record<string, { maxTier: number; budget: number }> = {
@@ -284,9 +288,7 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const attackBuyer = Object.keys(p.wants).some((sid) => ATTACK_STATS.includes(sid))
   const quality = baseQuality(item.base, attackBuyer)
   const usefulCount = mods.filter((m) => m.useful).length
-  // Nothing useful among the explicit options: fixed options alone don't sell, only the base does (else buying a white
-  // Two-Stone Ring and selling it straight back would pay).
-  const single = usefulCount === 0 ? 0 : usefulCount === 1 ? SINGLE_OPTION : 1
+  const single = shortfall(usefulCount)
   const elevated = ELEVATED_SURGE[Math.min(3, mods.filter((m) => m.useful && MODS[m.id].elev).length)]
   const value = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
@@ -306,7 +308,7 @@ export function baseAppeal(buildId: string, slot: Slot, base: string): number {
 
 // ---- High-efficiency useful options (D35): options a buyer values at HIGH_EFF or more before roll and boosts (about
 // tiers 1-3 of a full want; a tier-1 resistance is only 0.5, so common options never count). M = the most any single
-// buyer counts, if at least 2: one good option alone is alteration-spam territory (SINGLE_OPTION), not luck, and
+// buyer counts, if at least 2: one good option alone is alteration-spam territory (see FULL_FROM), not luck, and
 // would let a junk item fetch half a jackpot. The expected-cost model measures how lucky a craft was in M; taking the
 // max over every buyer (not the one that ended up buying) keeps "some build finds this rare" from turning every roll
 // into a jackpot.

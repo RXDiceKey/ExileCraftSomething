@@ -66,8 +66,12 @@ input[type='number'] { width: 90px; }
 .stash-item small { color: var(--dim); white-space: nowrap; }
 
 /* PoE-like item tooltip */
-.tooltip { background: #000; border: 1px solid #555; max-width: 460px; text-align: center; margin-bottom: 10px; }
-.tt-head { padding: 6px; background: #1b1b1b; font-size: 16px; }
+.tooltip { background: #000; border: 1px solid #555; max-width: 460px; text-align: center; margin-bottom: 10px; position: relative; }
+.tt-head { padding: 6px 84px; background: #1b1b1b; font-size: 16px; }
+/* "자세히 보기": fixed in the corner, so it stays put whatever the item */
+.tt-adv { position: absolute; top: 5px; right: 5px; font-size: 11px; padding: 2px 6px; }
+.tt-adv.active { border-color: var(--gold); color: var(--gold); }
+.mod-tag.adv { color: #8c8c8c; }
 .tooltip.normal .tt-head { color: var(--normal); border-bottom: 1px solid #555; }
 .tooltip.magic .tt-head { color: var(--magic); border-bottom: 1px solid #5555aa; }
 .tooltip.rare .tt-head { color: var(--rare); border-bottom: 1px solid #887; }

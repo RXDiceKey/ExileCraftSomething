@@ -1,17 +1,23 @@
+import { useContext } from 'react'
 import { defences, weaponStats, type Item } from '../engine/item.ts'
 import { baseArt, baseKind, defenceName, eldritchItemLines, eldritchLabel, gameText, influenceName, itemName, modLines, type Lang } from '../game/describe.ts'
 import { t, tierText } from '../i18n.ts'
+import { AdvancedMods } from './advanced.ts'
 
 // lit: the search's bright/dim look (true matches, false doesn't, null/undefined no search).
 export function Tooltip({ item, lang, lit }: { item: Item; lang: Lang; lit?: boolean | null }) {
-  const lines = modLines(item, lang)
+  const adv = useContext(AdvancedMods)
+  const lines = modLines(item, lang, adv.on)
   const implicits = lines.filter((l) => l.kind === 'implicit')
   const explicits = lines.filter((l) => l.kind !== 'implicit')
   const w = weaponStats(item)
   const range = ([a, b]: [number, number]) => `${a}-${b}`
   return (
     <div className={`tooltip ${item.rarity}${lit === true ? ' lit' : lit === false ? ' unlit' : ''}`}>
-      <div className="tt-head">{itemName(item, lang)}</div>
+      <div className="tt-head">
+        {itemName(item, lang)}
+        <button className={`tt-adv${adv.pinned ? ' active' : ''}`} onClick={adv.toggle}>{t(lang, 'advancedMods')}</button>
+      </div>
       <div className="tt-body">
         <img className="tt-art" src={`${import.meta.env.BASE_URL}${baseArt(item.base)}`} alt="" />
         <div className="tt-meta">{baseKind(item.base, lang)}</div>
@@ -37,17 +43,24 @@ export function Tooltip({ item, lang, lit }: { item: Item; lang: Lang; lit?: boo
         {implicits.length > 0 && <hr />}
         {implicits.map((l) => (
           <div key={l.id} className="mod">
-            {eldritchLabel(l.id, lang) && <div className="mod-tag">{eldritchLabel(l.id, lang)}</div>}
+            {l.head ? <div className="mod-tag adv">{l.head}</div>
+              : eldritchLabel(l.id, lang) && <div className="mod-tag">{eldritchLabel(l.id, lang)}</div>}
             {l.text.map((line, k) => <div key={k} className="mod-line">{line}</div>)}
           </div>
         ))}
         {explicits.length > 0 && <hr />}
         {explicits.map((l) => (
           <div key={l.id} className="mod">
-            <div className="mod-tag">
-              {t(lang, l.kind === 'prefix' ? 'prefix' : 'suffix')} · {tierText(lang, l.tier ?? 1)} · {l.name}
-              {l.crafted && ` · ${t(lang, 'crafted')}`}{l.fractured && ` · ${t(lang, 'fractured')}`}{l.drop && ` · ${gameText(lang, l.drop)}`}
-            </div>
+            {l.head ? (
+              <div className="mod-tag adv">
+                {l.head}{l.tier === 0 && ` · ${tierText(lang, 0)}`}{l.drop && ` · ${gameText(lang, l.drop)}`}
+              </div>
+            ) : (
+              <div className="mod-tag">
+                {t(lang, l.kind === 'prefix' ? 'prefix' : 'suffix')} · {tierText(lang, l.tier ?? 1)} · {l.name}
+                {l.crafted && ` · ${t(lang, 'crafted')}`}{l.fractured && ` · ${t(lang, 'fractured')}`}{l.drop && ` · ${gameText(lang, l.drop)}`}
+              </div>
+            )}
             {l.text.map((line, k) => <div key={k} className="mod-line">{line}</div>)}
           </div>
         ))}

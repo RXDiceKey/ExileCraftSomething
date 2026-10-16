@@ -271,6 +271,7 @@ const names = (lang) => ({
   harvest: harvestText[lang],
   bestiary: bestiaryText[lang],
   fossils: fossilText[lang],
+  tags: tagText[lang],
 })
 // Fossil effects as the game words them, by fossil name ("Scorched Fossil": ["화염 속성 부여 증가", "냉기 속성 부여 없음"]).
 const delveBases = await raw('dat/tables/English/BaseItemTypes.json')
@@ -304,7 +305,15 @@ const GAME_STRINGS = {
   unveil: 'UnveilingWindowUnveilButton', // "장막 해제"
   breach: 'FragmentStashSubTabBreach', delve: 'DelveTabName', incursion: 'IncursionTempleBlueprintWindowTitle', // 균열 / 탐광 / 앗조아틀의 사원
   ...Object.fromEntries([1, 2, 3, 4, 5, 6].map((n) => [`eldritchTier${n}`, `EldritchCurrencyTier${n}`])), // Lesser..Perfect
+  // Advanced Mod Descriptions (the game's Alt view): '{ 접두어 속성 부여 "강건한" (등급: 1) — 생명력 }'
+  modPrefix: 'ModDescriptionLinePrefix', modSuffix: 'ModDescriptionLineSuffix', modImplicit: 'ModDescriptionLineImplicit',
+  modCorrupted: 'ModDescriptionLineCorruptedImplicit', modCrafted: 'ModDescriptionLineCrafted', modFractured: 'ModDescriptionLineFractured',
+  modTier: 'ModDescriptionLineTier',
 }
+// Mod tag names for that header; tags the game gives no name (damage subtypes, influence_mod...) aren't shown.
+const usedTags = new Set(Object.values(mods).flatMap((m) => m.tags ?? []))
+const tagText = Object.fromEntries(await Promise.all(['en', 'ko'].map(async (l) => [l, Object.fromEntries(
+  (await raw(`dat/tables/${l === 'en' ? 'English' : 'Korean'}/Tags.json`)).filter((r) => r.Name && usedTags.has(r.Id)).map((r) => [r.Id, r.Name]))])))
 
 // ---- Gold prices: poe.ninja chaos value x 100 for every currency we have an icon for
 const GOLD_PER_CHAOS = 100
@@ -498,6 +507,8 @@ assert.equal(classes['Body Armour'].hunter, 'body_armour_basilisk')
 assert.equal(names('ko').classes.Boots, '장화')
 assert.equal(names('ko').game.presenceUnique, '고유 적이 접근해 있는 동안, {0}')
 assert.equal(names('ko').game.eldritchTier3, '우수한')
+assert.equal(names('ko').game.modPrefix, '접두어 속성 부여 "{0}"')
+assert.equal(names('ko').tags.fire, '화염')
 assert.equal(names('ko').mods.SpellDamageAndManaOnWeapon6, '대마법사의')
 assert.equal(names('ko').bases['Metadata/Items/Rings/Ring12'], '쌍보석 반지')
 const life = stats.findIndex((s) => s.ids.length === 1 && s.ids[0] === 'base_maximum_life')

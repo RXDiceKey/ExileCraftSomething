@@ -334,6 +334,24 @@ test('빌드 도감: 1위 구매자 빌드가 열리고 최고 판매가를 기�
   assert.equal(statLabel('base_maximum_life', 'ko')?.[1], '생명력 최대치 +#')
 })
 
+test('자세히 보기(인게임 Alt): 게임 문구 머리줄(종류·이름·등급·태그)과 수치마다 그 등급의 범위', () => {
+  const item: Item = { ...newItem(RING, 84, { s: 1 }), rarity: 'rare', explicits: [
+    { id: 'IncreasedLife7', values: [110] }, { id: 'FireResist8', values: [47] },
+    { ...rollMod(CRAFTING.bench[benchOptions({ ...newItem(RING, 84, { s: 1 }), rarity: 'rare' })[0]].mod, { s: 1 }), crafted: true },
+  ] }
+  const ko = modLines(item, 'ko', true)
+  const life = ko.find((l) => l.id === 'IncreasedLife7')!
+  assert.match(life.head!, /^\{ 접두어 속성 부여 ".+" \(등급: \d+\) — 생명력 \}$/)
+  assert.ok(life.text.some((x) => x.includes('110(100-114)')), life.text.join())
+  assert.match(ko.find((l) => l.id === 'FireResist8')!.head!, /^\{ 접미어 속성 부여 ".+" \(등급: 1\) — 원소, 화염, 저항 \}$/)
+  const crafted = ko.find((l) => l.crafted)!
+  assert.match(crafted.head!, /^\{ 대가의 제작 접(두|미)어 속성 부여/)
+  assert.ok(!crafted.head!.includes('등급'), '작업대 옵션은 등급 없음')
+  assert.match(ko.find((l) => l.kind === 'implicit')!.head!, /^\{ 고정 속성 부여/)
+  assert.match(modLines(item, 'en', true).find((l) => l.id === 'IncreasedLife7')!.head!, /^\{ Prefix Modifier ".+" \(Tier: \d+\) — Life \}$/)
+  assert.equal(modLines(item, 'ko').find((l) => l.id === 'IncreasedLife7')!.head, undefined, '평소엔 그대로')
+})
+
 test('미러급: 원본은 거울 3개, 복사본은 거울 + 수수료, 못 미치면 거울 반값 아래', () => {
   // Ice Spear (uber) amulet: all tier 1, one elevated (Maven) option, five options, a top base.
   const amulet = { ...withMods('Metadata/Items/Amulets/Amulet1', ['CriticalStrikeMultiplierInfluenceMaven__', 'IncreasedCastSpeed4',

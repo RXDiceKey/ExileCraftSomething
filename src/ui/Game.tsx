@@ -24,6 +24,7 @@ import { rivalNewsText } from './rivalText.ts'
 import { playerRank } from '../game/rivals.ts'
 import { Stash } from './Stash.tsx'
 import { TipLayer } from './Tip.tsx'
+import { AdvancedMods, useAltHeld } from './advanced.ts'
 
 interface Props {
   lang: Lang
@@ -49,6 +50,11 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
 
   const entry = state.stash.find((x) => x.uid === selected)
   const match = useMemo(() => compileSearch(settings.search), [settings.search])
+  const alt = useAltHeld()
+  const advanced = useMemo(() => ({
+    on: alt || !!settings.advancedMods, pinned: !!settings.advancedMods,
+    toggle: () => setSettings({ ...settings, advancedMods: !settings.advancedMods }),
+  }), [alt, settings, setSettings])
   // The spam machine has its own regex (user), apart from the stash search.
   const spamMatch = useMemo(() => compileSearch(settings.spamSearch ?? ''), [settings.spamSearch])
   // The search lights up (or dims) the item shown in the middle, not the stash list (user).
@@ -182,6 +188,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   )
 
   return (
+    <AdvancedMods.Provider value={advanced}>
     <div className="game">
       <TipLayer />
       <header className="topbar">
@@ -269,5 +276,6 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
         </div>
       </div>
     </div>
+    </AdvancedMods.Provider>
   )
 }

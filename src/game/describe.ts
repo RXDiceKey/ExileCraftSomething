@@ -20,6 +20,7 @@ interface Text {
   harvest: Record<string, string> // harvest craft wording by the game's craft id
   bestiary: Record<string, string> // beastcraft wording by the game's recipe id
   fossils: Record<string, string[]> // fossil effects as the game words them, by fossil name
+  tags: Record<string, string> // mod tag names the game shows (Tags.dat), for the Advanced Mod Descriptions header
 }
 
 const STATS = statsJson as StatEntry[]
@@ -189,10 +190,15 @@ export interface ModLine {
   crafted?: true
   fractured?: true
   drop?: 'breach' | 'delve' | 'incursion'
+  head?: string // advanced: the game's header line for the option
 }
 
-export function modLines(item: Item, lang: Lang): ModLine[] {
-  const imp = item.implicits.map((m): ModLine => ({ kind: 'implicit', id: m.id, name: '', text: modText(item, m, false, lang) }))
+// advanced: the game's Advanced Mod Descriptions (Alt), a header per option and every number with its range.
+export function modLines(item: Item, lang: Lang, advanced = false): ModLine[] {
+  const text = advanced ? rangedText : modText
+  const imp = item.implicits.map((m): ModLine => ({
+    kind: 'implicit', id: m.id, name: '', text: text(item, m, false, lang), ...(advanced && { head: modHead(item, m, 'implicit', lang) }),
+  }))
   const exp = [...item.explicits]
     .sort((a, b) => (MODS[a.id].gen === 'prefix' ? 0 : 1) - (MODS[b.id].gen === 'prefix' ? 0 : 1))
     .map((m): ModLine => ({
@@ -200,12 +206,52 @@ export function modLines(item: Item, lang: Lang): ModLine[] {
       id: m.id,
       name: modName(m.id, lang),
       tier: tierOf(item, m.id),
-      text: modText(item, m, true, lang),
+      text: text(item, m, true, lang),
       ...(m.crafted && { crafted: true as const }),
       ...(m.fractured && { fractured: true as const }),
       ...(MODS[m.id].drop && { drop: MODS[m.id].drop }),
+      ...(advanced && { head: modHead(item, m, MODS[m.id].gen as 'prefix' | 'suffix', lang) }),
     }))
   return [...imp.filter((l) => l.text.length), ...exp]
+}
+
+// ---- Advanced Mod Descriptions (user: like the game's Alt view). The header in the game's words, its tag names from
+// Tags.dat: '{ 접두어 속성 부여 "강건한" (등급: 1) — 생명력 }'. Crafted options have no tier here (the game shows a bench
+// rank this game doesn't keep); elevated ones and veiled placeholders get no header line of their own.
+export function modHead(item: Item, m: RolledMod, kind: ModLine['kind'], lang: Lang): string | undefined {
+  const def = MODS[m.id]
+  if (def.dom === 'veiled') return undefined
+  let what: string
+  if (kind === 'implicit') what = eldritchLabel(m.id, lang) ?? gameText(lang, def.gen === 'corrupted' ? 'modCorrupted' : 'modImplicit')
+  else {
+    const name = modName(m.id, lang)
+    what = gameText(lang, kind === 'prefix' ? 'modPrefix' : 'modSuffix', name).replace(/\s*""/, '') // no name: no quotes
+    if (m.crafted) what = gameText(lang, 'modCrafted', what)
+    if (m.fractured) what = gameText(lang, 'modFractured', what)
+    const tier = tierOf(item, m.id)
+    if (!m.crafted && tier > 0) what += gameText(lang, 'modTier', String(tier))
+  }
+  const tags = (def.tags ?? []).map((tg) => TEXT[lang].tags?.[tg]).filter(Boolean)
+  return `{ ${what}${tags.length ? ` — ${tags.join(', ')}` : ''} }`
+}
+
+// Every rolled number followed by the range of its tier, as the game shows it: "+110(100-114) 최대 생명력". A fixed
+// number has no range; a line whose wording turns over inside the range ("increased" / "reduced") is left as it is.
+const NUM = /(-?\d+(?:\.\d+)?)/
+export function rangedText(item: Item, m: RolledMod, explicit: boolean, lang: Lang): string[] {
+  const now = modText(item, m, explicit, lang)
+  if (MODS[m.id].dom === 'veiled') return now
+  const stats = MODS[m.id].stats
+  const lo = modText(item, { id: m.id, values: stats.map(([, a, b]) => Math.min(a, b)) }, explicit, lang)
+  const hi = modText(item, { id: m.id, values: stats.map(([, a, b]) => Math.max(a, b)) }, explicit, lang)
+  if (lo.length !== now.length || hi.length !== now.length) return now
+  return now.map((line, i) => {
+    const t = line.split(NUM)
+    const a = lo[i].split(NUM)
+    const b = hi[i].split(NUM)
+    if (a.length !== t.length || b.length !== t.length || t.some((x, k) => k % 2 === 0 && (x !== a[k] || x !== b[k]))) return line
+    return t.map((x, k) => (k % 2 && a[k] !== b[k] ? `${x}(${+a[k] <= +b[k] ? `${a[k]}-${b[k]}` : `${b[k]}-${a[k]}`})` : x)).join('')
+  })
 }
 
 export const itemClass = (item: Item) => BASES[item.base].cls

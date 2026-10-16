@@ -42,6 +42,7 @@ await save('dat/config.json', {
     { name: 'ItemClasses', columns: ['Id', 'Name'] },
     { name: 'Ascendancy', columns: ['Id', 'Name'] },
     { name: 'ClientStrings', columns: ['Id', 'Text'] }, // UI wording, to use the game's own terms
+    { name: 'Tags', columns: ['Id', 'Name'] }, // mod tag names (Advanced Mod Descriptions: "— 원소, 화염, 저항")
     { name: 'MonsterVarieties', columns: ['Id', 'Name'] }, // beast names for beastcrafting
     { name: 'HarvestCraftOptions', columns: ['Id', 'Text'] }, // harvest craft wording
     { name: 'BestiaryRecipes', columns: ['Id', 'Description', 'Notes'] }, // beastcraft wording

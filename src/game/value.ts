@@ -183,8 +183,8 @@ const rawWant = (p: Pick<Buyer, 'wants'>, sid: string) => Math.max(0, ...keysOf(
 
 // How much a buyer wants a mod: its best stat. A hybrid mod (two stats, e.g. minimum frenzy charges + frenzy charge on
 // kill) is still one option, so it never counts twice. `steep`: only high tiers count (stacked attributes).
-function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: number; note?: ModNote; steep: boolean } {
-  let best: { w: number; note?: ModNote; steep: boolean } = { w: 0, steep: false }
+function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: number; note?: ModNote; steep: boolean; key?: string } {
+  let best: { w: number; note?: ModNote; steep: boolean; key?: string } = { w: 0, steep: false }
   for (const sid of stats) {
     for (const key of keysOf(sid)) {
       let want = p.wants[key] ?? 0
@@ -193,7 +193,7 @@ function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: numbe
       const stack = attrsOf(key).some((a) => p.stacks.has(a))
       const pr = priorityOf(key)
       const w = want * (stack ? STACKER : (pr?.[1] ?? 1))
-      if (w > best.w) best = { w, note: stack ? 'stacked' : pr?.[2], steep: stack }
+      if (w > best.w) best = { w, note: stack ? 'stacked' : pr?.[2], steep: stack, key }
     }
   }
   return best
@@ -329,12 +329,18 @@ export function rarityOf(item: Item, modId: string): number {
   return r
 }
 
+// Several elemental resistance options on one item (user, 2026-10-16): the total is easy to fill from other slots, so the
+// best one counts in full and each one after it for less, both in the price and in whether it is useful.
+export const RES_REPEAT = [1, 0.5, 0.25]
+
 function judge(item: Item, p: Buyer, lang: Lang) {
+  const viaTotal: boolean[] = []
   const mods = item.explicits.map((m): ModVerdict => {
     const def = MODS[m.id]
     // A drop option's zero stats (the other minion counts) say nothing about what it does.
     const stats = (def.drop ? def.stats.filter(([, a, b]) => a || b) : def.stats).map(([sid]) => sid)
     const natural = wantOf(p, stats)
+    viaTotal.push(natural.key === ELE_RES)
     const { w, note, steep } = def.drop ? { ...natural, w: Math.max(natural.w, dropThemeWant(p, stats)) } : natural
     const tier = tierOf(item, m.id)
     const roll = def.stats.length
@@ -355,6 +361,10 @@ function judge(item: Item, p: Buyer, lang: Lang) {
       for (const v of mods.filter(inSet)) Object.assign(v, { contribution: v.contribution * f, useful: v.contribution * f >= USEFUL_MIN, note: 'incompleteSet' })
     }
   }
+  mods.filter((v, i) => viaTotal[i] && v.contribution > 0).sort((a, b) => b.contribution - a.contribution).forEach((v, k) => {
+    const c = v.contribution * RES_REPEAT[Math.min(k, RES_REPEAT.length - 1)]
+    Object.assign(v, { contribution: c, useful: c >= USEFUL_MIN })
+  })
   // Fixed options (implicits) the buyer wants count at half weight, e.g. resistances on a Two-Stone Ring.
   const implicit = item.implicits.map((m) => IMPLICIT_WEIGHT * wantOf(p, MODS[m.id].stats.map(([sid]) => sid)).w)
   const contributions = [...mods.map((m) => m.contribution), ...implicit]

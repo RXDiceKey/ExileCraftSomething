@@ -11,7 +11,7 @@ import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, dismissCommission, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, ELE_RES, elementalCount, rollMeta, RUMOR_LEAD, saturate, saturation, SINGLE_ELE_RES } from './meta.ts'
 import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
-import { quote, slotOf } from './value.ts'
+import { quote, RES_REPEAT, slotOf } from './value.ts'
 
 const ok = <T>(r: Result<T>): T => { assert.ok(r.ok, r.ok ? '' : r.error); return r.state }
 const names = (textEn as { bases: Record<string, string> }).bases
@@ -302,6 +302,11 @@ test('원소 저항은 합계 하나로 (정의의 화염의 화염 저항만 �
   const ring = (res: string) => quote({ ...newItem(coral, 84, { s: 1 }), rarity: 'rare', explicits: [{ id: 'IncreasedLife7', values: [110] }, { id: res, values: [47] }] }, 'en', 1).optionValue
   assert.equal(ring('ColdResist8'), ring('LightningResist8'))
   assert.ok(ring('FireResist8') > ring('ColdResist8'), `화염 ${ring('FireResist8')} vs 냉기 ${ring('ColdResist8')}`)
+  // Several of them (user): the best counts in full, the next for half.
+  const two = quote({ ...newItem(coral, 84, { s: 1 }), rarity: 'rare', explicits: [{ id: 'IncreasedLife7', values: [110] },
+    { id: 'ColdResist8', values: [47] }, { id: 'LightningResist8', values: [47] }] }, 'en', 1).best!
+  const [hi, lo] = two.mods.filter((m) => m.id !== 'IncreasedLife7').map((m) => m.contribution).sort((a, b) => b - a)
+  assert.ok(hi > 0 && Math.abs(lo - hi * RES_REPEAT[1]) < 1e-9, `${two.name}: ${hi} / ${lo}`)
 })
 
 test('초반 3일엔 보수 천만 이상 의뢰가 안 뜨고, 그래도 의뢰는 붙음', () => {

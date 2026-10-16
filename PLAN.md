@@ -633,9 +633,9 @@ craftingisfun/
 - [x] 방어 종류·능력치 표시 (툴팁, 보관함, 상점) — 용어는 게임 데이터 기준 (방어도/회피/에너지 보호막/수호, 힘/민첩/지능)
 
 ### P4. 배포 (필요할 때)
-- [ ] (사용자) 리포 Public 전환
-- [ ] GitHub Actions 배포 워크플로
-- [ ] (사용자) Settings → Pages → Source: GitHub Actions
+- [x] (사용자) 리포 Public 전환 (2026-10-16, 공개 전 점검: 파일·커밋 기록에 이름·회사 계정·이메일·비밀 값 없음)
+- [x] GitHub Actions 배포 워크플로 (`.github/workflows/deploy.yml`: main에 push → 테스트 → 빌드 → Pages)
+- [x] (사용자) Settings → Pages → Source: GitHub Actions
 - [ ] push → 자동 배포 확인, 플레이 URL 공유
 
 ### P5. 빌드 메타 + 확정 제작

@@ -18,9 +18,10 @@ interface Props {
   goal: number | undefined
   onDeliver: (id: number) => void
   onGoal: (id: number | undefined) => void
+  onDismiss: (id: number) => void
 }
 
-export function Board({ lang, board, day, meta, entry, canSell, goal, onDeliver, onGoal }: Props) {
+export function Board({ lang, board, day, meta, entry, canSell, goal, onDeliver, onGoal, onDismiss }: Props) {
   return (
     <section className="panel board">
       <h2>{t(lang, 'board')}</h2>
@@ -38,6 +39,7 @@ export function Board({ lang, board, day, meta, entry, canSell, goal, onDeliver,
                 {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
                 <button className="primary" disabled={!fits || !canSell} onClick={() => onDeliver(c.id)}>{t(lang, 'deliver')}</button>
                 <button onClick={() => onGoal(goal === c.id ? undefined : c.id)}>{t(lang, goal === c.id ? 'clearGoal' : 'setGoal')}</button>
+                <button className="dismiss" onClick={() => onDismiss(c.id)}>{t(lang, 'dismiss')}</button>
                 {entry && !fits && <span className="hint">{t(lang, 'notFit')}</span>}
               </div>
             </li>

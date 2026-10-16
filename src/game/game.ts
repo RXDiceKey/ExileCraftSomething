@@ -304,8 +304,15 @@ export function deliver(s: GameState, uid: number, id: number): Result {
     state: {
       ...s, used: s.used + 1, pending: s.pending + c.reward, stash: s.stash.filter((x) => x.uid !== uid),
       sales: [...s.sales, { day: s.day, item: entry.item, price: c.reward, buyer: c.build }], board: s.board!.filter((x) => x !== c),
+      goal: s.goal === id ? undefined : s.goal,
     },
   }
+}
+
+// The player drops an order (user); the board fills back up at the next day close, not now.
+export function dismissCommission(s: GameState, id: number): Result {
+  if (!s.board?.some((c) => c.id === id)) return fail('gone')
+  return { ok: true, state: { ...s, board: s.board.filter((c) => c.id !== id), goal: s.goal === id ? undefined : s.goal } }
 }
 
 // Selling at Faustus's quote; the gold arrives at the next day close.
@@ -337,5 +344,6 @@ export function closeDay(s: GameState): GameState {
   const rng = { ...rng0 }
   const meta = advanceMeta(s.meta, s.day + 1, rng)
   const board = refreshBoard(s.board ?? [], s.day + 1, LAST_DAY, meta, rng)
-  return { ...withRivals, rng, meta, board, day: s.day + 1 }
+  // A goal whose order expired goes with it.
+  return { ...withRivals, rng, meta, board, day: s.day + 1, goal: board.some((c) => c.id === s.goal) ? s.goal : undefined }
 }

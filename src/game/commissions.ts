@@ -245,13 +245,15 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   return day <= EARLY_DAYS && reward >= EARLY_REWARD_MAX ? undefined : { ...c, reward }
 }
 
-// Start of a day: expired orders go, one to three new ones come (up to BOARD_MAX).
+// Start of a day (user): expired orders go and the board fills back up to BOARD_MAX, however many are left; the first day
+// starts with FIRST_DAY_ORDERS. A build doesn't post a second order for a slot it already has one for.
+export const FIRST_DAY_ORDERS = 3
 export function refreshBoard(board: Commission[], day: number, lastDay: number, meta: Meta, rng: Rng): Commission[] {
   const out = board.filter((c) => c.until >= day)
-  const n = int(rng, 1, 3)
-  for (let k = 0, tries = 0; k < n && out.length < BOARD_MAX && tries < 20; tries++) {
+  const target = day === 1 ? FIRST_DAY_ORDERS : BOARD_MAX
+  for (let tries = 0; out.length < target && tries < 40; tries++) {
     const c = makeCommission(day * 100 + tries, day, lastDay, meta, rng)
-    if (c) { out.push(c); k++ }
+    if (c && !out.some((o) => o.build === c.build && o.slot === c.slot)) out.push(c)
   }
   return out
 }

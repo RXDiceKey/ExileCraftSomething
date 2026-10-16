@@ -8,7 +8,7 @@ import {
   type Commission,
 } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
-import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
+import { buyBase, closeDay, deliver, dismissCommission, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
 import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
 import { quote, slotOf } from './value.ts'
@@ -94,13 +94,13 @@ test('소문: 패치 2일 전에 계획된 변경 하나가 새고, 패치 날 �
 
 test('의뢰 게시판: 조건에 맞는 아이템을 납품하면 보수가 다음 마감에 들어오고 판매 1번을 씀', () => {
   let s: GameState = { ...newGame(7), gold: 1e9 }
-  assert.ok(s.board!.length >= 1 && s.board!.length <= 3)
+  assert.equal(s.board!.length, 3)
   const c = s.board![0]
   assert.ok(c.reward > 0)
   assert.ok(c.until >= s.day)
   const item = fill(c)
   assert.ok(canDeliver(item, c))
-  s = { ...s, nextUid: s.nextUid + 2, stash: [{ uid: s.nextUid, item }, { uid: s.nextUid + 1, item: newItem(RING, 84, { s: 3 }) }] }
+  s = { ...s, goal: c.id, nextUid: s.nextUid + 2, stash: [{ uid: s.nextUid, item }, { uid: s.nextUid + 1, item: newItem(RING, 84, { s: 3 }) }] }
   const [good, bad] = s.stash
   const before = s
   assert.equal(deliver(s, bad.uid, c.id).ok, false, '안 맞는 아이템은 거절')
@@ -108,6 +108,7 @@ test('의뢰 게시판: 조건에 맞는 아이템을 납품하면 보수가 다
   assert.equal(s.pending, before.pending + c.reward)
   assert.equal(s.used, before.used + 1)
   assert.ok(!s.board!.includes(c))
+  assert.equal(s.goal, undefined, '납품하면 목표 해제')
   assert.equal(s.sales.at(-1)!.buyer, c.build)
   assert.equal(s.stash.length, 1)
 })
@@ -300,4 +301,24 @@ test('공격 빌드 무기 의뢰는 DPS로: 피해 옵션 대신 물리/원소/
     }
   }
   assert.ok(seen > 0, 'DPS 의뢰가 나옴')
+})
+
+test('의뢰 게시판: 첫날 3건, 그 뒤 마감마다 5건까지 채움, 같은 빌드·부위 중복 없음, 삭제·만료·납품하면 목표도 해제', () => {
+  for (let seed = 1; seed <= 20; seed++) {
+    let s = newGame(seed)
+    assert.equal(s.board!.length, 3, '첫날 3건')
+    // Drop one and set another as the goal: the board stays short until the next close, then it's full again.
+    const [gone, kept] = s.board!
+    s = { ...ok(dismissCommission(s, gone.id)), goal: kept.id }
+    assert.equal(s.board!.length, 2)
+    assert.equal(ok(dismissCommission(s, kept.id)).goal, undefined, '삭제하면 목표 해제')
+    for (let day = 1; day < 6; day++) {
+      s = closeDay(s)
+      assert.equal(s.board!.length, 5, `${s.day}일차 5건`)
+      const keys = s.board!.map((c) => `${c.build}|${c.slot}`)
+      assert.equal(new Set(keys).size, keys.length, '같은 빌드·부위 중복 없음')
+      if (s.goal !== undefined) assert.ok(s.board!.some((c) => c.id === s.goal), '목표는 게시판에 있는 의뢰만')
+    }
+    assert.equal(s.goal, undefined, `만료된 목표 해제 (${kept.until}일까지였던 의뢰)`)
+  }
 })

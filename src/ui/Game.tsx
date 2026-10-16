@@ -4,7 +4,7 @@ import type { CurrencyId } from '../engine/currency.ts'
 import { BASES } from '../engine/data.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
+  ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, deliver, dismissCommission, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
   doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -252,7 +252,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           </div>
           <div hidden={view !== 'board'}>
             <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver}
-              goal={state.goal} onGoal={(id) => setState({ ...state, goal: id })} />
+              goal={state.goal} onGoal={(id) => setState({ ...state, goal: id })} onDismiss={(id) => run(dismissCommission(state, id))} />
           </div>
           <div hidden={view !== 'codex'}>
             <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />

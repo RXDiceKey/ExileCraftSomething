@@ -209,3 +209,4 @@ input[type='number'] { width: 90px; }
 .bench-groups details { border-bottom: 1px solid #241e16; padding: 2px 0; }
 .bench-groups summary { cursor: pointer; color: var(--mod); }
 .bench-groups details .craft-list { padding-left: 14px; }
+.commission-foot .dismiss { margin-left: auto; font-size: 12px; opacity: 0.8; }

@@ -33,8 +33,10 @@ export const hasOutcomeMetamod = (i: Item) => {
 // ---- Crafting bench
 export const craftedCount = (i: Item) => i.explicits.filter((m) => m.crafted).length
 
-// Options the bench offers for this item right now (index into CRAFTING.bench).
+// Options the bench offers for this item right now (index into CRAFTING.bench). With a crafted option it would swap out
+// (see swapsCrafted), what the item offers without it.
 export function benchOptions(item: Item): number[] {
+  if (swapsCrafted(item)) return benchOptions(removeCrafted(item))
   if (!editable(item) || item.rarity === 'normal') return []
   const cls = BASES[item.base].cls
   const c = affixCounts(item)
@@ -50,12 +52,18 @@ export function benchOptions(item: Item): number[] {
   })
 }
 
-export const applyBench = (item: Item, index: number, rng: Rng): Item =>
-  ({ ...item, explicits: [...item.explicits, { ...rollMod(CRAFTING.bench[index].mod, rng), crafted: true }] })
+export function applyBench(item: Item, index: number, rng: Rng): Item {
+  const base = swapsCrafted(item) ? removeCrafted(item) : item
+  return { ...base, explicits: [...base.explicits, { ...rollMod(CRAFTING.bench[index].mod, rng), crafted: true }] }
+}
 
 // A fractured crafted mod stays (fractured mods can't be removed).
 export const removable = (i: Item) => i.explicits.some((m) => m.crafted && !m.fractured)
 export const removeCrafted = (item: Item): Item => ({ ...item, explicits: item.explicits.filter((m) => !m.crafted || m.fractured) })
+// The bench swaps a crafted option for the new one (user: don't block on it): with no meta-craft on the item (those, the
+// multimod included, keep their crafted options), its one crafted option is removed first, paying the scouring that
+// "Remove crafted modifiers" costs. A fractured crafted option can't be removed, so it still blocks.
+export const swapsCrafted = (i: Item) => craftedCount(i) === 1 && removable(i) && !Object.values(metamods(i)).some(Boolean)
 
 // ---- Essences (PoE Wiki: Essence): every essence upgrades a normal item to rare with its guaranteed mod; only
 // Screaming (tier 5) and up, plus the corrupted tier-8 ones, can also reroll a rare. Low tiers cap the level of the

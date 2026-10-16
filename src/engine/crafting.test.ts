@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
-import { applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, CRAFTING, matronOptions, removeCrafted } from './crafting.ts'
+import {
+  applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, CRAFTING, matronOptions, removeCrafted, swapsCrafted,
+} from './crafting.ts'
 import { CURRENCIES, qualityStep } from './currency.ts'
 import { BASES, MODS } from './data.ts'
 import { affixCounts, newItem, rollMod, type Item } from './item.ts'
@@ -16,13 +18,24 @@ const rare = (base: string, ids: string[]): Item =>
 const benchIndex = (item: Item, statId: string) =>
   benchOptions(item).find((i) => MODS[CRAFTING.bench[i].mod].stats.some(([s]) => s === statId))!
 
-test('작업대: 제작 속성 1개, 멀티는 3개, 제작 속성 제거', () => {
+test('작업대: 제작 속성 1개(새로 하면 기존 것을 지우고 교체), 멀티는 3개, 메타 속성이 있으면 교체 안 함, 제작 속성 제거', () => {
   const rng = { s: 3 }
   let item = rare(REGALIA, ['FireResist7'])
   const life = benchIndex(item, 'base_maximum_life')
   item = applyBench(item, life, rng)
   assert.equal(item.explicits.filter((m) => m.crafted).length, 1)
-  assert.equal(benchOptions(item).length, 0, 'only one crafted mod without multimod')
+  // A second craft swaps the crafted option out instead of being refused (user).
+  assert.ok(swapsCrafted(item) && benchOptions(item).length > 0)
+  const swapped = applyBench(item, benchIndex(item, 'base_cold_damage_resistance_%'), rng)
+  const crafted = swapped.explicits.filter((m) => m.crafted)
+  assert.equal(crafted.length, 1)
+  assert.ok(MODS[crafted[0].id].stats.some(([s]) => s === 'base_cold_damage_resistance_%'), '생명력이 냉기 저항으로 바뀜')
+  assert.equal(swapped.explicits.length, 2)
+  // A meta-craft keeps its crafted option: no swap, no second craft.
+  let locked = rare(REGALIA, ['FireResist7'])
+  locked = applyBench(locked, benchIndex(locked, 'item_generation_cannot_change_prefixes'), rng)
+  assert.ok(!swapsCrafted(locked))
+  assert.equal(benchOptions(locked).length, 0, 'meta-craft blocks the bench')
 
   let multi = rare(REGALIA, ['FireResist7'])
   multi = applyBench(multi, benchIndex(multi, 'item_generation_can_have_multiple_crafted_mods'), rng)

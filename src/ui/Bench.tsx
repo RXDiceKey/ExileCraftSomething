@@ -1,8 +1,8 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { sfx } from '../audio.ts'
-import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor } from '../engine/crafting.ts'
+import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor, swapsCrafted } from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
-import { BASES } from '../engine/data.ts'
+import { BASES, MODS } from '../engine/data.ts'
 import { BEAST_RECIPES, canImprint, canRestore, IMPRINT, IMPRINT_BEAST, IMPRINT_RECIPE } from '../engine/beasts.ts'
 import { canRecombine } from '../engine/recombinator.ts'
 import { HARVEST, LIFEFORCE, type Lifeforce } from '../engine/harvest.ts'
@@ -10,8 +10,10 @@ import { canReveal, canUnveil, isVeiled } from '../engine/veiled.ts'
 import { canEldritchImplicit, conflictChance, dominance, eldritchTier, EMBERS, ICHORS } from '../engine/eldritch.ts'
 import { AWAKENER, canAwaken, canDominance, canInfluenceExalt, DOMINANCE, INFLUENCE_EXALTS, isInfluenced } from '../engine/influence.ts'
 import type { Item } from '../engine/item.ts'
-import { bestiaryText, gameText, harvestText, influenceName, itemName, modLines, rangeText, type Lang } from '../game/describe.ts'
-import { beastCost, ELDRITCH_ORBS, fossilCost, harvestCost, recombineCost, VEILED_ORBS, type SpamOptions, type SpamReport, type StashItem } from '../game/game.ts'
+import { bestiaryText, gameText, harvestText, influenceName, itemName, modLines, rangeText, statLabel, type Lang } from '../game/describe.ts'
+import {
+  beastCost, benchCost, ELDRITCH_ORBS, fossilCost, harvestCost, recombineCost, VEILED_ORBS, type SpamOptions, type SpamReport, type StashItem,
+} from '../game/game.ts'
 import { CURRENCY_EN, currencyPrice, iconOf, MIRROR, nameOf, priceOf } from '../game/shop.ts'
 import { fmtGold, t } from '../i18n.ts'
 import { Tooltip } from './Tooltip.tsx'
@@ -78,7 +80,15 @@ export function Bench(p: Props) {
   const [opts, setOpts] = useState<SpamOptions>({ augPrefix: false, augSuffix: false, maxTries: 500, goldCap: 20_000 })
   const [report, setReport] = useState<SpamReport | null>(null)
   const item = entry?.item
-  const bench = useMemo(() => (item ? benchOptions(item) : []), [item])
+  // Bench crafts grouped by option family (user), tiers together, in the bench's order.
+  const bench = useMemo(() => {
+    const groups = new Map<string, number[]>()
+    for (const i of item ? benchOptions(item) : []) {
+      const type = MODS[CRAFTING.bench[i].mod].type
+      groups.set(type, [...(groups.get(type) ?? []), i])
+    }
+    return [...groups.values()]
+  }, [item])
   if (!item) return <section className="panel bench"><div className="bench-item">{p.header}</div><p className="hint">{t(lang, 'selectItem')}</p></section>
 
   const tabButton = (k: Tab, label: string) => (
@@ -156,17 +166,27 @@ export function Bench(p: Props) {
             </button>
           )}
           {bench.length === 0 && <p className="hint">{t(lang, 'benchNone')}</p>}
-          <ul className="craft-list">
-            {bench.map((i) => {
-              const o = CRAFTING.bench[i]
-              return (
-                <li key={i}>
-                  <span>{rangeText(item, o.mod, lang).join(' / ')}</span>
-                  <button disabled={o.cost > gold} onClick={() => { sfx('currencyApply'); p.onBench(i) }}>{fmtGold(o.cost)}</button>
-                </li>
+          {bench.length > 0 && swapsCrafted(item) && <p className="hint">{t(lang, 'benchSwaps', fmtGold(currencyPrice('scouring')))}</p>}
+          <div className="bench-groups">
+            {bench.map((ids) => {
+              const rows = (
+                <ul className="craft-list">
+                  {ids.map((i) => {
+                    const cost = benchCost(item, i)
+                    return (
+                      <li key={i}>
+                        <span>{rangeText(item, CRAFTING.bench[i].mod, lang).join(' / ')}</span>
+                        <button disabled={cost > gold} onClick={() => { sfx('currencyApply'); p.onBench(i) }}>{fmtGold(cost)}</button>
+                      </li>
+                    )
+                  })}
+                </ul>
               )
+              if (ids.length === 1) return <div key={ids[0]}>{rows}</div>
+              const name = MODS[CRAFTING.bench[ids[0]].mod].stats.map(([s]) => statLabel(s, lang)?.[1] ?? s).join(' / ')
+              return <details key={ids[0]}><summary>{name} <span className="hint">({ids.length})</span></summary>{rows}</details>
             })}
-          </ul>
+          </div>
         </>
       )}
 

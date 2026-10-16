@@ -236,7 +236,9 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
             {tab('board', t(lang, 'board'))}
             {tab('codex', t(lang, 'codex'))}
           </nav>
-          {view === 'bench' && (
+          {/* Tabs only hide when another one is open (user: going to the shop and back mustn't reset the bench's tab,
+              fossils, spam settings, open groups...). Faustus is drawn only when open: its quote is the costly part. */}
+          <div hidden={view !== 'bench'}>
             <Bench lang={lang} entry={entry} gold={state.gold} day={state.day} canSpam={!!match} lit={lit}
               onCurrency={onCurrency} onBench={onBench} onRemoveCrafted={onRemoveCrafted} onMatron={onMatron} onEssence={onEssence}
               onFossils={onFossils} onMirror={onMirror} onSpam={onSpam} onFaustus={openFaustus}
@@ -244,13 +246,17 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               onEldritchImplicit={onEldritchImplicit} onEldritchOrb={onEldritchOrb} onHarvest={onHarvest}
               onBeast={onBeast} onImprint={onImprint} onRestore={onRestore}
               onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} header={header} />
-          )}
-          {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuyUnidentified={onBuyUnidentified} />}
-          {view === 'board' && (
+          </div>
+          <div hidden={view !== 'shop'}>
+            <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuyUnidentified={onBuyUnidentified} />
+          </div>
+          <div hidden={view !== 'board'}>
             <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver}
               goal={state.goal} onGoal={(id) => setState({ ...state, goal: id })} />
-          )}
-          {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
+          </div>
+          <div hidden={view !== 'codex'}>
+            <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />
+          </div>
           {view === 'faustus' && (
             <Faustus lang={lang} entry={entry} day={state.day} meta={state.meta} canSell={actionsLeft > 0} lit={lit}
               onSell={onSell} onBack={() => setView('bench')} />

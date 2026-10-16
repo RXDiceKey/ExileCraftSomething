@@ -206,3 +206,6 @@ input[type='number'] { width: 90px; }
 .goal-checks li.ok { color: var(--mod); }
 .goal-checks li.ok::before { content: '✓ '; color: #9fdc9f; }
 .commissions > li.goal-on { border-color: var(--gold); }
+.bench-groups details { border-bottom: 1px solid #241e16; padding: 2px 0; }
+.bench-groups summary { cursor: pointer; color: var(--mod); }
+.bench-groups details .craft-list { padding-left: 14px; }

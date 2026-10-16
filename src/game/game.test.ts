@@ -5,7 +5,8 @@ import { CURRENCIES } from '../engine/currency.ts'
 import { MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
-import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
+import { ACTIONS_PER_DAY, buyBase, closeDay, doBench, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
+import { benchOptions, CRAFTING } from '../engine/crafting.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, lifeforcePrice, MIRROR, premium, priceOf } from './shop.ts'
 import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
@@ -356,4 +357,17 @@ test('상점: 아이템 레벨이 베이스의 최소 등장 레벨보다 낮으
   const low = buyBase(s, base, 60)
   assert.ok(!low.ok && low.error === 'ilvlTooLow')
   assert.ok(buyBase(s, base, 84).ok)
+})
+
+test('작업대 교체: 기존 제작 옵션을 지우는 정제의 오브 값이 제작 값에 더해짐', () => {
+  const base = Object.keys(baseNames).find((id) => baseNames[id] === 'Vaal Regalia')!
+  const s0 = newGame(5)
+  const s1: GameState = { ...s0, gold: 1_000_000, stash: [{ uid: 1, item: withMods(base, ['FireResist7']) }], nextUid: 2 }
+  const life = benchOptions(s1.stash[0].item).find((i) => MODS[CRAFTING.bench[i].mod].stats.some(([st]) => st === 'base_maximum_life'))!
+  const s2 = ok(doBench(s1, 1, life))
+  assert.equal(s1.gold - s2.gold, CRAFTING.bench[life].cost, '처음엔 제작 값만')
+  const cold = benchOptions(s2.stash[0].item).find((i) => MODS[CRAFTING.bench[i].mod].stats.some(([st]) => st === 'base_cold_damage_resistance_%'))!
+  const s3 = ok(doBench(s2, 1, cold))
+  assert.equal(s2.gold - s3.gold, CRAFTING.bench[cold].cost + priceOf('Orb of Scouring'), '교체는 정제 값 추가')
+  assert.equal(s3.stash[0].item.explicits.filter((m) => m.crafted).length, 1)
 })

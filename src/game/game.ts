@@ -1,5 +1,8 @@
 // Game state and every player action, as pure functions (state in -> new state out).
-import { applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, removeCrafted, resonatorFor } from '../engine/crafting.ts'
+import {
+  applyBench, applyEssence, applyFossils, applyMatron, benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, removeCrafted,
+  resonatorFor, swapsCrafted,
+} from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
 import {
   applyConflict, applyEldritchAnnul, applyEldritchChaos, applyEldritchExalt, applyEldritchImplicit, canConflict, canEldritchAnnul,
@@ -126,8 +129,10 @@ function craft(
 export const doCurrency = (s: GameState, uid: number, c: CurrencyId) =>
   craft(s, uid, CURRENCIES[c].can, () => currencyPrice(c), CURRENCIES[c].apply, `cur:${c}`)
 
+// A craft that swaps out the item's crafted option also pays the scouring for removing it.
+export const benchCost = (item: Item, index: number) => CRAFTING.bench[index].cost + (swapsCrafted(item) ? currencyPrice('scouring') : 0)
 export const doBench = (s: GameState, uid: number, index: number) =>
-  craft(s, uid, (i) => benchOptions(i).includes(index), () => CRAFTING.bench[index].cost, (i, r) => applyBench(i, index, r), `bench:${index}`)
+  craft(s, uid, (i) => benchOptions(i).includes(index), (i) => benchCost(i, index), (i, r) => applyBench(i, index, r), `bench:${index}`)
 
 // The bench's "Remove crafted modifiers" costs an Orb of Scouring.
 export const doRemoveCrafted = (s: GameState, uid: number) =>

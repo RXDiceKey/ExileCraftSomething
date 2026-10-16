@@ -4,7 +4,7 @@ import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
 import { baseDefence, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 import {
-  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, dpsBar, dpsKind, EARLY_DAYS, EARLY_REWARD_MAX, refreshBoard, WANTS_LATE_FROM,
+  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, dpsBar, dpsKind, EARLY_DAYS, EARLY_REWARD_MAX, MIN_REWARD, refreshBoard, WANTS_LATE_FROM,
   type Commission,
 } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
@@ -315,6 +315,7 @@ test('의뢰 게시판: 첫날 3건, 그 뒤 마감마다 5건까지 채움, 같
     for (let day = 1; day < 6; day++) {
       s = closeDay(s)
       assert.equal(s.board!.length, 5, `${s.day}일차 5건`)
+      assert.ok(s.board!.every((c) => c.reward >= MIN_REWARD), '보수 5,000 이상만')
       const keys = s.board!.map((c) => `${c.build}|${c.slot}`)
       assert.equal(new Set(keys).size, keys.length, '같은 빌드·부위 중복 없음')
       if (s.goal !== undefined) assert.ok(s.board!.some((c) => c.id === s.goal), '목표는 게시판에 있는 의뢰만')

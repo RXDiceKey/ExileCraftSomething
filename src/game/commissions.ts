@@ -57,6 +57,8 @@ export const wantsOn = (day: number) => (day >= WANTS_LATE_FROM ? WANTS_LATE : W
 // dropped and the board draws another.
 export const EARLY_DAYS = 3
 export const EARLY_REWARD_MAX = 10_000_000
+// Orders paying less than this aren't posted (user: cheap orders kept showing up); the board draws another.
+export const MIN_REWARD = 5_000
 const BASE_TIE = 0.95 // bases within 5% of the build's favourite are just as good: one is picked at random
 const MAX_TIER: Record<string, number> = { starter: 3, advanced: 2, uber: 1 }
 export const DEFENCE_TIER: Record<string, number> = { starter: 4, advanced: 3, uber: 2 }
@@ -242,7 +244,7 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0,
   }
   const reward = Math.round(COMMISSION_BONUS * (basePrice(base, ILVL, day) + quote(plainest, 'en', day, meta).optionValue))
-  return day <= EARLY_DAYS && reward >= EARLY_REWARD_MAX ? undefined : { ...c, reward }
+  return reward < MIN_REWARD || (day <= EARLY_DAYS && reward >= EARLY_REWARD_MAX) ? undefined : { ...c, reward }
 }
 
 // Start of a day (user): expired orders go and the board fills back up to BOARD_MAX, however many are left; the first day

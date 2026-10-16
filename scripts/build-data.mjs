@@ -299,20 +299,32 @@ const GAME_STRINGS = {
 // ---- Gold prices: poe.ninja chaos value x 100 for every currency we have an icon for
 const GOLD_PER_CHAOS = 100
 const chaos = new Map([['Chaos Orb', 1]])
+const volume = new Map() // poe.ninja's daily volume, for the essence ladders below
 for (const type of ['Currency', 'Essence', 'Fossil', 'Resonator', 'Oil']) {
   const d = await raw(`ninja/${type}.json`)
   const nameOf = new Map(d.items.map((i) => [i.id, i.name]))
-  for (const l of d.lines) if (nameOf.has(l.id)) chaos.set(nameOf.get(l.id), l.primaryValue)
+  for (const l of d.lines) if (nameOf.has(l.id)) {
+    chaos.set(nameOf.get(l.id), l.primaryValue)
+    volume.set(nameOf.get(l.id), l.volumePrimaryValue ?? 0)
+  }
 }
-// Essence tiers poe.ninja doesn't list are priced off the nearest listed tier of the same essence (x3 per tier).
+// Essence ladders (user): three essences of a tier make one of the next, so each tier costs a bit under three times the
+// one below (ESSENCE_STEP). poe.ninja's thinly traded tiers are noise (Shrieking Essence of Greed 5c on 4 trades a day
+// against Deafening 1.29c on 119; Deafening Essence of Doubt 1c on 0.17), so every tier of a family comes from its most
+// traded tier.
 const ESSENCE_TIERS = ['Whispering', 'Muttering', 'Weeping', 'Wailing', 'Screaming', 'Shrieking', 'Deafening']
+const ESSENCE_STEP = 2.8
 const essenceTier = (n) => ESSENCE_TIERS.findIndex((t) => n.startsWith(t + ' '))
-for (const r of currencyRows.filter((r) => r.cat === '에센스' && !chaos.has(r.en) && essenceTier(r.en) >= 0)) {
-  const family = r.en.slice(r.en.indexOf(' ') + 1)
-  const known = ESSENCE_TIERS.map((t, i) => [i, chaos.get(`${t} ${family}`)]).filter(([, c]) => c !== undefined)
-  if (!known.length) continue
-  const [i, c] = known.reduce((a, b) => (Math.abs(b[0] - essenceTier(r.en)) < Math.abs(a[0] - essenceTier(r.en)) ? b : a))
-  chaos.set(r.en, c * 3 ** (essenceTier(r.en) - i))
+const essenceFamilies = new Set(currencyRows.filter((r) => r.cat === '에센스' && essenceTier(r.en) >= 0).map((r) => r.en.slice(r.en.indexOf(' ') + 1)))
+for (const family of essenceFamilies) {
+  const listed = ESSENCE_TIERS.map((t, i) => [i, `${t} ${family}`]).filter(([, n]) => chaos.has(n))
+  if (!listed.length) continue
+  const [at, anchor] = listed.reduce((a, b) => ((volume.get(b[1]) ?? 0) > (volume.get(a[1]) ?? 0) ? b : a))
+  const base = chaos.get(anchor)
+  for (const [i, t] of ESSENCE_TIERS.entries()) {
+    const name = `${t} ${family}`
+    if (currencyRows.some((r) => r.en === name)) chaos.set(name, base * ESSENCE_STEP ** (i - at))
+  }
 }
 // Alchemical resonators aren't traded much; same price as the Chaotic one of the same size.
 for (const r of currencyRows.filter((r) => r.en.endsWith('Alchemical Resonator'))) {

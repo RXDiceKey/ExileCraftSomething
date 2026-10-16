@@ -3,7 +3,7 @@ import { BASES } from '../engine/data.ts'
 import { newItem } from '../engine/item.ts'
 import { attrName, baseArt, baseKindKeys, baseName, baseStats, className, gameText, rangeText, type Lang } from '../game/describe.ts'
 import { spendable, type GameState } from '../game/game.ts'
-import { basePrice, buyableBases, isTopBase } from '../game/shop.ts'
+import { basePrice, buyableBases, isSpecialBase, isTopBase } from '../game/shop.ts'
 import { DROP_SOURCES, dropOptions, SPECIAL_ILVL, unidentifiedPrice, type DropSource } from '../game/specials.ts'
 import { fmtGold, t } from '../i18n.ts'
 
@@ -50,7 +50,8 @@ export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Pr
       && (!kind || dropOptions(kind, id).length > 0) && baseName(id, lang).toLowerCase().includes(query.toLowerCase())
       && (!attr || (ARMOUR.includes(BASES[id].cls) && baseKindKeys(id).attrs.join('_') === attr)))
     .map((id) => ({ id, price: kind ? unidentifiedPrice(kind, id, state.day) : basePrice(id, ilvl, state.day) }))
-    .sort((a, b) => BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, kind, lower, attr, lang, state.day])
+    // Ordinary bases first, then the special ones (user); highest level first within each.
+    .sort((a, b) => +isSpecialBase(a.id) - +isSpecialBase(b.id) || BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, kind, lower, attr, lang, state.day])
 
   return (
     <section className="panel shop">

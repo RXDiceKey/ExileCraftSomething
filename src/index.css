@@ -210,3 +210,7 @@ input[type='number'] { width: 90px; }
 .bench-groups summary { cursor: pointer; color: var(--mod); }
 .bench-groups details .craft-list { padding-left: 14px; }
 .commission-foot .dismiss { margin-left: auto; font-size: 12px; opacity: 0.8; }
+/* 따갚돼 mode (user): the start screen's checkbox, and the gold in red below zero. */
+.debt-mode { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; border: 1px dashed var(--line); border-radius: 3px; }
+.debt-mode small { color: var(--dim); }
+.debt { color: #e06060; font-weight: bold; }

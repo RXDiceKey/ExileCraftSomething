@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef, type Dispatch, type SetStateAction } 
 import { BASES } from '../engine/data.ts'
 import { newItem } from '../engine/item.ts'
 import { baseArt, baseName, baseStats, className, gameText, rangeText, type Lang } from '../game/describe.ts'
-import type { GameState } from '../game/game.ts'
+import { spendable, type GameState } from '../game/game.ts'
 import { basePrice, buyableBases, isTopBase } from '../game/shop.ts'
 import { DROP_SOURCES, dropOptions, SPECIAL_ILVL, unidentifiedPrice, type DropSource } from '../game/specials.ts'
 import { fmtGold, t } from '../i18n.ts'
@@ -76,7 +76,7 @@ export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Pr
             <span className="base-name">
               <span className="base-title">
                 {baseName(id, lang)}
-                <button disabled={price > state.gold} onClick={() => (kind ? onBuyUnidentified(kind, id) : onBuy(id, ilvl))}>
+                <button disabled={price > spendable(state)} onClick={() => (kind ? onBuyUnidentified(kind, id) : onBuy(id, ilvl))}>
                   {t(lang, 'buy')} {fmtGold(price)}
                 </button>
               </span>

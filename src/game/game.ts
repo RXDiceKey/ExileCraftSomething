@@ -52,8 +52,16 @@ export interface GameState {
   rivalNews?: RivalNews[] // what they did at the last day close
   board?: Commission[] // commission board (D38); older saves get one on load
   goal?: number // the commission the player works towards, shown above the item (user)
-  finished?: { score: number }
+  finished?: { score: number; bankrupt?: true }
+  debt?: true // "따갚돼" mode (user): gold may go down to -DEBT_LIMIT
+  debtDays?: number // day closes in a row that ended below zero (debt mode)
 }
+
+// "따갚돼" mode (user): gold may go down to -DEBT_LIMIT, and DEBT_DAYS day closes in a row below zero end the run.
+export const DEBT_LIMIT = 1_000_000
+export const DEBT_DAYS = 3
+// Gold a purchase may use: all of it, plus the debt allowance in debt mode.
+export const spendable = (s: Pick<GameState, 'gold' | 'debt'>) => s.gold + (s.debt ? DEBT_LIMIT : 0)
 
 export type Result<T = GameState> = { ok: true; state: T } | { ok: false; error: string }
 const fail = (error: string): { ok: false; error: string } => ({ ok: false, error })
@@ -64,11 +72,14 @@ function withRng<T>(s: GameState, f: (rng: Rng) => T): [T, Rng] {
   return [f(rng), rng]
 }
 
-export function newGame(seed: number): GameState {
+export function newGame(seed: number, debt = false): GameState {
   const rng = { s: seed }
   const meta = rollMeta(rng)
   const board = refreshBoard([], 1, LAST_DAY, meta, rng)
-  return { v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD), board }
+  return {
+    v: 1, rng, day: 1, gold: START_GOLD, pending: 0, used: 0, nextUid: 1, stash: [], sales: [], meta, rivals: newRivals(START_GOLD), board,
+    ...(debt && { debt: true as const, debtDays: 0 }),
+  }
 }
 
 // Older saves get what they're missing on load: build popularity (rolled now), trade rivals (starting at the start gold).
@@ -92,7 +103,7 @@ const addItem = (s: GameState, item: Item, gold: number, rng: Rng): GameState =>
 export function buyBase(s: GameState, base: string, ilvl: number): Result {
   if (ilvl < BASES[base].lvl) return fail('ilvlTooLow') // the base doesn't drop that low
   const price = basePrice(base, ilvl, s.day)
-  if (price > s.gold) return fail('noGold')
+  if (price > spendable(s)) return fail('noGold')
   const [item, rng] = withRng(s, (r) => newItem(base, ilvl, r))
   return { ok: true, state: addItem(s, item, s.gold - price, rng) }
 }
@@ -101,7 +112,7 @@ export function buyBase(s: GameState, base: string, ilvl: number): Result {
 export function buyUnidentified(s: GameState, source: DropSource, base: string): Result {
   const price = unidentifiedPrice(source, base, s.day)
   if (!price) return fail('cantApply')
-  if (price > s.gold) return fail('noGold')
+  if (price > spendable(s)) return fail('noGold')
   const [item, rng] = withRng(s, (r) => rollUnidentified(source, base, r))
   return { ok: true, state: addItem(s, item, s.gold - price, rng) }
 }
@@ -120,7 +131,7 @@ function craft(
   if (!entry) return fail('gone')
   if (!can(entry.item)) return fail('cantApply')
   const price = cost(entry.item)
-  if (price > s.gold) return fail('noGold')
+  if (price > spendable(s)) return fail('noGold')
   const [made, rng] = withRng(s, (r) => f(entry.item, r))
   const item = key ? record(entry.item, made, { key, cost: price, ...more }, highEffCount) : made
   return { ok: true, state: { ...s, rng, gold: s.gold - price, stash: replaceItem(s, uid, item) } }
@@ -215,7 +226,7 @@ export function doRecombine(s: GameState, uidA: number, uidB: number): Result {
   if (!a || !b) return fail('gone')
   if (!canRecombine(a.item, b.item)) return fail('cantApply')
   const price = recombineCost(a.item, b.item)
-  if (price > s.gold) return fail('noGold')
+  if (price > spendable(s)) return fail('noGold')
   const [made, rng] = withRng(s, (r) => recombine(a.item, b.item, r))
   const item = record(a.item, made, { key: 'recomb', cost: price, other: b.item, extra: itemExpectedCost(b.item, s.day) }, highEffCount)
   const rest = { ...s, stash: s.stash.filter((x) => x.uid !== uidA && x.uid !== uidB) }
@@ -228,7 +239,7 @@ export function doMirror(s: GameState, uid: number): Result {
   if (!entry) return fail('gone')
   if (entry.item.mirrored || entry.item.corrupted) return fail('cantApply') // a mirror copies no corrupted item (PoE Wiki)
   const price = priceOf(MIRROR)
-  if (price > s.gold) return fail('noGold')
+  if (price > spendable(s)) return fail('noGold')
   const copy = record(entry.item, { ...entry.item, mirrored: true }, { key: 'mirror', cost: price, fixed: true }, highEffCount)
   return { ok: true, state: addItem(s, copy, s.gold - price, s.rng) }
 }
@@ -261,7 +272,7 @@ export function spamAlteration(s: GameState, uid: number, matches: (item: Item) 
   }
   const pay = (price: number): SpamReport['stop'] | null => {
     if (spent + price > o.goldCap) return 'goldCap'
-    if (price > gold) return 'noGold'
+    if (price > spendable({ gold, debt: s.debt })) return 'noGold'
     gold -= price
     spent += price
     return null
@@ -340,10 +351,13 @@ export function closeDay(s: GameState): GameState {
   // Rivals close their day too (the last one included), measured against the player's settled gold.
   const [moved, rng0] = withRng(s, (r) => advanceRivals(s.rivals, settled.gold, START_GOLD, r))
   const withRivals = { ...settled, rng: rng0, rivals: moved.rivals, rivalNews: moved.news }
+  // Debt mode: one more day below zero, or back to none; DEBT_DAYS in a row and the run is over.
+  const debtDays = s.debt ? (settled.gold < 0 ? (s.debtDays ?? 0) + 1 : 0) : undefined
+  if (debtDays !== undefined && debtDays >= DEBT_DAYS) return { ...withRivals, debtDays, finished: { score: settled.gold, bankrupt: true } }
   if (s.day >= LAST_DAY) return { ...withRivals, finished: { score: settled.gold } }
   const rng = { ...rng0 }
   const meta = advanceMeta(s.meta, s.day + 1, rng)
   const board = refreshBoard(s.board ?? [], s.day + 1, LAST_DAY, meta, rng)
   // A goal whose order expired goes with it.
-  return { ...withRivals, rng, meta, board, day: s.day + 1, goal: board.some((c) => c.id === s.goal) ? s.goal : undefined }
+  return { ...withRivals, rng, meta, board, day: s.day + 1, goal: board.some((c) => c.id === s.goal) ? s.goal : undefined, ...(s.debt && { debtDays }) }
 }

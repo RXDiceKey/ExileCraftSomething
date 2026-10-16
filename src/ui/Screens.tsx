@@ -1,4 +1,5 @@
 import type { Lang } from '../game/describe.ts'
+import { DEBT_DAYS, DEBT_LIMIT } from '../game/game.ts'
 import type { Rival } from '../game/rivals.ts'
 import { fmtGold, t, tList } from '../i18n.ts'
 import { rankRows } from './rivalText.ts'
@@ -24,18 +25,24 @@ interface StartProps {
   best: number
   canContinue: boolean
   onNew: () => void
+  debtMode: boolean
+  onDebtMode: (on: boolean) => void
   onContinue: () => void
   onCredits: () => void
   onCodex: () => void
 }
 
-export function StartMenu({ lang, best, canContinue, onNew, onContinue, onCredits, onCodex }: StartProps) {
+export function StartMenu({ lang, best, canContinue, onNew, debtMode, onDebtMode, onContinue, onCredits, onCodex }: StartProps) {
   return (
     <main className="screen">
       <h1>{t(lang, 'title')}</h1>
       {best > 0 && <p>{t(lang, 'bestScore')}: {fmtGold(best)}</p>}
       <div className="menu">
         <button className={canContinue ? '' : 'primary'} onClick={onNew}>{t(lang, 'newRun')}</button>
+        <label className="debt-mode">
+          <input type="checkbox" checked={debtMode} onChange={(e) => onDebtMode(e.target.checked)} /> <b>{t(lang, 'debtMode')}</b>
+          <small>{t(lang, 'debtModeHint', fmtGold(DEBT_LIMIT), DEBT_DAYS)}</small>
+        </label>
         <button className={canContinue ? 'primary' : ''} disabled={!canContinue} onClick={onContinue}>{t(lang, 'continue')}</button>
         <button onClick={onCodex}>{t(lang, 'codex')}</button>
         <button onClick={onCredits}>{t(lang, 'credits')}</button>
@@ -69,11 +76,12 @@ export function Credits({ lang, onBack }: { lang: Lang; onBack: () => void }) {
   )
 }
 
-interface RunOverProps { lang: Lang; score: number; isBest: boolean; rivals: Rival[]; onNew: () => void; onMenu: () => void }
-export function RunOver({ lang, score, isBest, rivals, onNew, onMenu }: RunOverProps) {
+interface RunOverProps { lang: Lang; score: number; isBest: boolean; rivals: Rival[]; bankrupt: boolean; onNew: () => void; onMenu: () => void }
+export function RunOver({ lang, score, isBest, rivals, bankrupt, onNew, onMenu }: RunOverProps) {
   return (
     <main className="screen">
-      <h1>{t(lang, 'runOver')}</h1>
+      <h1>{t(lang, bankrupt ? 'bankrupt' : 'runOver')}</h1>
+      {bankrupt && <p className="boom">{t(lang, 'bankruptWhy', DEBT_DAYS)}</p>}
       <p className="big">{t(lang, 'finalScore', fmtGold(score))}</p>
       {isBest && <p className="best">{t(lang, 'newBest')}</p>}
       <h3>{t(lang, 'finalRanking')}</h3>

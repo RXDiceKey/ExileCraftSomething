@@ -39,7 +39,7 @@ function App() {
     }
   }
   const startNew = () => {
-    setGame(newGame((Date.now() ^ (Math.random() * 2 ** 31)) >>> 0))
+    setGame(newGame((Date.now() ^ (Math.random() * 2 ** 31)) >>> 0, !!settings.debtMode))
     setScreen('game')
   }
 
@@ -52,7 +52,7 @@ function App() {
   if (screen === 'codex') return <>{switcher}<main className="screen"><Codex lang={lang} codex={codex} onBack={() => setScreen('start')} /></main></>
   if (screen === 'game' && game) {
     if (game.finished) {
-      return <>{switcher}<RunOver lang={lang} score={game.finished.score} isBest={game.finished.score >= best} rivals={game.rivals}
+      return <>{switcher}<RunOver lang={lang} score={game.finished.score} isBest={game.finished.score >= best} rivals={game.rivals} bankrupt={!!game.finished.bankrupt}
         onNew={startNew} onMenu={() => setScreen('start')} /></>
     }
     return <>{switcher}<Game lang={lang} state={game} setState={setGame} settings={settings} setSettings={setSettings} codex={codex}
@@ -66,6 +66,8 @@ function App() {
         best={best}
         canContinue={!!game && !game.finished}
         onNew={startNew}
+        debtMode={!!settings.debtMode}
+        onDebtMode={(on) => setSettings({ ...settings, debtMode: on })}
         onContinue={() => setScreen('game')}
         onCredits={() => setScreen('credits')}
         onCodex={() => setScreen('codex')}

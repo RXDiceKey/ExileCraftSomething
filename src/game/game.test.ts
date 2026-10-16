@@ -5,7 +5,7 @@ import { CURRENCIES } from '../engine/currency.ts'
 import { MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
-import { ACTIONS_PER_DAY, buyBase, closeDay, doBench, doMirror, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
+import { ACTIONS_PER_DAY, buyBase, closeDay, DEBT_DAYS, DEBT_LIMIT, doBench, doMirror, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { benchOptions, CRAFTING } from '../engine/crafting.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, lifeforcePrice, MIRROR, premium, priceOf } from './shop.ts'
@@ -400,4 +400,29 @@ test('타락: 그냥 타락은 ×0.7(베이스 되팔기도), 그 빌드가 원�
   // A Mirror copies no corrupted item.
   const s: GameState = { ...newGame(4), gold: 1e9, stash: [{ uid: 1, item: { ...plain, corrupted: true } }], nextUid: 2 }
   assert.equal(doMirror(s, 1).ok, false)
+})
+
+test('따갚돼 모드: 골드가 -100만까지 내려가고, 3일 연속 음수로 마감하면 게임 오버 (보통 모드는 0 아래로 못 감)', () => {
+  const base = baseId('Vaal Regalia')
+  const price = basePrice(base, 84, 1)
+  // Normal mode: no debt.
+  assert.equal(buyBase({ ...newGame(2), gold: price - 1 }, base, 84).ok, false)
+  // Debt mode: down to -DEBT_LIMIT, not past it.
+  let s: GameState = { ...newGame(2, true), gold: 0 }
+  assert.ok(s.debt)
+  s = ok(buyBase(s, base, 84))
+  assert.equal(s.gold, -price)
+  assert.equal(buyBase({ ...s, gold: -DEBT_LIMIT + price - 1 }, base, 84).ok, false, '-100만 아래로는 못 감')
+  // Three closes in a row below zero end the run; climbing back to zero resets the count.
+  s = closeDay(s)
+  assert.equal(s.debtDays, 1)
+  s = closeDay({ ...s, pending: -s.gold }) // paid back at this close
+  assert.equal(s.debtDays, 0)
+  s = { ...s, gold: -1 }
+  for (let k = 1; k < DEBT_DAYS; k++) {
+    s = closeDay(s)
+    assert.equal(s.finished, undefined)
+  }
+  s = closeDay(s)
+  assert.ok(s.finished?.bankrupt, `${DEBT_DAYS}일 연속 음수`)
 })

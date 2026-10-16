@@ -4,7 +4,7 @@ import type { CurrencyId } from '../engine/currency.ts'
 import { BASES } from '../engine/data.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
-  ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, deliver, dismissCommission, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
+  ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, DEBT_DAYS, deliver, dismissCommission, hunt, spendable, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
   doAwaken, doBeast, doDominance, doEldritchImplicit, doEldritchOrb, doHarvest, doRecombine, doImprint, doRestore, doReveal, doUnveil, doVeiledOrb, doFossils, doInfluenceExalt, doMatron, doMirror, doRemoveCrafted,
   type GameState, type Result, type SpamOptions,
 } from '../game/game.ts'
@@ -166,7 +166,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   const header = (
     <>
       <div className="status-line">
-        <b>{t(lang, 'day', state.day, LAST_DAY)}</b> · {t(lang, 'gold')} <b className="gold">{fmtGold(state.gold)}</b>
+        <b>{t(lang, 'day', state.day, LAST_DAY)}</b> · {t(lang, 'gold')} <b className={state.gold < 0 ? 'debt' : 'gold'}>{fmtGold(state.gold)}</b>
         {state.pending > 0 && <span className="hint"> (+{fmtGold(state.pending)})</span>} · {t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}
       </div>
       {goal && <GoalCard lang={lang} c={goal} item={entry?.item} day={state.day} open={settings.goalOpen ?? true}
@@ -184,7 +184,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
       <header className="topbar">
         <strong>{t(lang, 'day', state.day, LAST_DAY)} · {t(lang, 'weekdays').split(',')[weekday(state.day)]}</strong>
         {boom(state.day) > 1 && <span className="boom">{t(lang, 'boomBadge', boomPct(state.day))}</span>}
-        <span>{t(lang, 'gold')}: <b className="gold">{fmtGold(state.gold)}</b></span>
+        <span>{t(lang, 'gold')}: <b className={state.gold < 0 ? 'debt' : 'gold'}>{fmtGold(state.gold)}</b></span>
+        {state.debt && <span className={state.gold < 0 ? 'debt' : 'hint'}>{t(lang, 'debtBadge')}{state.gold < 0 && ` · ${t(lang, 'debtDays', (state.debtDays ?? 0) + 1, DEBT_DAYS)}`}</span>}
         {state.pending > 0 && <span>{t(lang, 'pending')}: {fmtGold(state.pending)}</span>}
         <span>{t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}</span>
         <span>{t(lang, 'rank', playerRank(state.gold + state.pending, state.rivals), state.rivals.length + 1)}</span>
@@ -239,7 +240,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           {/* Tabs only hide when another one is open (user: going to the shop and back mustn't reset the bench's tab,
               fossils, spam settings, open groups...). Faustus is drawn only when open: its quote is the costly part. */}
           <div hidden={view !== 'bench'}>
-            <Bench lang={lang} entry={entry} gold={state.gold} day={state.day} canSpam={!!match} lit={lit}
+            <Bench lang={lang} entry={entry} gold={spendable(state)} day={state.day} canSpam={!!match} lit={lit}
               onCurrency={onCurrency} onBench={onBench} onRemoveCrafted={onRemoveCrafted} onMatron={onMatron} onEssence={onEssence}
               onFossils={onFossils} onMirror={onMirror} onSpam={onSpam} onFaustus={openFaustus}
               stash={state.stash} onInfluenceExalt={onInfluenceExalt} onDominance={onDominance} onAwaken={onAwaken}

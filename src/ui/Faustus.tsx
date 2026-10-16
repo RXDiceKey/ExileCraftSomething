@@ -56,6 +56,7 @@ export function Faustus({ lang, entry, day, meta, canSell, lit, onSell, onBack }
           <ul className="price-factors">
             {q.best?.mirror && <li className="boom">{entry.item.mirrored ? t(lang, 'mirrorCopy', MIRROR_FEE) : t(lang, 'mirrorOriginal', MIRROR_ORIGINAL)}</li>}
             {q.best?.capped && <li>{t(lang, 'mirrorCap')}</li>}
+            {q.best && q.best.corrupt !== 1 && <li>{t(lang, q.best.corrupt > 1 ? 'corruptGood' : 'corruptPlain', q.best.corrupt)}</li>}
             {elevated > 0 && !q.best?.mirror && <li>{t(lang, 'elevatedNote', elevated, ELEVATED_SURGE[elevated])}</li>}
             {q.boom > 1 && <li className="boom">{t(lang, 'boomNote', Math.round((q.boom - 1) * 100))}</li>}
             {sat < 1 && <li>{t(lang, 'saturationNote', Math.round((1 - sat) * 100))}</li>}

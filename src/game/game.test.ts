@@ -5,13 +5,13 @@ import { CURRENCIES } from '../engine/currency.ts'
 import { MODS } from '../engine/data.ts'
 import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
-import { ACTIONS_PER_DAY, buyBase, closeDay, doBench, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
+import { ACTIONS_PER_DAY, buyBase, closeDay, doBench, doMirror, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { benchOptions, CRAFTING } from '../engine/crafting.ts'
 import { compileSearch } from './search.ts'
 import { basePrice, baseResale, lifeforcePrice, MIRROR, premium, priceOf } from './shop.ts'
 import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
-import { MIRROR_CAP, MIRROR_FEE, MIRROR_ORIGINAL, quote, shortfall, stackedAttributes, synergy } from './value.ts'
+import { CORRUPT_GOOD, CORRUPT_PLAIN, MIRROR_CAP, MIRROR_FEE, MIRROR_ORIGINAL, quote, shortfall, stackedAttributes, synergy } from './value.ts'
 
 const baseNames = (textEn as { bases: Record<string, string> }).bases
 const baseId = (name: string) => Object.keys(baseNames).find((id) => baseNames[id] === name)!
@@ -370,4 +370,34 @@ test('작업대 교체: 기존 제작 옵션을 지우는 정제의 오브 값�
   const s3 = ok(doBench(s2, 1, cold))
   assert.equal(s2.gold - s3.gold, CRAFTING.bench[cold].cost + priceOf('Orb of Scouring'), '교체는 정제 값 추가')
   assert.equal(s3.stash[0].item.explicits.filter((m) => m.crafted).length, 1)
+})
+
+test('타락: 그냥 타락은 ×0.7(베이스 되팔기도), 그 빌드가 원하는 타락 옵션은 ×1.5, 거울로 복사 못 하고 미러급도 아님', () => {
+  const glove = baseId('Sorcerer Gloves')
+  const mods = ['IncreasedLife8', 'ColdResist7', 'FireResist7', 'LightningResist7']
+  const corruptMod = (type: string) => Object.keys(MODS).find((id) => MODS[id].gen === 'corrupted' && MODS[id].type === type)!
+  const plain = withMods(glove, mods)
+  const v = quote(plain, 'en', 8)
+  const just = quote({ ...plain, corrupted: true }, 'en', 8)
+  assert.ok(Math.abs(just.optionValue / v.optionValue - CORRUPT_PLAIN) < 0.01, `${just.optionValue} / ${v.optionValue}`)
+  assert.equal(just.baseResale, Math.round(baseResale(glove, 86, 8) * CORRUPT_PLAIN))
+  // +1 to Level of Socketed Gems: any build takes it. Item rarity: no build wants it.
+  const good = quote({ ...plain, corrupted: true, implicits: [rollMod(corruptMod('LocalIncreaseSocketedGemLevel'), { s: 1 })] }, 'en', 8)
+  assert.ok(Math.abs(good.optionValue / v.optionValue - CORRUPT_GOOD) < 0.01)
+  assert.equal(good.best!.corrupt, CORRUPT_GOOD)
+  const rarity = quote({ ...plain, corrupted: true, implicits: [rollMod(corruptMod('IncreasedItemRarity'), { s: 1 })] }, 'en', 8)
+  assert.equal(rarity.best!.corrupt, CORRUPT_PLAIN)
+  // Elemental Weakness on hit: an elemental build's, not a physical one's.
+  const ew = { ...plain, corrupted: true as const, implicits: [rollMod(corruptMod('CurseOnHitLevelElementalWeakness'), { s: 1 })] }
+  const phys = BUILDS.find((b) => b.id === 'boneshatter')!
+  const ele = BUILDS.find((b) => b.id === 'lightning-arrow')!
+  const factor = (id: string, item: Item) => {
+    const q = quote(item, 'en', 8)
+    return q.best?.id === id ? q.best.corrupt : undefined
+  }
+  assert.ok([CORRUPT_GOOD, undefined].includes(factor(ele.id, ew)))
+  assert.ok([CORRUPT_PLAIN, undefined].includes(factor(phys.id, ew)))
+  // A Mirror copies no corrupted item.
+  const s: GameState = { ...newGame(4), gold: 1e9, stash: [{ uid: 1, item: { ...plain, corrupted: true } }], nextUid: 2 }
+  assert.equal(doMirror(s, 1).ok, false)
 })

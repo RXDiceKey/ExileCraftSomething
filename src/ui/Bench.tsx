@@ -135,7 +135,7 @@ export function Bench(p: Props) {
                 </button>
               )
             })}
-            <button className="currency" disabled={!!item.mirrored || priceOf(MIRROR) > gold}
+            <button className="currency" disabled={!!item.mirrored || !!item.corrupted || priceOf(MIRROR) > gold}
               data-tip={`${nameOf(MIRROR, lang)} — ${fmtGold(priceOf(MIRROR))}`} onClick={() => { sfx('currencyApply'); p.onMirror() }}>
               <img src={icon(MIRROR)} alt={nameOf(MIRROR, lang)} />
               <small>{fmtGold(priceOf(MIRROR))}</small>

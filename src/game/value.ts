@@ -239,6 +239,7 @@ export interface Quote {
     id: string; name: string; fit: number; usefulCount: number; completeness: number; baseQuality: number; mods: ModVerdict[]
     mirror: boolean // mirror tier (D46): priced as a copy, a mirror plus the fee
     capped: boolean // short of mirror tier and bent below MIRROR_CAP of a mirror
+    corrupt: number // corruption: CORRUPT_GOOD, CORRUPT_PLAIN, or 1 when not corrupted
   }
   baseResale: number
 }
@@ -362,9 +363,60 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const raw = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated * rarity
   const mirror = mirrorTier(item, p, mods, quality)
   const cap = MIRROR_CAP * priceOf(MIRROR)
-  const value = mirror ? mirrorTierPrice(item, p.sat) : bend(raw, cap)
+  const corrupt = corruptionFactor(item, p)
+  const value = mirror ? mirrorTierPrice(item, p.sat) : bend(raw * corrupt, cap)
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
-  return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods, mirror, capped: !mirror && raw > cap / 2 }
+  return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods, mirror, capped: !mirror && raw * corrupt > cap / 2, corrupt }
+}
+
+// ---- Corruption (user): a corrupted item can't be crafted on any more, so it sells for CORRUPT_PLAIN of its price (the
+// base resale too), unless its corruption implicit is one this buyer wants: CORRUPT_GOOD. Which implicits are sought
+// (Maxroll's corruption guide, trade forum threads) and by whom: some any build takes (+1% to all maximum resistances, an
+// additional curse, movement speed, +1 to socketed gems, % maximum life / energy shield, the defensive auras); the rest go
+// with what the build is (its elements for curse on hit, +2 socketed gems, aura effect / reservation and added damage;
+// attack or spell; critical strikes; damage over time; the charges). An implicit whose stat the build wants outright
+// counts too (critical strike multiplier, cast speed, spell suppression, chaos resistance...).
+export const CORRUPT_PLAIN = 0.7
+export const CORRUPT_GOOD = 1.5
+type Trait = 'any' | 'fire' | 'cold' | 'lightning' | 'physical' | 'chaos' | 'elemental' | 'attack' | 'spell' | 'crit' | 'dot'
+const CORRUPT_WANTS: [RegExp, Trait][] = [
+  [/^(additional_maximum_all_resistances_%|base_maximum_(fire|cold|lightning)_damage_resistance_%|number_of_additional_curses_allowed)$/, 'any'],
+  [/^(base_movement_velocity_\+%|local_socketed_gem_level_\+|maximum_life_\+%|maximum_energy_shield_\+%)$/, 'any'],
+  [/^(determination|grace|discipline)_/, 'any'],
+  [/flammability|^anger_|socketed_fire_gem|added_fire_damage/, 'fire'],
+  [/frostbite|^hatred_|socketed_cold_gem|added_cold_damage|cold_ailment_effect/, 'cold'],
+  [/conductivity|^wrath_|socketed_lightning_gem|added_lightning_damage|^shock_effect/, 'lightning'],
+  [/vulnerability|^pride_|socketed_physical_gem|endurance_charges/, 'physical'],
+  [/despair|socketed_chaos_gem|^delirium_aura|^malevolence_/, 'chaos'],
+  [/elemental_weakness|elemental_damage_with_attack|^purity_of_elements_/, 'elemental'],
+  [/^attack_speed|attack_additional_critical|frenzy_charges|mana_gain_per_target/, 'attack'],
+  [/cast_speed|spell_additional_critical|^zealotry_/, 'spell'],
+  [/critical_strike|power_charges/, 'crit'],
+  [/dot_multiplier|despair|^delirium_aura|^malevolence_/, 'dot'],
+]
+// What a buyer is, from every option it wants (a build: in any slot).
+const traitCache = new Map<string, Set<Trait>>()
+function traitsOf(p: Buyer): Set<Trait> {
+  let t = traitCache.get(p.id)
+  if (t) return t
+  const stats = (p.build ? BUILD_STATS.get(p.id) : undefined) ?? Object.keys(p.wants)
+  const has = (re: RegExp) => stats.some((s) => re.test(s) && !/resist|reduction|taken/.test(s))
+  t = new Set<Trait>(['any'])
+  for (const e of ['fire', 'cold', 'lightning', 'physical', 'chaos'] as const) if (has(new RegExp(e))) t.add(e)
+  if (t.has('fire') || t.has('cold') || t.has('lightning') || has(/elemental/)) t.add('elemental')
+  if (has(/attack|accuracy/) || stats.some((s) => ATTACK_STATS.includes(s))) t.add('attack')
+  if (has(/spell|cast_speed/)) t.add('spell')
+  if (has(/critical/)) t.add('crit')
+  if (has(/dot_multiplier|damage_over_time/)) t.add('dot')
+  traitCache.set(p.id, t)
+  return t
+}
+export function corruptionFactor(item: Item, p: Buyer): number {
+  if (!item.corrupted) return 1
+  const traits = traitsOf(p)
+  const good = item.implicits.some((m) => MODS[m.id].gen === 'corrupted' && MODS[m.id].stats.some(([sid]) =>
+    (p.wants[sid] ?? 0) >= 0.5 || CORRUPT_WANTS.some(([re, trait]) => re.test(sid) && traits.has(trait))))
+  return good ? CORRUPT_GOOD : CORRUPT_PLAIN
 }
 
 // ---- Mirror tier (D46): the end of crafting (user: price the best items like the real ones). The Forbidden Trove league
@@ -390,7 +442,7 @@ function mirrorTier(item: Item, p: Buyer, mods: ModVerdict[], quality: number): 
   const l = affixLimits(item)
   const special = mods.some((m) => MODS[m.id].elev || MODS[m.id].drop || isInfluenced(m.id))
     || (['exarch', 'eater'] as const).some((side) => eldritchTier(item, side) >= EMBERS['Exceptional Eldritch Ember'])
-  return p.build && p.fit === 1 && quality >= MIRROR_BASE && mods.length >= Math.min(FINISHED, l.prefix + l.suffix)
+  return !item.corrupted && p.build && p.fit === 1 && quality >= MIRROR_BASE && mods.length >= Math.min(FINISHED, l.prefix + l.suffix)
     && mods.every((m) => m.useful && m.tier <= 1) && special
 }
 
@@ -473,7 +525,7 @@ export function dropAppeal(modId: string, base: string): boolean {
 export const slotBudget = (cls: string) => SLOT_BUDGET[slotOf(cls)]
 
 export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
-  const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item))
+  const resale = Math.round(baseResale(item.base, item.ilvl, day) * baseShare(item) * (item.corrupted ? CORRUPT_PLAIN : 1))
   // The weekend boom lifts what buyers pay, not the base resale floor (else buying and reselling bases would profit).
   const k = boom(day)
   const judged = buyers(item, lang, day, meta).map((p) => {
@@ -491,7 +543,7 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
     best: best.usefulCount > 0
       ? {
         id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality,
-        mods: best.mods, mirror: best.mirror, capped: best.capped,
+        mods: best.mods, mirror: best.mirror, capped: best.capped, corrupt: best.corrupt,
       }
       : undefined,
     baseResale: resale,

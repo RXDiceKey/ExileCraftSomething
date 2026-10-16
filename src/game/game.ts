@@ -226,7 +226,7 @@ export function doRecombine(s: GameState, uidA: number, uidB: number): Result {
 export function doMirror(s: GameState, uid: number): Result {
   const entry = findItem(s, uid)
   if (!entry) return fail('gone')
-  if (entry.item.mirrored) return fail('cantApply')
+  if (entry.item.mirrored || entry.item.corrupted) return fail('cantApply') // a mirror copies no corrupted item (PoE Wiki)
   const price = priceOf(MIRROR)
   if (price > s.gold) return fail('noGold')
   const copy = record(entry.item, { ...entry.item, mirrored: true }, { key: 'mirror', cost: price, fixed: true }, highEffCount)

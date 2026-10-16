@@ -2,9 +2,10 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
-import { baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
+import { baseDefence, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 import {
-  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, EARLY_DAYS, EARLY_REWARD_MAX, refreshBoard, WANTS_LATE_FROM, type Commission,
+  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, dpsBar, dpsKind, EARLY_DAYS, EARLY_REWARD_MAX, refreshBoard, WANTS_LATE_FROM,
+  type Commission,
 } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
@@ -25,12 +26,16 @@ function fill(c: Commission): Item {
   const any = buyableBases().find((b) => c.classes.includes(BASES[b].cls) && !isSpecialBase(b)
     && (!c.defence || c.defence.every((d) => baseKindKeys(b).defences.includes(d))))!
   const totals = c.defence && c.wants.some((w) => 'defence' in w) ? defenceBars(any, c.defence as Defence[], 1) : undefined
-  const base = c.base ?? totals?.top ?? any
+  // A DPS order: the class's top base with the build's damage options at tier 1.
+  const dps = c.wants.find((w) => 'dps' in w)
+  const wants = BUILDS.find((b) => b.id === c.build)!.slots[c.slot]!.wants
+  const dpsTotals = dps && 'dps' in dps ? dpsBar(any, dps.dps, DPS_STATS.filter((s) => (wants[s] ?? 0) >= 0.7), 1) : undefined
+  const base = c.base ?? totals?.top ?? dpsTotals?.top ?? any
   const item = newItem(base, 84, { s: 1 })
   const tags = itemTags(item)
-  const ids: string[] = caring(c) ? [...(totals?.mods ?? [])] : []
+  const ids: string[] = [...(caring(c) ? totals?.mods ?? [] : []), ...(dpsTotals?.mods ?? [])]
   for (const w of c.wants) {
-    if ('defence' in w) continue
+    if ('defence' in w || 'dps' in w) continue
     // The option giving the most of that stat at item level 84 (the asks sit inside the accepted tiers of its family).
     const most = (x: string) => Math.max(...MODS[x].stats.filter(([s]) => s === w.stat).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
     const id = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
@@ -127,7 +132,7 @@ test('의뢰 보수 = (베이스 상점가 + 조건을 딱 채운 아이템의 �
       const ids: string[] = []
       const mods: RolledMod[] = []
       for (const w of c.wants) {
-        if ('defence' in w) continue
+        if ('defence' in w || 'dps' in w) continue
         const fits = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
           && !MODS[x].elev && MODS[x].stats.some(([st]) => st === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
           && !ids.some((q) => MODS[q].grp.some((g) => MODS[x].grp.includes(g))))
@@ -151,7 +156,10 @@ test('의뢰: 처음부터 옵션 3개, 중반(7일차)부터 4개, 빌드가 �
     for (let seed = 1; seed <= 4; seed++) {
       for (const c of refreshBoard([], day, 14, rollMeta({ s: seed }), { s: seed * 31 + day })) {
         const options = c.wants.filter((w) => !('defence' in w) || caring(c)).length
-        assert.equal(options, day >= WANTS_LATE_FROM ? 4 : 3, `${day}일차 옵션 수`)
+        const count = day >= WANTS_LATE_FROM ? 4 : 3
+        // A DPS ask stands in for the damage options, so a bow order may be "elemental DPS" and little else.
+        if (c.wants.some((w) => 'dps' in w)) assert.ok(options >= 1 && options <= count, `${day}일차 DPS 의뢰 조건 수 ${options}`)
+        else assert.equal(options, count, `${day}일차 옵션 수`)
         const item = fill(c)
         assert.ok(canDeliver(item, c), '조건 옵션을 다 붙이면 납품 가능')
         if (c.base) {
@@ -230,8 +238,8 @@ test('의뢰 옵션은 등급이 아니라 수치로: 1등급 요구는 1등급 
   for (let seed = 1; seed < 30; seed++) {
     for (const c of refreshBoard([], 7, 14, rollMeta({ s: seed }), { s: seed * 5 })) {
       for (const w of c.wants) {
-        if ('defence' in w) {
-          assert.equal(w.min % 10, 0, '방어 수치는 10단위')
+        if ('defence' in w || 'dps' in w) {
+          assert.equal(w.min % 10, 0, '방어·DPS 수치는 10단위')
           continue
         }
         assert.ok(w.min !== undefined, '수치로 요구')
@@ -264,4 +272,27 @@ test('초반 3일엔 보수 천만 이상 의뢰가 안 뜨고, 그래도 의뢰
       for (const c of board) assert.ok(c.reward < EARLY_REWARD_MAX, `${day}일차 ${c.build}: 보수 ${c.reward}`)
     }
   }
+})
+
+test('공격 빌드 무기 의뢰는 DPS로: 피해 옵션 대신 물리/원소/전체 DPS를 10단위로 요구하고 그 종류 무기면 아무 베이스나', () => {
+  assert.equal(dpsKind(BUILDS.find((b) => b.id === 'boneshatter')!.slots.weapon!.wants), 'phys')
+  assert.equal(dpsKind(BUILDS.find((b) => b.id === 'lightning-arrow')!.slots.weapon!.wants), 'ele')
+  assert.equal(dpsKind(BUILDS.find((b) => b.id === 'winter-orb')!.slots.weapon!.wants), undefined, '주문 빌드는 DPS 안 봄')
+  let seen = 0
+  for (let seed = 1; seed <= 60 && seen < 3; seed++) {
+    for (const c of refreshBoard([], 7, 14, rollMeta({ s: seed }), { s: seed * 11 })) {
+      const w = c.wants.find((x) => 'dps' in x)
+      if (!w || !('dps' in w)) continue
+      seen++
+      const kind = dpsKind(BUILDS.find((b) => b.id === c.build)!.slots.weapon!.wants)
+      assert.equal(w.dps, kind)
+      assert.ok(w.min > 0 && w.min % 10 === 0, `DPS ${w.min}`)
+      assert.equal(c.base, undefined, '아무 베이스나')
+      assert.equal(c.classes.length, 1)
+      // No option ask for what the DPS already covers.
+      assert.ok(!c.wants.some((x) => 'stat' in x && DPS_STATS.includes(x.stat)))
+      assert.ok(canDeliver(fill(c), c), `${c.build}: 채운 아이템이 통과`)
+    }
+  }
+  assert.ok(seen > 0, 'DPS 의뢰가 나옴')
 })

@@ -4,7 +4,7 @@ import textEnJson from '../data/text.en.json' with { type: 'json' }
 import textKoJson from '../data/text.ko.json' with { type: 'json' }
 import { BASES, MODS, type Influence } from '../engine/data.ts'
 import { modInfluence } from '../engine/influence.ts'
-import { baseDefence, itemTags, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
+import { baseDefence, baseDps, itemTags, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 
 export type Lang = 'ko' | 'en'
 
@@ -202,8 +202,8 @@ export const baseArt = (base: string) => `items/${BASES[base].art}.png`
 
 // "에너지 보호막 · 지능": defence type (armour pieces, from tags) + attribute (from tags or requirements).
 const KIND: Record<Lang, Record<string, string>> = {
-  ko: { str: '힘', dex: '민첩', int: '지능', armour: '방어도', evasion: '회피', es: '에너지 보호막', ward: '수호' },
-  en: { str: 'Str', dex: 'Dex', int: 'Int', armour: 'Armour', evasion: 'Evasion', es: 'Energy Shield', ward: 'Ward' },
+  ko: { str: '힘', dex: '민첩', int: '지능', armour: '방어도', evasion: '회피', es: '에너지 보호막', ward: '수호', pdps: '물리 DPS' },
+  en: { str: 'Str', dex: 'Dex', int: 'Int', armour: 'Armour', evasion: 'Evasion', es: 'Energy Shield', ward: 'Ward', pdps: 'Physical DPS' },
 }
 const DEFENCE_OF = { str: 'armour', dex: 'evasion', int: 'es' } as const
 export const defenceName = (d: string, lang: Lang) => KIND[lang][d] ?? d
@@ -221,11 +221,12 @@ export function baseKind(base: string, lang: Lang): string {
   const { defences, attrs } = baseKindKeys(base)
   return [defences.map((d) => KIND[lang][d]).join('/'), attrs.map((a) => KIND[lang][a]).join('/')].filter(Boolean).join(' · ')
 }
-// The same with the base's defence numbers (shop list, user): "방어도 1360 · 힘".
+// The same with the base's defence numbers, or a weapon's physical DPS (shop list, user): "방어도 1360 · 힘", "물리 DPS 107.1 · 민첩".
 export function baseStats(base: string, lang: Lang): string {
   const { defences, attrs } = baseKindKeys(base)
-  return [defences.map((d) => `${KIND[lang][d]} ${baseDefence(base, d as Defence)}`).join(' / '), attrs.map((a) => KIND[lang][a]).join('/')]
-    .filter(Boolean).join(' · ')
+  const dps = baseDps(base)
+  return [defences.map((d) => `${KIND[lang][d]} ${baseDefence(base, d as Defence)}`).join(' / '), dps ? `${KIND[lang].pdps} ${dps.toFixed(1)}` : '',
+    attrs.map((a) => KIND[lang][a]).join('/')].filter(Boolean).join(' · ')
 }
 
 const RARITY: Record<Lang, Record<Item['rarity'], string>> = {

@@ -65,6 +65,35 @@ export function defences(item: Item): Partial<Record<Defence, number>> {
   return out
 }
 
+// ---- Weapon damage (user: attack weapons are judged by DPS the way armour is by defence). The item's own numbers, from
+// local options: physical (base + added) x (1 + (increased + quality) / 100), elemental and chaos added, attacks per second
+// x (1 + increased attack speed / 100), critical strike chance x (1 + increased / 100). DPS = average hit x attacks per second.
+export type DpsKind = 'phys' | 'ele' | 'total'
+const ELEMENTS = ['fire', 'cold', 'lightning']
+const added = (kind: string) => [`local_minimum_added_${kind}_damage`, `local_maximum_added_${kind}_damage`]
+// The options that move DPS (critical strike chance doesn't, as on the trade site).
+export const DPS_STATS = ['local_physical_damage_+%', ...added('physical'), 'local_attack_speed_+%', ...ELEMENTS.flatMap(added)]
+export interface WeaponStats { phys: [number, number]; ele: [number, number]; chaos: [number, number]; aps: number; crit: number; dps: Record<DpsKind, number> }
+export function weaponStats(item: Item): WeaponStats | undefined {
+  const p = BASES[item.base].props as Record<string, number>
+  if (!p.attack_time) return undefined
+  const sum = (sid: string) => [...item.implicits, ...item.explicits]
+    .reduce((s, m) => s + MODS[m.id].stats.reduce((t, [x], i) => t + (x === sid ? m.values[i] : 0), 0), 0)
+  const pair = (kinds: string[]): [number, number] => [0, 1].map((k) => kinds.reduce((s, kind) => s + sum(added(kind)[k]), 0)) as [number, number]
+  const inc = 1 + (sum('local_physical_damage_+%') + (item.quality ?? 0)) / 100
+  const [a, b] = pair(['physical'])
+  const phys: [number, number] = [Math.round((p.physical_damage_min + a) * inc), Math.round((p.physical_damage_max + b) * inc)]
+  const ele = pair(ELEMENTS)
+  const chaos = pair(['chaos'])
+  const aps = (1000 / p.attack_time) * (1 + sum('local_attack_speed_+%') / 100)
+  const crit = (p.critical_strike_chance / 100) * (1 + sum('local_critical_strike_chance_+%') / 100)
+  const per = ([x, y]: [number, number]) => ((x + y) / 2) * aps
+  return { phys, ele, chaos, aps, crit, dps: { phys: per(phys), ele: per(ele), total: per(phys) + per(ele) + per(chaos) } }
+}
+// The bare base's physical DPS (the shop list, the order bars).
+export const baseDps = (base: string) =>
+  weaponStats({ base, ilvl: 1, rarity: 'normal', implicits: [], explicits: [], influences: [] })?.dps.phys ?? 0
+
 // One craft in an item's history (see game/history.ts).
 export interface CraftStep {
   key: string // what was done, e.g. "cur:chaos", "ess:Deafening Essence of Greed"

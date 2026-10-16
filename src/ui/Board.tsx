@@ -1,6 +1,8 @@
 // Commission board (D38) and rumors about the coming patches.
 import type { Item } from '../engine/item.ts'
 import { baseFits, canDeliver, meetsWant, type Commission, type Want } from '../game/commissions.ts'
+
+const wantKey = (w: Want) => ('defence' in w ? w.defence : 'dps' in w ? `dps-${w.dps}` : w.stat)
 import { baseArt, baseName, className, defenceName, statLabel, statLine, type Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, type Meta } from '../game/meta.ts'
@@ -31,7 +33,7 @@ export function Board({ lang, board, day, meta, entry, canSell, goal, onDeliver,
               <div>
                 <b>{buildName(c.build, lang)}</b> — <OrderBase lang={lang} c={c} />
               </div>
-              <ul>{c.wants.map((w) => <li key={'defence' in w ? w.defence : w.stat}><WantText lang={lang} w={w} /></li>)}</ul>
+              <ul>{c.wants.map((w) => <li key={wantKey(w)}><WantText lang={lang} w={w} /></li>)}</ul>
               <div className="commission-foot">
                 {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
                 <button className="primary" disabled={!fits || !canSell} onClick={() => onDeliver(c.id)}>{t(lang, 'deliver')}</button>
@@ -73,7 +75,7 @@ export function GoalCard({ lang, c, item, day, open, onToggle }: {
       </summary>
       <ul className="goal-checks">
         <li className={base ? 'ok' : undefined}><OrderBase lang={lang} c={c} /></li>
-        {c.wants.map((w, k) => <li key={'defence' in w ? w.defence : w.stat} className={wants[k] ? 'ok' : undefined}><WantText lang={lang} w={w} /></li>)}
+        {c.wants.map((w, k) => <li key={wantKey(w)} className={wants[k] ? 'ok' : undefined}><WantText lang={lang} w={w} /></li>)}
       </ul>
     </details>
   )
@@ -87,6 +89,7 @@ function OrderBase({ lang, c }: { lang: Lang; c: Commission }) {
 
 function WantText({ lang, w }: { lang: Lang; w: Want }) {
   if ('defence' in w) return <>{defenceName(w.defence, lang)} {t(lang, 'atLeast', w.min)}</>
+  if ('dps' in w) return <>{t(lang, `dps_${w.dps}`)} {t(lang, 'atLeast', w.min)}</>
   if (w.min === undefined) return <>{statLabel(w.stat, lang)?.[1] ?? w.stat} · {w.maxTier > 1 ? t(lang, 'tierRange', w.maxTier) : t(lang, 'tier', 1)}</>
   return <AskLine lang={lang} values={{ [w.stat]: w.min, ...(w.stat2 && { [w.stat2]: w.min2! }) }} />
 }

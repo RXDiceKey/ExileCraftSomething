@@ -15,9 +15,13 @@
 // roll, no quality): the top base gets there with those tiers, lower bases need better ones, or quality.
 // A build that doesn't look at defence there (life first, say) still wants a decent base: each defence at least what the
 // second-best ordinary base of the kind has bare, on top of the options asked; any base of the kind will do.
+// Attack weapon orders (user: judged by DPS as armour is by defence): an attack build's weapon order asks a DPS (physical,
+// elemental or total, by which damage options the build wants) instead of those options, and takes any base of the class.
+// The bar: the class's top base by physical DPS with the build's damage options at DEFENCE_TIER (lowest roll), in tens.
 import { BASES, MODS } from '../engine/data.ts'
 import {
-  affixLimits, baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod,
+  affixLimits, baseDefence, baseDps, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, weaponStats,
+  type Defence, type DpsKind, type Item, type RolledMod,
 } from '../engine/item.ts'
 import { int, next, pickWeighted, type Rng } from '../engine/rng.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
@@ -27,6 +31,7 @@ import { baseAppeal, quote, slotOf } from './value.ts'
 
 // min/stat2/min2: the numbers asked (older saves: the tier only). maxTier stays for the reference item.
 export type Want = { stat: string; maxTier: number; min?: number; stat2?: string; min2?: number } | { defence: Defence; min: number }
+  | { dps: DpsKind; min: number }
 export interface Commission {
   id: number
   build: string
@@ -64,6 +69,7 @@ const total = (item: Item, stat: string) =>
 const reaches = (v: number, ask: number) => (ask < 0 ? v <= ask : v >= ask)
 export const meetsWant = (item: Item, w: Want) => {
   if ('defence' in w) return (defences(item)[w.defence] ?? 0) >= w.min
+  if ('dps' in w) return (weaponStats(item)?.dps[w.dps] ?? 0) >= w.min
   if (w.min === undefined) return item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
   return reaches(total(item, w.stat), w.min) && (!w.stat2 || reaches(total(item, w.stat2), w.min2!))
 }
@@ -88,10 +94,18 @@ export function defenceBars(base: string, defs: Defence[], tier: number): { top:
   const score = (b: string) => defs.reduce((s, d) => s + baseDefence(b, d) / best(d), 0)
   const top = kin.reduce((x, y) => (score(y) > score(x) ? y : x), base)
   const ref: Item = { ...newItem(top, ILVL, { s: 1 }), rarity: 'rare' }
+  const mods = barMods(ref, defs.flatMap((d) => [[defenceFlat(d)], defenceInc(d)]), tier)
+  const total = defences({ ...ref, explicits: mods.map(lowest) })
+  return { top, mods, mins: Object.fromEntries(defs.map((d) => [d, Math.floor((total[d] ?? 0) / DEFENCE_STEP) * DEFENCE_STEP])) }
+}
+
+const lowest = (id: string): RolledMod => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) })
+// For each stat list, the best option of exactly that tier carrying one of the stats (or the worst tier there is, if the
+// ladder is short), as long as its group is free and its side has room.
+function barMods(ref: Item, wanted: string[][], tier: number): string[] {
   const tags = itemTags(ref)
   const room = affixLimits(ref)
   const low = (id: string, stats: string[]) => Math.min(...MODS[id].stats.filter(([s]) => stats.includes(s)).map(([, x, y]) => Math.min(x, y)))
-  // The best option of exactly that tier carrying one of the stats (or the worst tier there is, if the ladder is short).
   const at = (stats: string[]) => {
     const all = Object.keys(MODS).filter((id) => {
       const m = MODS[id]
@@ -103,16 +117,30 @@ export function defenceBars(base: string, defs: Defence[], tier: number): { top:
     return all.filter((id) => tierOf(ref, id) === Math.min(tier, worst)).reduce((x, id) => (low(id, stats) > low(x, stats) ? id : x))
   }
   const mods: string[] = []
-  for (const d of defs) {
-    for (const id of [at([defenceFlat(d)]), at(defenceInc(d))]) {
-      if (!id || mods.some((p) => MODS[p].grp.some((g) => MODS[id].grp.includes(g)))) continue
-      if (mods.filter((p) => MODS[p].gen === MODS[id].gen).length >= (MODS[id].gen === 'prefix' ? room.prefix : room.suffix)) continue
-      mods.push(id)
-    }
+  for (const id of wanted.map(at)) {
+    if (!id || mods.some((p) => MODS[p].grp.some((g) => MODS[id].grp.includes(g)))) continue
+    if (mods.filter((p) => MODS[p].gen === MODS[id].gen).length >= (MODS[id].gen === 'prefix' ? room.prefix : room.suffix)) continue
+    mods.push(id)
   }
-  const lowest = (id: string) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) })
-  const total = defences({ ...ref, explicits: mods.map(lowest) })
-  return { top, mods, mins: Object.fromEntries(defs.map((d) => [d, Math.floor((total[d] ?? 0) / DEFENCE_STEP) * DEFENCE_STEP])) }
+  return mods
+}
+
+// An attack build's weapon (it wants attack speed, physical damage or critical strike chance there): which DPS it asks.
+const ATTACK_SIGNS = ['local_attack_speed_+%', 'local_physical_damage_+%', 'local_minimum_added_physical_damage', 'local_critical_strike_chance_+%']
+export function dpsKind(wants: Record<string, number>): DpsKind | undefined {
+  if (!ATTACK_SIGNS.some((s) => (wants[s] ?? 0) >= 0.7)) return undefined
+  const has = (re: RegExp) => Object.entries(wants).some(([s, w]) => w >= 0.7 && re.test(s))
+  const phys = has(/^local_(physical_damage_+%|(minimum|maximum)_added_physical_damage)$/)
+  const ele = has(/^local_(minimum|maximum)_added_(fire|cold|lightning)_damage$/)
+  return phys && !ele ? 'phys' : ele && !phys ? 'ele' : 'total'
+}
+export function dpsBar(base: string, kind: DpsKind, stats: string[], tier: number): { top: string; mods: string[]; min: number } {
+  const kin = buyableBases().filter((b) => BASES[b].cls === BASES[base].cls && !isSpecialBase(b))
+  const top = kin.reduce((x, y) => (baseDps(y) > baseDps(x) ? y : x), base)
+  const ref: Item = { ...newItem(top, ILVL, { s: 1 }), rarity: 'rare' }
+  const mods = barMods(ref, stats.map((s) => [s]), tier)
+  const dps = weaponStats({ ...ref, explicits: mods.map(lowest) })?.dps[kind] ?? 0
+  return { top, mods, min: Math.floor(dps / DEFENCE_STEP) * DEFENCE_STEP }
 }
 
 // Each defence at least what the second-best ordinary base of this kind has bare (the top two in the shop pass as they
@@ -156,22 +184,26 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   const caring = armour && Object.entries(want.wants).some(([s, w]) => w >= 0.7 && isDefenceStat(s))
   const defs = caring ? kinds : []
   const bars = defs.length ? defenceBars(base, defs, DEFENCE_TIER[b.tier]) : undefined
+  const kind = slot === 'weapon' ? dpsKind(want.wants) : undefined
+  const bar = kind ? dpsBar(base, kind, DPS_STATS.filter((s) => (want.wants[s] ?? 0) >= 0.7), DEFENCE_TIER[b.tier]) : undefined
+  const dps = bar && bar.min > 0 ? { kind: kind!, ...bar } : undefined
   const tags = itemTags(ref)
   const maxTier = MAX_TIER[b.tier]
   const count = wantsOn(day)
   const room = affixLimits({ ...ref, rarity: 'rare' })
   // Options the build really wants, in random order; for each, the worst mod that still meets the tier, rolling here,
   // as long as its side has room.
-  const stats = Object.entries(want.wants).filter(([s, w]) => w >= 0.7 && !(defs.length && isDefenceStat(s))).map(([s]) => s)
+  const stats = Object.entries(want.wants).filter(([s, w]) => w >= 0.7 && !(defs.length && isDefenceStat(s)) && !(dps && DPS_STATS.includes(s)))
+    .map(([s]) => s)
   for (let k = stats.length - 1; k > 0; k--) {
     const j = int(rng, 0, k)
     ;[stats[k], stats[j]] = [stats[j], stats[k]]
   }
   // The defence options sit on the reference item too (they take room and count in its value).
-  const picked: string[] = (bars?.mods ?? []).filter((id) => spawnWeight(id, tags) > 0)
+  const picked: string[] = [...(bars?.mods ?? []), ...(dps?.mods ?? [])].filter((id) => spawnWeight(id, tags) > 0)
   // The reference item's options: defence ones at their lowest roll (that's how the bars are set), asked ones at the asks.
   const rolled: RolledMod[] = picked.map((id) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) }))
-  const wants: Want[] = defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 }))
+  const wants: Want[] = [...defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 })), ...(dps ? [{ dps: dps.kind, min: dps.min }] : [])]
   for (const stat of stats) {
     if (wants.length === count) break
     const fits = Object.keys(MODS).filter((id) => {
@@ -195,12 +227,13 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     const [s1, s2] = two && /maximum/.test(stat) ? [two, stat] : [stat, two]
     wants.push({ stat: s1, maxTier, min: ask(worst, s1, at), ...(s2 && { stat2: s2, min2: ask(worst, s2, at) }) })
   }
-  if (wants.length < count) return undefined
+  if (wants.length < (dps ? 1 : count)) return undefined // a DPS ask stands in for the damage options it replaced
   if (armour && !caring) wants.push(...decentBase(base, kinds))
   const plainest: Item = { ...ref, rarity: 'rare', explicits: rolled }
   const c: Commission = {
     id, build: b.id, slot, wants,
-    ...(armour ? { classes: [BASES[base].cls], defence: kinds } : { classes, ...(want.defence && { defence: want.defence }), base }),
+    ...(armour ? { classes: [BASES[base].cls], defence: kinds }
+      : dps ? { classes: [BASES[base].cls] } : { classes, ...(want.defence && { defence: want.defence }), base }),
     until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0,
   }
   const reward = Math.round(COMMISSION_BONUS * (basePrice(base, ILVL, day) + quote(plainest, 'en', day, meta).optionValue))

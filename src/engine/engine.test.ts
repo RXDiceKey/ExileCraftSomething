@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { CURRENCIES, type CurrencyId } from './currency.ts'
-import { MODS } from './data.ts'
-import { affixCounts, affixLimits, itemTags, newItem, spawnWeight, type Item } from './item.ts'
+import { BASES, MODS } from './data.ts'
+import { affixCounts, affixLimits, itemTags, newItem, spawnWeight, weaponStats, type Item } from './item.ts'
 import type { Rng } from './rng.ts'
 
 const baseNames = (textEn as { bases: Record<string, string> }).bases
@@ -147,4 +147,21 @@ test('타락 아이템은 변경 불가', () => {
   const rng = { s: 9 }
   const item = { ...spend('alchemy', newItem(REGALIA, 86, rng), rng), corrupted: true as const }
   for (const c of Object.keys(CURRENCIES) as CurrencyId[]) assert.equal(CURRENCIES[c].can(item), false, c)
+})
+
+test('무기 피해: 물리 (기본 + 추가) × (1 + 증가%/100), 초당 공격 × (1 + 공격 속도%/100), DPS = 평균 × 초당 공격', () => {
+  const bow = Object.keys(BASES).find((id) => BASES[id].cls === 'Bow' && (BASES[id].props as Record<string, number>).attack_time)!
+  const p = BASES[bow].props as Record<string, number>
+  const mod = (stat: string) => Object.keys(MODS).find((id) => MODS[id].stats.length === 1 && MODS[id].stats[0][0] === stat)!
+  const flat = Object.keys(MODS).find((id) => MODS[id].stats.length === 2 && MODS[id].stats[0][0] === 'local_minimum_added_physical_damage')!
+  const item = { ...newItem(bow, 84, { s: 1 }), implicits: [], explicits: [
+    { id: mod('local_physical_damage_+%'), values: [100] }, { id: flat, values: [10, 20] }, { id: mod('local_attack_speed_+%'), values: [10] },
+  ] }
+  const w = weaponStats(item)!
+  assert.deepEqual(w.phys, [Math.round((p.physical_damage_min + 10) * 2), Math.round((p.physical_damage_max + 20) * 2)])
+  const aps = (1000 / p.attack_time) * 1.1
+  assert.ok(Math.abs(w.aps - aps) < 1e-9)
+  assert.ok(Math.abs(w.dps.phys - ((w.phys[0] + w.phys[1]) / 2) * aps) < 1e-9)
+  assert.equal(w.dps.ele, 0)
+  assert.equal(weaponStats(newItem(Object.keys(BASES).find((id) => BASES[id].cls === 'Ring')!, 84, { s: 1 })), undefined, '무기가 아니면 없음')
 })

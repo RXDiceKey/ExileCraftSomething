@@ -104,6 +104,24 @@ export function Bench(p: Props) {
     </button>
   )
   const donors = p.stash.filter((d) => d.uid !== entry!.uid && canAwaken(d.item, item))
+  const pane = (
+    <div className="bench-item">
+      {p.header}
+      {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
+      <Tooltip item={item} lang={lang} lit={p.lit} />
+      <button className="primary" onClick={p.onFaustus}>{t(lang, 'takeToFaustus')}</button>
+    </div>
+  )
+  // Nothing on the bench touches a corrupted or mirrored item (user): say so instead of a wall of greyed-out buttons.
+  if (item.corrupted || item.mirrored) {
+    return (
+      <section className="panel bench">
+        <h2>{t(lang, 'bench')}</h2>
+        {pane}
+        <p className="hint">{t(lang, item.corrupted ? 'benchCorrupted' : 'benchMirrored')}</p>
+      </section>
+    )
+  }
 
   return (
     <section className="panel bench">
@@ -391,12 +409,7 @@ export function Bench(p: Props) {
         </>
       )}
 
-      <div className="bench-item">
-        {p.header}
-        {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
-        <Tooltip item={item} lang={lang} lit={p.lit} />
-        <button className="primary" onClick={p.onFaustus}>{t(lang, 'takeToFaustus')}</button>
-      </div>
+      {pane}
     </section>
   )
 }

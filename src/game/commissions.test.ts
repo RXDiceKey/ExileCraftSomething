@@ -2,12 +2,12 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
-import { baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, rollMod, spawnWeight, type Defence, type Item } from '../engine/item.ts'
+import { baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 import { canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, refreshBoard, WANTS_LATE_FROM, type Commission } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
-import { baseGroup, buyableBases, isSpecialBase } from './shop.ts'
+import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
 import { quote, slotOf } from './value.ts'
 
 const ok = <T>(r: Result<T>): T => { assert.ok(r.ok, r.ok ? '' : r.error); return r.state }
@@ -114,7 +114,7 @@ test('의뢰 게시판: 기한이 지나면 사라지고, 마감마다 새 의�
   }
 })
 
-test('의뢰 보수 = 같은 옵션을 파우스투스에게 보였을 때의 옵션 가치 × 1.5 (조건을 겨우 채운 아이템 기준)', () => {
+test('의뢰 보수 = (베이스 상점가 + 조건을 딱 채운 아이템의 옵션 가치) × 1.5, 같은 아이템을 파는 것보다 늘 많음', () => {
   for (const day of [1, 7, 12]) {
     const meta = rollMeta({ s: day })
     for (const c of refreshBoard([], day, 14, meta, { s: day * 13 })) {
@@ -123,18 +123,23 @@ test('의뢰 보수 = 같은 옵션을 파우스투스에게 보였을 때의 �
       const item = newItem(c.base!, 84, { s: 1 })
       const tags = itemTags(item)
       const ids: string[] = []
+      const mods: RolledMod[] = []
       for (const w of c.wants) {
         if ('defence' in w) continue
         const fits = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
           && !MODS[x].elev && MODS[x].stats.some(([st]) => st === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
           && !ids.some((q) => MODS[q].grp.some((g) => MODS[x].grp.includes(g))))
-        ids.push(fits.reduce((a, x) => (tierOf(item, x) > tierOf(item, a) ? x : a)))
+        const id = fits.reduce((a, x) => (tierOf(item, x) > tierOf(item, a) ? x : a))
+        ids.push(id)
+        // Rolled at the numbers asked, like the order's own item.
+        mods.push({ id, values: MODS[id].stats.map(([st, a, b]) => (st === w.stat ? w.min! : st === w.stat2 ? w.min2! : Math.min(a, b))) })
       }
-      const plain: Item = { ...item, rarity: 'rare', explicits: ids.map((id) => rollMod(id, { s: 2 })) }
-      const v = quote(plain, 'en', day, meta).optionValue
-      // Only the rolled values differ from the order's own item (a roll moves a contribution by up to 15%).
-      const ratio = c.reward / (COMMISSION_BONUS * v)
-      assert.ok(ratio > 0.6 && ratio < 1.7, `${day}일차 ${c.build}: 보수 ${c.reward}, 옵션 가치 ${v}`)
+      const plain: Item = { ...item, rarity: 'rare', explicits: mods }
+      const q = quote(plain, 'en', day, meta)
+      // Only a hybrid family picked here instead of the main one can differ from the order's own item.
+      const ratio = c.reward / (COMMISSION_BONUS * (basePrice(c.base!, 84, day) + q.optionValue))
+      assert.ok(ratio > 0.6 && ratio < 1.7, `${day}일차 ${c.build}: 보수 ${c.reward}, 옵션 가치 ${q.optionValue}`)
+      assert.ok(c.reward > q.price, `${day}일차 ${c.build}: 보수 ${c.reward} ≤ 파우스투스 견적 ${q.price}`)
     }
   }
 })

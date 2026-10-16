@@ -1,8 +1,11 @@
 // Commission board (D38): builds post orders for one slot — the base they like best and a few options they want at a
 // tier or better, a deadline and a fixed reward. Delivering uses one of the day's sales and pays at the next day close,
 // like a sale. Orders ask for 3 options at first and 4 from mid-run on (user).
-// Reward (user): COMMISSION_BONUS x the option value Faustus gives for those options, i.e. for the plainest item that
-// fills the order (its base, each option at the worst tier that still counts), on the day it's posted.
+// Reward (user, 2026-10-16): COMMISSION_BONUS x (the base's shop price + the option value Faustus gives the plainest item
+// that fills the order), on the day it's posted. The plainest item: the order's base, each option at the worst tier that
+// still counts, rolled exactly at the numbers asked. Was the option value alone, which left out the base: a three-
+// resistance glove order paid 174 gold for an item Faustus buys for 3,600 (its base), so delivering lost to selling.
+// Base + options is never below Faustus's price, so an order always pays more than selling the same item.
 // Option asks are numbers, not tiers (user): a tier-1 ask wants the lowest tier-1 roll, a "tier 1-3" ask a value inside
 // tier 3's range (30-90% up it, per order), so a good tier 3 passes, a poor one doesn't, tier 2 always does. Paired stats
 // (added damage "a to b") ask both. Judged on the item's explicit options added up.
@@ -14,12 +17,12 @@
 // second-best ordinary base of the kind has bare, on top of the options asked; any base of the kind will do.
 import { BASES, MODS } from '../engine/data.ts'
 import {
-  affixLimits, baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, rollMod, spawnWeight, type Defence, type Item,
+  affixLimits, baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod,
 } from '../engine/item.ts'
 import { int, next, pickWeighted, type Rng } from '../engine/rng.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { BUILDS, popularity, type Meta, type Slot } from './meta.ts'
-import { baseGroup, buyableBases, isSpecialBase } from './shop.ts'
+import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
 import { baseAppeal, quote, slotOf } from './value.ts'
 
 // min/stat2/min2: the numbers asked (older saves: the tier only). maxTier stays for the reference item.
@@ -163,6 +166,8 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   }
   // The defence options sit on the reference item too (they take room and count in its value).
   const picked: string[] = (bars?.mods ?? []).filter((id) => spawnWeight(id, tags) > 0)
+  // The reference item's options: defence ones at their lowest roll (that's how the bars are set), asked ones at the asks.
+  const rolled: RolledMod[] = picked.map((id) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) }))
   const wants: Want[] = defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 }))
   for (const stat of stats) {
     if (wants.length === count) break
@@ -180,6 +185,7 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     const worst = fits.filter((x) => MODS[x].type === main).reduce((a, x) => (tierOf(ref, x) > tierOf(ref, a) ? x : a))
     picked.push(worst)
     const at = maxTier === 1 ? 0 : 0.3 + 0.6 * next(rng)
+    rolled.push({ id: worst, values: MODS[worst].stats.map(([s]) => ask(worst, s, at)) })
     const pair = partner(stat)
     const two = pair && hasStat(worst, pair) ? pair : undefined
     // Ask the pair as minimum then maximum, so the line reads "a to b".
@@ -188,13 +194,13 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   }
   if (wants.length < count) return undefined
   if (armour && !caring) wants.push(...decentBase(base, kinds))
-  const plainest: Item = { ...ref, rarity: 'rare', explicits: picked.map((m) => rollMod(m, rng)) }
+  const plainest: Item = { ...ref, rarity: 'rare', explicits: rolled }
   const c: Commission = {
     id, build: b.id, slot, wants,
     ...(armour ? { classes: [BASES[base].cls], defence: kinds } : { classes, ...(want.defence && { defence: want.defence }), base }),
     until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0,
   }
-  return { ...c, reward: Math.round(COMMISSION_BONUS * quote(plainest, 'en', day, meta).optionValue) }
+  return { ...c, reward: Math.round(COMMISSION_BONUS * (basePrice(base, ILVL, day) + quote(plainest, 'en', day, meta).optionValue)) }
 }
 
 // Start of a day: expired orders go, one to three new ones come (up to BOARD_MAX).

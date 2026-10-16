@@ -18,6 +18,8 @@
 // Attack weapon orders (user: judged by DPS as armour is by defence): an attack build's weapon order asks a DPS (physical,
 // elemental or total, by which damage options the build wants) instead of those options, and takes any base of the class.
 // The bar: the class's top base by physical DPS with the build's damage options at DEFENCE_TIER (lowest roll), in tens.
+// The DPS stands for the options it replaces (user), never for none: a build wanting no damage option on its weapon (only
+// critical strike chance, say) gets a plain option order, and a DPS ask replacing k options counts as k of the order's.
 import { BASES, MODS } from '../engine/data.ts'
 import {
   affixLimits, baseDefence, baseDps, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, weaponStats,
@@ -125,10 +127,11 @@ function barMods(ref: Item, wanted: string[][], tier: number): string[] {
   return mods
 }
 
-// An attack build's weapon (it wants attack speed, physical damage or critical strike chance there): which DPS it asks.
+// An attack build's weapon (it wants attack speed, physical damage or critical strike chance there) with at least one damage
+// option wanted: which DPS it asks.
 const ATTACK_SIGNS = ['local_attack_speed_+%', 'local_physical_damage_+%', 'local_minimum_added_physical_damage', 'local_critical_strike_chance_+%']
 export function dpsKind(wants: Record<string, number>): DpsKind | undefined {
-  if (!ATTACK_SIGNS.some((s) => (wants[s] ?? 0) >= 0.7)) return undefined
+  if (!ATTACK_SIGNS.some((s) => (wants[s] ?? 0) >= 0.7) || !DPS_STATS.some((s) => (wants[s] ?? 0) >= 0.7)) return undefined
   const has = (re: RegExp) => Object.entries(wants).some(([s, w]) => w >= 0.7 && re.test(s))
   const phys = has(/^local_(physical_damage_+%|(minimum|maximum)_added_physical_damage)$/)
   const ele = has(/^local_(minimum|maximum)_added_(fire|cold|lightning)_damage$/)
@@ -186,10 +189,12 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   const bars = defs.length ? defenceBars(base, defs, DEFENCE_TIER[b.tier]) : undefined
   const kind = slot === 'weapon' ? dpsKind(want.wants) : undefined
   const bar = kind ? dpsBar(base, kind, DPS_STATS.filter((s) => (want.wants[s] ?? 0) >= 0.7), DEFENCE_TIER[b.tier]) : undefined
-  const dps = bar && bar.min > 0 ? { kind: kind!, ...bar } : undefined
+  const dps = bar && bar.mods.length && bar.min > 0 ? { kind: kind!, ...bar } : undefined
   const tags = itemTags(ref)
   const maxTier = MAX_TIER[b.tier]
   const count = wantsOn(day)
+  // The DPS ask counts as the options it replaced.
+  const need = dps ? Math.max(1, count - dps.mods.length + 1) : count
   const room = affixLimits({ ...ref, rarity: 'rare' })
   // Options the build really wants, in random order; for each, the worst mod that still meets the tier, rolling here,
   // as long as its side has room.
@@ -205,7 +210,7 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   const rolled: RolledMod[] = picked.map((id) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) }))
   const wants: Want[] = [...defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 })), ...(dps ? [{ dps: dps.kind, min: dps.min }] : [])]
   for (const stat of stats) {
-    if (wants.length === count) break
+    if (wants.length === need) break
     const fits = Object.keys(MODS).filter((id) => {
       const m = MODS[id]
       return (m.gen === 'prefix' || m.gen === 'suffix') && !m.dom && !m.essenceOnly && !m.elev && hasStat(id, stat)
@@ -227,7 +232,7 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     const [s1, s2] = two && /maximum/.test(stat) ? [two, stat] : [stat, two]
     wants.push({ stat: s1, maxTier, min: ask(worst, s1, at), ...(s2 && { stat2: s2, min2: ask(worst, s2, at) }) })
   }
-  if (wants.length < (dps ? 1 : count)) return undefined // a DPS ask stands in for the damage options it replaced
+  if (wants.length < need) return undefined
   if (armour && !caring) wants.push(...decentBase(base, kinds))
   const plainest: Item = { ...ref, rarity: 'rare', explicits: rolled }
   const c: Commission = {

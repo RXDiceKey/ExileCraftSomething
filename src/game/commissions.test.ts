@@ -278,6 +278,9 @@ test('공격 빌드 무기 의뢰는 DPS로: 피해 옵션 대신 물리/원소/
   assert.equal(dpsKind(BUILDS.find((b) => b.id === 'boneshatter')!.slots.weapon!.wants), 'phys')
   assert.equal(dpsKind(BUILDS.find((b) => b.id === 'lightning-arrow')!.slots.weapon!.wants), 'ele')
   assert.equal(dpsKind(BUILDS.find((b) => b.id === 'winter-orb')!.slots.weapon!.wants), undefined, '주문 빌드는 DPS 안 봄')
+  // DPS replaces damage options; with none to replace there's no DPS ask (user: it can't stand in for zero options).
+  assert.equal(dpsKind({ 'local_critical_strike_chance_+%': 1, 'base_critical_strike_multiplier_+': 1 }), undefined)
+  assert.equal(dpsKind(BUILDS.find((b) => b.id === 'kinetic-fusillade-ascendant-uber')!.slots.weapon!.wants), 'total', '카오스 추가 피해 마법봉')
   let seen = 0
   for (let seed = 1; seed <= 60 && seen < 3; seed++) {
     for (const c of refreshBoard([], 7, 14, rollMeta({ s: seed }), { s: seed * 11 })) {
@@ -288,6 +291,8 @@ test('공격 빌드 무기 의뢰는 DPS로: 피해 옵션 대신 물리/원소/
       assert.equal(w.dps, kind)
       assert.ok(w.min > 0 && w.min % 10 === 0, `DPS ${w.min}`)
       assert.equal(c.base, undefined, '아무 베이스나')
+      const wanted = DPS_STATS.filter((s) => (BUILDS.find((b) => b.id === c.build)!.slots.weapon!.wants[s] ?? 0) >= 0.7)
+      assert.ok(wanted.length > 0, '대체할 피해 옵션이 있을 때만')
       assert.equal(c.classes.length, 1)
       // No option ask for what the DPS already covers.
       assert.ok(!c.wants.some((x) => 'stat' in x && DPS_STATS.includes(x.stat)))

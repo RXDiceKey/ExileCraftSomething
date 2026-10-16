@@ -71,8 +71,8 @@ export function defences(item: Item): Partial<Record<Defence, number>> {
 export type DpsKind = 'phys' | 'ele' | 'total'
 const ELEMENTS = ['fire', 'cold', 'lightning']
 const added = (kind: string) => [`local_minimum_added_${kind}_damage`, `local_maximum_added_${kind}_damage`]
-// The options that move DPS (critical strike chance doesn't, as on the trade site).
-export const DPS_STATS = ['local_physical_damage_+%', ...added('physical'), 'local_attack_speed_+%', ...ELEMENTS.flatMap(added)]
+// The options that move DPS (critical strike chance doesn't, as on the trade site). Added chaos counts in the total.
+export const DPS_STATS = ['local_physical_damage_+%', ...added('physical'), 'local_attack_speed_+%', ...ELEMENTS.flatMap(added), ...added('chaos')]
 export interface WeaponStats { phys: [number, number]; ele: [number, number]; chaos: [number, number]; aps: number; crit: number; dps: Record<DpsKind, number> }
 export function weaponStats(item: Item): WeaponStats | undefined {
   const p = BASES[item.base].props as Record<string, number>

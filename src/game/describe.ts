@@ -4,7 +4,7 @@ import textEnJson from '../data/text.en.json' with { type: 'json' }
 import textKoJson from '../data/text.ko.json' with { type: 'json' }
 import { BASES, MODS, type Influence } from '../engine/data.ts'
 import { modInfluence } from '../engine/influence.ts'
-import { itemTags, spawnWeight, type Item, type RolledMod } from '../engine/item.ts'
+import { baseDefence, itemTags, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 
 export type Lang = 'ko' | 'en'
 
@@ -220,6 +220,12 @@ export function baseKindKeys(base: string): { defences: string[]; attrs: string[
 export function baseKind(base: string, lang: Lang): string {
   const { defences, attrs } = baseKindKeys(base)
   return [defences.map((d) => KIND[lang][d]).join('/'), attrs.map((a) => KIND[lang][a]).join('/')].filter(Boolean).join(' · ')
+}
+// The same with the base's defence numbers (shop list, user): "방어도 1360 · 힘".
+export function baseStats(base: string, lang: Lang): string {
+  const { defences, attrs } = baseKindKeys(base)
+  return [defences.map((d) => `${KIND[lang][d]} ${baseDefence(base, d as Defence)}`).join(' / '), attrs.map((a) => KIND[lang][a]).join('/')]
+    .filter(Boolean).join(' · ')
 }
 
 const RARITY: Record<Lang, Record<Item['rarity'], string>> = {

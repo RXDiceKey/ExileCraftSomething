@@ -62,7 +62,7 @@ const total = (item: Item, stat: string) =>
   item.explicits.reduce((s, m) => s + MODS[m.id].stats.reduce((t, [sid], i) => t + (sid === stat ? m.values[i] : 0), 0), 0)
 // A negative ask ("-7 to Total Mana Cost") is met by going lower.
 const reaches = (v: number, ask: number) => (ask < 0 ? v <= ask : v >= ask)
-const meetsWant = (item: Item, w: Want) => {
+export const meetsWant = (item: Item, w: Want) => {
   if ('defence' in w) return (defences(item)[w.defence] ?? 0) >= w.min
   if (w.min === undefined) return item.explicits.some((m) => hasStat(m.id, w.stat) && tierOf(item, m.id) <= w.maxTier)
   return reaches(total(item, w.stat), w.min) && (!w.stat2 || reaches(total(item, w.stat2), w.min2!))
@@ -126,11 +126,10 @@ export function decentBase(base: string, defs: Defence[]): Want[] {
   return defs.map((d) => ({ defence: d, min: Math.floor(baseDefence(second, d) / DEFENCE_STEP) * DEFENCE_STEP }))
 }
 
-export function canDeliver(item: Item, c: Commission): boolean {
-  if (c.base ? item.base !== c.base : !c.classes.includes(BASES[item.base].cls)) return false
-  if (c.defence && !c.defence.some((d) => baseKindKeys(item.base).defences.includes(d))) return false
-  return c.wants.every((w) => meetsWant(item, w))
-}
+// The order's base (or class and defence) part.
+export const baseFits = (item: Item, c: Commission) => (c.base ? item.base === c.base : c.classes.includes(BASES[item.base].cls))
+  && (!c.defence || c.defence.some((d) => baseKindKeys(item.base).defences.includes(d)))
+export const canDeliver = (item: Item, c: Commission) => baseFits(item, c) && c.wants.every((w) => meetsWant(item, w))
 
 // The base this build likes best for the slot (quality and wanted fixed options); near-ties picked at random.
 function favouriteBase(build: string, slot: Slot, bases: string[], rng: Rng): string {

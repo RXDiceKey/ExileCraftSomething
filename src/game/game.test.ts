@@ -349,3 +349,11 @@ test('미러급: 원본은 거울 3개, 복사본은 거울 + 수수료, 못 미
   const simplex = quote(withMods('Metadata/Items/Amulets/AmuletE3', ['GlobalDamageOverTimeMultiplier1h5', 'GlobalSkillGemLevel1', 'GlobalLightningGemLevel1']), 'ko', 10)
   assert.ok(simplex.optionValue <= MIRROR_CAP * mirror * simplex.boom && simplex.optionValue > 0.4 * mirror, `${simplex.optionValue}`)
 })
+
+test('상점: 아이템 레벨이 베이스의 최소 등장 레벨보다 낮으면 못 삼', () => {
+  const s = newGame(3)
+  const base = Object.keys(baseNames).find((id) => baseNames[id] === 'Vaal Regalia')!
+  const low = buyBase(s, base, 60)
+  assert.ok(!low.ok && low.error === 'ilvlTooLow')
+  assert.ok(buyBase(s, base, 84).ok)
+})

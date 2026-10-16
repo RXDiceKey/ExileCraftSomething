@@ -48,6 +48,7 @@ export interface GameState {
   rivals: Rival[] // trade rivals (D34)
   rivalNews?: RivalNews[] // what they did at the last day close
   board?: Commission[] // commission board (D38); older saves get one on load
+  goal?: number // the commission the player works towards, shown above the item (user)
   finished?: { score: number }
 }
 
@@ -86,6 +87,7 @@ const addItem = (s: GameState, item: Item, gold: number, rng: Rng): GameState =>
   ({ ...s, rng, gold, nextUid: s.nextUid + 1, stash: [...s.stash, { uid: s.nextUid, item }] })
 
 export function buyBase(s: GameState, base: string, ilvl: number): Result {
+  if (ilvl < BASES[base].lvl) return fail('ilvlTooLow') // the base doesn't drop that low
   const price = basePrice(base, ilvl, s.day)
   if (price > s.gold) return fail('noGold')
   const [item, rng] = withRng(s, (r) => newItem(base, ilvl, r))

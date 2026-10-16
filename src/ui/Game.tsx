@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { faustusFarewell, faustusGreeting, sfx } from '../audio.ts'
 import type { CurrencyId } from '../engine/currency.ts'
+import { BASES } from '../engine/data.ts'
 import { searchText, type Lang } from '../game/describe.ts'
 import {
   ACTIONS_PER_DAY, buyBase, buyUnidentified, closeDay, deliver, hunt, upgradeSave, LAST_DAY, sell, spamAlteration, doBench, doCurrency, doEssence,
@@ -12,7 +13,7 @@ import { compileSearch } from '../game/search.ts'
 import { fmtGold, t } from '../i18n.ts'
 import { exportFile, importFile, type Settings } from '../save.ts'
 import { Bench } from './Bench.tsx'
-import { Board } from './Board.tsx'
+import { Board, GoalCard } from './Board.tsx'
 import { Codex } from './Codex.tsx'
 import { Faustus } from './Faustus.tsx'
 import type { DropSource } from '../game/specials.ts'
@@ -68,7 +69,9 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   const onBuy = (base: string, ilvl: number) => {
     sfx('button')
     const uid = state.nextUid
-    if (run(buyBase(state, base, ilvl))) { setSelected(uid); setView('bench') }
+    const r = buyBase(state, base, ilvl)
+    if (!r.ok && r.error === 'ilvlTooLow') return setNotice(t(lang, 'err_ilvlTooLow', BASES[base].lvl))
+    if (run(r)) { setSelected(uid); setView('bench') }
   }
   const onBuyUnidentified = (source: DropSource, base: string) => {
     sfx('button')
@@ -158,6 +161,19 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     if (lines.length) setNotice(lines.join(' / '))
   }
 
+  // Pinned above the item on the bench (user): the top bar's day and gold, and the goal order if one is set.
+  const goal = state.board?.find((c) => c.id === state.goal)
+  const header = (
+    <>
+      <div className="status-line">
+        <b>{t(lang, 'day', state.day, LAST_DAY)}</b> · {t(lang, 'gold')} <b className="gold">{fmtGold(state.gold)}</b>
+        {state.pending > 0 && <span className="hint"> (+{fmtGold(state.pending)})</span>} · {t(lang, 'actionsLeft', actionsLeft, ACTIONS_PER_DAY)}
+      </div>
+      {goal && <GoalCard lang={lang} c={goal} item={entry?.item} day={state.day} open={settings.goalOpen ?? true}
+        onToggle={(open) => setSettings({ ...settings, goalOpen: open })} />}
+    </>
+  )
+
   const tab = (v: View, label: string) => (
     <button className={view === v ? 'tab active' : 'tab'} onClick={() => (v === 'faustus' ? openFaustus() : setView(v))}>{label}</button>
   )
@@ -227,11 +243,12 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
               stash={state.stash} onInfluenceExalt={onInfluenceExalt} onDominance={onDominance} onAwaken={onAwaken}
               onEldritchImplicit={onEldritchImplicit} onEldritchOrb={onEldritchOrb} onHarvest={onHarvest}
               onBeast={onBeast} onImprint={onImprint} onRestore={onRestore}
-              onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} />
+              onVeiledOrb={onVeiledOrb} onReveal={onReveal} onUnveil={onUnveil} onRecombine={onRecombine} header={header} />
           )}
           {view === 'shop' && <Shop lang={lang} state={state} view={shopView} onView={setShopView} onBuy={onBuy} onBuyUnidentified={onBuyUnidentified} />}
           {view === 'board' && (
-            <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver} />
+            <Board lang={lang} board={state.board ?? []} day={state.day} meta={state.meta} entry={entry} canSell={actionsLeft > 0} onDeliver={onDeliver}
+              goal={state.goal} onGoal={(id) => setState({ ...state, goal: id })} />
           )}
           {view === 'codex' && <Codex lang={lang} codex={codex} meta={state.meta} day={state.day} />}
           {view === 'faustus' && (

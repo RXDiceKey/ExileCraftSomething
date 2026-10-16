@@ -19,9 +19,19 @@ export const UNID_MARKUP = 1.5
 export const UNID_VALUE = 0.75 // chaos per point of slot budget for a sure useful option (about half a crafted-up item)
 const BREACH_COUNT = [3, 2, 1] // 1, 2 or 3 Breachlord options: 50 / 33 / 17%
 
-// The drop options a base can come with.
-export const dropOptions = (source: DropSource, base: string) => source === 'breach' && base !== GRASPING_MAIL ? []
-  : Object.keys(MODS).filter((id) => MODS[id].drop === source && (source === 'breach' || onBase(base, MODS[id].on ?? [])))
+export const SACRIFICIAL_GARB = 'Metadata/Items/Armours/BodyArmours/BodyStrDexInt1'
+// Bases that only drop in their own content (user: a Grasping Mail never comes out of Delve): Grasping Mail from
+// Breach, Sacrificial Garb from Ritual, the experimental bases from Heist. Atlas bases drop in any map, Delve included.
+const contentOf = (base: string) => base === GRASPING_MAIL ? 'breach'
+  : base === SACRIFICIAL_GARB ? 'ritual' : BASES[base].tags.includes('experimental_base') ? 'heist' : undefined
+
+// The drop options a base can come with: its own content's, if it has one; Breach's only on a Grasping Mail. None on a
+// base that doesn't drop at SPECIAL_ILVL.
+export function dropOptions(source: DropSource, base: string): string[] {
+  const own = contentOf(base)
+  if (BASES[base].lvl > SPECIAL_ILVL || (own ? own !== source : source === 'breach')) return []
+  return Object.keys(MODS).filter((id) => MODS[id].drop === source && (source === 'breach' || onBase(base, MODS[id].on ?? [])))
+}
 
 // Chance the roll gives at least one option some buyer of this base wants.
 function usefulChance(source: DropSource, base: string): number {

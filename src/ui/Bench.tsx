@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { sfx } from '../audio.ts'
 import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor } from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
@@ -66,6 +66,7 @@ interface Props {
   onUnveil: (choice: string) => void
   onSpam: (o: SpamOptions) => SpamReport | null
   onFaustus: () => void
+  header?: ReactNode // day / gold and the goal, pinned with the item (user)
 }
 
 const icon = (en: string) => `${import.meta.env.BASE_URL}${iconOf(en)}`
@@ -78,7 +79,7 @@ export function Bench(p: Props) {
   const [report, setReport] = useState<SpamReport | null>(null)
   const item = entry?.item
   const bench = useMemo(() => (item ? benchOptions(item) : []), [item])
-  if (!item) return <section className="panel bench"><p className="hint">{t(lang, 'selectItem')}</p></section>
+  if (!item) return <section className="panel bench"><div className="bench-item">{p.header}</div><p className="hint">{t(lang, 'selectItem')}</p></section>
 
   const tabButton = (k: Tab, label: string) => (
     <button className={tab === k ? 'tab active' : 'tab'} onClick={() => setTab(k)}>{label}</button>
@@ -371,6 +372,7 @@ export function Bench(p: Props) {
       )}
 
       <div className="bench-item">
+        {p.header}
         {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
         <Tooltip item={item} lang={lang} lit={p.lit} />
         <button className="primary" onClick={p.onFaustus}>{t(lang, 'takeToFaustus')}</button>

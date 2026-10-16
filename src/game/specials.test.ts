@@ -8,7 +8,7 @@ import { isExclusive } from '../engine/recombinator.ts'
 import { tierOf } from './describe.ts'
 import { buyUnidentified, newGame, type GameState, type Result } from './game.ts'
 import { basePrice, buyableBases, isSpecialBase, isTopBase } from './shop.ts'
-import { dropOptions, GRASPING_MAIL, SPECIAL_ILVL, UNID_MARKUP, unidentifiedPrice } from './specials.ts'
+import { dropOptions, GRASPING_MAIL, SACRIFICIAL_GARB, SPECIAL_ILVL, UNID_MARKUP, unidentifiedPrice } from './specials.ts'
 import { DROP_PREMIUM, quote, RARITY_MAX, RARITY_MIN, rarityOf } from './value.ts'
 
 const names = (textEn as { bases: Record<string, string> }).bases
@@ -105,4 +105,17 @@ test('희소성: 같은 등급 표준(가중치 1000)보다 드문 옵션은 비
     const r = rarityOf(ring, id)
     assert.ok(r >= RARITY_MIN && r <= RARITY_MAX)
   }
+})
+
+test('콘텐츠 전용 베이스는 자기 콘텐츠 옵션으로만: 탐욕스러운 사슬옷은 균열만, 희생의 의복·강탈 실험 베이스는 매물 없음', () => {
+  assert.ok(dropOptions('breach', GRASPING_MAIL).length > 0)
+  for (const s of ['delve', 'incursion'] as const) {
+    assert.deepEqual(dropOptions(s, GRASPING_MAIL), [], `탐욕스러운 사슬옷 ${s}`)
+    assert.deepEqual(dropOptions(s, SACRIFICIAL_GARB), [], `희생의 의복 ${s}`)
+    const heist = buyableBases().filter((id) => BASES[id].tags.includes('experimental_base') && dropOptions(s, id).length)
+    assert.deepEqual(heist, [], `강탈 베이스 ${s}`)
+  }
+  // Atlas bases drop anywhere: a Convoking Wand still comes out of Delve.
+  const convoking = buyableBases().find((id) => BASES[id].tags.includes('wandatlas1'))!
+  assert.ok(dropOptions('delve', convoking).length > 0)
 })

@@ -6,7 +6,7 @@ import type { Codex } from './game/meta.ts'
 
 const KEY = { save: 'craftingisfun.save', best: 'craftingisfun.best', settings: 'craftingisfun.settings', codex: 'craftingisfun.codex' }
 
-export interface Settings { lang?: Lang; volume: number; muted: boolean; search: string; popularOpen?: boolean }
+export interface Settings { lang?: Lang; volume: number; muted: boolean; search: string; popularOpen?: boolean; goalOpen?: boolean }
 const DEFAULT_SETTINGS: Settings = { volume: 0.7, muted: false, search: '' }
 
 function read<T>(key: string): T | null {

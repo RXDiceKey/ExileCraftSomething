@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, type Dispatch, type SetStateAction } from 'react'
 import { BASES } from '../engine/data.ts'
 import { newItem } from '../engine/item.ts'
-import { baseArt, baseKind, baseName, className, gameText, rangeText, type Lang } from '../game/describe.ts'
+import { baseArt, baseName, baseStats, className, gameText, rangeText, type Lang } from '../game/describe.ts'
 import type { GameState } from '../game/game.ts'
 import { basePrice, buyableBases, isTopBase } from '../game/shop.ts'
 import { DROP_SOURCES, dropOptions, SPECIAL_ILVL, unidentifiedPrice, type DropSource } from '../game/specials.ts'
@@ -80,7 +80,7 @@ export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Pr
                   {t(lang, 'buy')} {fmtGold(price)}
                 </button>
               </span>
-              <small>{className(BASES[id].cls, lang)} · {baseKind(id, lang) || '—'} · lv {BASES[id].lvl}</small>
+              <small>{className(BASES[id].cls, lang)} · {baseStats(id, lang) || '—'}</small>
               {kind && <Options lang={lang} source={kind} base={id} />}
             </span>
           </li>

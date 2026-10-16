@@ -124,6 +124,7 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   }
   const onDeliver = (id: number) => {
     if (selected === null) return
+    if (actionsLeft <= 0) return setNotice(t(lang, 'deliverNoActions'))
     const reward = state.board?.find((c) => c.id === id)?.reward ?? 0
     const r = deliver(state, selected, id)
     if (!r.ok) return setNotice(errorText(r.error))

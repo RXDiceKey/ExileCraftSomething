@@ -37,10 +37,10 @@ export function Board({ lang, board, day, meta, entry, canSell, goal, onDeliver,
               <ul>{c.wants.map((w) => <li key={wantKey(w)}><WantText lang={lang} w={w} /></li>)}</ul>
               <div className="commission-foot">
                 {t(lang, 'commissionLeft', c.until - day + 1)} · {t(lang, 'commissionReward')} <b className="gold">{fmtGold(c.reward)}</b>
-                <button className="primary" disabled={!fits || !canSell} onClick={() => onDeliver(c.id)}>{t(lang, 'deliver')}</button>
+                <button className={fits && canSell ? 'primary' : undefined} disabled={!fits} onClick={() => onDeliver(c.id)}>{t(lang, 'deliver')}</button>
                 <button onClick={() => onGoal(goal === c.id ? undefined : c.id)}>{t(lang, goal === c.id ? 'clearGoal' : 'setGoal')}</button>
                 <button className="dismiss" onClick={() => onDismiss(c.id)}>{t(lang, 'dismiss')}</button>
-                {entry && !fits && <span className="hint">{t(lang, 'notFit')}</span>}
+                {fits && <span className="fit">{t(lang, 'fits')}</span>}
               </div>
             </li>
           )

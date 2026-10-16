@@ -214,3 +214,4 @@ input[type='number'] { width: 90px; }
 .debt-mode { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; border: 1px dashed var(--line); border-radius: 3px; }
 .debt-mode small { color: var(--dim); }
 .debt { color: #e06060; font-weight: bold; }
+.commission-foot .fit { color: #9fdc9f; }

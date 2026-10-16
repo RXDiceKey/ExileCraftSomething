@@ -2,13 +2,14 @@
 // so high-tier options spread across different builds are cheap and options concentrated on one build are pricey.
 // Buyers: the 30 popular builds (src/data/builds.json, slot by slot) plus a few generic "+@" demands.
 import { BASES, MODS } from '../engine/data.ts'
-import { modInfluence } from '../engine/influence.ts'
-import { fractured, itemTags, onBase, rollMod, spawnWeight, type Item } from '../engine/item.ts'
+import { eldritchTier, EMBERS } from '../engine/eldritch.ts'
+import { isInfluenced, modInfluence } from '../engine/influence.ts'
+import { affixLimits, fractured, itemTags, onBase, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
 import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
 import { replay } from './replay.ts'
-import { basePrice, baseResale, GOLD_PER_CHAOS } from './shop.ts'
+import { basePrice, baseResale, GOLD_PER_CHAOS, MIRROR, priceOf } from './shop.ts'
 
 interface Profile {
   id: string
@@ -219,6 +220,7 @@ interface Buyer {
   fit: number // 0..1: does this buyer use this kind of base?
   wants: Record<string, number>
   pop: number // popularity multiplier
+  sat: number // saturation alone (part of pop): copies of a mirror-tier item flood its buyers too
   maxTier: number // options worse than this tier don't count for this buyer
   build: boolean
   stacks: Set<string> // attributes this build stacks
@@ -233,7 +235,11 @@ export interface Quote {
   optionValue: number // what the best buyer pays for the options (V)
   expectedCost: number // what making it is expected to cost (E, see history.ts)
   top: ProfileQuote[] // best 3 buyers that pay anything
-  best?: { id: string; name: string; fit: number; usefulCount: number; completeness: number; baseQuality: number; mods: ModVerdict[] }
+  best?: {
+    id: string; name: string; fit: number; usefulCount: number; completeness: number; baseQuality: number; mods: ModVerdict[]
+    mirror: boolean // mirror tier (D46): priced as a copy, a mirror plus the fee
+    capped: boolean // short of mirror tier and bent below MIRROR_CAP of a mirror
+  }
   baseResale: number
 }
 
@@ -242,7 +248,7 @@ function buyers(item: Item, lang: Lang, day: number, meta?: Meta): Buyer[] {
   const slot = slotOf(base.cls)
   const defences = baseKindKeys(item.base).defences
   const generic = PROFILES.map((p): Buyer => ({
-    id: p.id, name: p.name[lang], budget: p.budget, fit: p.fit(base.cls, base.tags), wants: p.wants, pop: saturation(meta, p.id, slot), maxTier: 99, build: false,
+    id: p.id, name: p.name[lang], budget: p.budget, fit: p.fit(base.cls, base.tags), wants: p.wants, pop: saturation(meta, p.id, slot), sat: saturation(meta, p.id, slot), maxTier: 99, build: false,
     stacks: new Set(),
   }))
   const builds = BUILDS.flatMap((b): Buyer[] => {
@@ -254,7 +260,8 @@ function buyers(item: Item, lang: Lang, day: number, meta?: Meta): Buyer[] {
     const t = BUILD_TIER[b.tier]
     return [{
       id: b.id, name: b.name[lang], budget: SLOT_BUDGET[slot] * t.budget, fit, wants: want.wants,
-      pop: popularity(meta, b.id, day) * saturation(meta, b.id, slot), maxTier: t.maxTier, build: true, stacks: STACKS.get(b.id)!,
+      pop: popularity(meta, b.id, day) * saturation(meta, b.id, slot), sat: saturation(meta, b.id, slot), maxTier: t.maxTier, build: true,
+      stacks: STACKS.get(b.id)!,
     }]
   })
   return [...builds, ...generic]
@@ -352,9 +359,39 @@ function judge(item: Item, p: Buyer, lang: Lang) {
   const elevated = ELEVATED_SURGE[Math.min(3, mods.filter((m) => m.useful && MODS[m.id].elev).length)]
   const usefulMods = mods.filter((m) => m.useful)
   const rarity = usefulMods.length ? Math.exp(usefulMods.reduce((s, m) => s + Math.log(rarityOf(item, m.id)), 0) / usefulMods.length) : 1
-  const value = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated * rarity
+  const raw = p.budget * PRICE_LEVEL * GOLD_PER_CHAOS * synergy(contributions) * quality ** BASE_POWER * p.fit * p.pop * single * elevated * rarity
+  const mirror = mirrorTier(item, p, mods, quality)
+  const cap = MIRROR_CAP * priceOf(MIRROR)
+  const value = mirror ? mirrorTierPrice(item, p.sat) : bend(raw, cap)
   const completeness = contributions.reduce((a, b) => a + b, 0) / FULL_ITEM
-  return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods }
+  return { value: Math.round(value), usefulCount, completeness, baseQuality: quality, mods, mirror, capped: !mirror && raw > cap / 2 }
+}
+
+// ---- Mirror tier (D46): the end of crafting (user: price the best items like the real ones). The Forbidden Trove league
+// mirror shop (39 items, 3.28) sells copies for a Mirror of Kalandra plus a 140-200 divine fee whatever the slot, and the
+// items share this: every option tier 1 or better (elevated, essence, drop-only; one tier 2 in 39), five or more of them,
+// a top base, all for one build, and something plain crafting can't give (influence, elevated or drop-only options,
+// Exceptional or better eldritch implicits; synthesis isn't in this game). Anything short of it bends toward MIRROR_CAP of a mirror and never
+// reaches it.
+// Price (user): the mirror in "a mirror + fee" is only what making the copy takes, the fee is the service. So a copy
+// (mirrored) sells for a mirror plus the fee, and saturation (copies flooding that build) only eats the fee: copying is
+// at worst break-even. The original is worth several mirrors, the fees its maker expects from many copies.
+export const MIRROR_FEE = 160 // divines
+export const MIRROR_ORIGINAL = 3 // mirrors
+export const MIRROR_CAP = 0.5
+export const MIRROR_BASE = 0.9 // base quality: the top base of its kind or close to it
+export const mirrorTierPrice = (item: Item, sat: number) => item.mirrored
+  ? priceOf(MIRROR) + MIRROR_FEE * priceOf('Divine Orb') * sat
+  : MIRROR_ORIGINAL * priceOf(MIRROR) * sat
+// Identity up to half the cap, then a smooth approach to the cap (better items still price higher; huge ones round to it).
+export const bend = (v: number, cap: number) => (v <= cap / 2 ? v : cap / 2 + (cap / 2) * (1 - Math.exp(-(v - cap / 2) / (cap / 2))))
+
+function mirrorTier(item: Item, p: Buyer, mods: ModVerdict[], quality: number): boolean {
+  const l = affixLimits(item)
+  const special = mods.some((m) => MODS[m.id].elev || MODS[m.id].drop || isInfluenced(m.id))
+    || (['exarch', 'eater'] as const).some((side) => eldritchTier(item, side) >= EMBERS['Exceptional Eldritch Ember'])
+  return p.build && p.fit === 1 && quality >= MIRROR_BASE && mods.length >= Math.min(FINISHED, l.prefix + l.suffix)
+    && mods.every((m) => m.useful && m.tier <= 1) && special
 }
 
 // How much a build likes a base before any explicit option: base quality and the fixed options it wants, as in judge().
@@ -452,7 +489,10 @@ export function quote(item: Item, lang: Lang, day: number, meta?: Meta): Quote {
     expectedCost: cost,
     top: judged.filter((j) => j.value > 0).slice(0, 3).map((j) => ({ id: j.p.id, name: j.p.name, value: j.value, trend: j.p.build ? trend(meta, j.p.id, day) : null })),
     best: best.usefulCount > 0
-      ? { id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality, mods: best.mods }
+      ? {
+        id: best.p.id, name: best.p.name, fit: best.p.fit, usefulCount: best.usefulCount, completeness: best.completeness, baseQuality: best.baseQuality,
+        mods: best.mods, mirror: best.mirror, capped: best.capped,
+      }
       : undefined,
     baseResale: resale,
   }

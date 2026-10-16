@@ -4,7 +4,7 @@ import { fractured } from '../engine/item.ts'
 import type { Lang } from '../game/describe.ts'
 import type { StashItem } from '../game/game.ts'
 import { buildName, saturation, type Meta } from '../game/meta.ts'
-import { ELEVATED_SURGE, quote, slotOf } from '../game/value.ts'
+import { ELEVATED_SURGE, MIRROR_FEE, MIRROR_ORIGINAL, quote, slotOf } from '../game/value.ts'
 import { fmtGold, t, tierText } from '../i18n.ts'
 import { Tooltip } from './Tooltip.tsx'
 
@@ -54,7 +54,9 @@ export function Faustus({ lang, entry, day, meta, canSell, lit, onSell, onBack }
             </ul>
           )}
           <ul className="price-factors">
-            {elevated > 0 && <li>{t(lang, 'elevatedNote', elevated, ELEVATED_SURGE[elevated])}</li>}
+            {q.best?.mirror && <li className="boom">{entry.item.mirrored ? t(lang, 'mirrorCopy', MIRROR_FEE) : t(lang, 'mirrorOriginal', MIRROR_ORIGINAL)}</li>}
+            {q.best?.capped && <li>{t(lang, 'mirrorCap')}</li>}
+            {elevated > 0 && !q.best?.mirror && <li>{t(lang, 'elevatedNote', elevated, ELEVATED_SURGE[elevated])}</li>}
             {q.boom > 1 && <li className="boom">{t(lang, 'boomNote', Math.round((q.boom - 1) * 100))}</li>}
             {sat < 1 && <li>{t(lang, 'saturationNote', Math.round((1 - sat) * 100))}</li>}
             {q.price === q.baseResale && <li>{t(lang, fractured(entry.item) ? 'baseResaleFractured' : 'baseResale')}</li>}

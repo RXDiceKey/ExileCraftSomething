@@ -7,10 +7,10 @@ import { itemTags, newItem, rollMod, spawnWeight, type Item } from '../engine/it
 import { baseKind, modLines, modText, searchText, statLabel, tierOf } from './describe.ts'
 import { ACTIONS_PER_DAY, buyBase, closeDay, hunt, LAST_DAY, newGame, sell, spamAlteration, START_GOLD, doCurrency, type GameState } from './game.ts'
 import { compileSearch } from './search.ts'
-import { basePrice, baseResale, lifeforcePrice, premium, priceOf } from './shop.ts'
+import { basePrice, baseResale, lifeforcePrice, MIRROR, premium, priceOf } from './shop.ts'
 import { BUILDS, LATE_DAY, mergeCodex, popularity, STARTER_DAYS, trend, weekday, WEEKEND_BOOM } from './meta.ts'
 import { snapshot } from './history.ts'
-import { quote, shortfall, stackedAttributes, synergy } from './value.ts'
+import { MIRROR_CAP, MIRROR_FEE, MIRROR_ORIGINAL, quote, shortfall, stackedAttributes, synergy } from './value.ts'
 
 const baseNames = (textEn as { bases: Record<string, string> }).bases
 const baseId = (name: string) => Object.keys(baseNames).find((id) => baseNames[id] === name)!
@@ -326,4 +326,26 @@ test('빌드 도감: 1위 구매자 빌드가 열리고 최고 판매가를 기�
   assert.equal(mergeCodex(once, [{ buyer: id, price: 500 }]), once, '바뀐 게 없으면 같은 객체')
   assert.deepEqual(mergeCodex(once, [{ buyer: id, price: 800 }]), { [id]: 800 })
   assert.equal(statLabel('base_maximum_life', 'ko')?.[1], '생명력 최대치 +#')
+})
+
+test('미러급: 원본은 거울 3개, 복사본은 거울 + 수수료, 못 미치면 거울 반값 아래', () => {
+  // Ice Spear (uber) amulet: all tier 1, one elevated (Maven) option, five options, a top base.
+  const amulet = { ...withMods('Metadata/Items/Amulets/Amulet1', ['CriticalStrikeMultiplierInfluenceMaven__', 'IncreasedCastSpeed4',
+    'IncreasedLife8', 'GlobalSkillGemLevel1', 'GlobalColdGemLevel1__']), influences: ['shaper', 'elder'] } as Item
+  const mirror = priceOf(MIRROR)
+  const q = quote(amulet, 'ko', 10)
+  assert.ok(q.best?.mirror, `미러급이어야 함: ${q.best?.id}`)
+  assert.equal(q.optionValue, Math.round(MIRROR_ORIGINAL * mirror * q.boom))
+  const copy = quote({ ...amulet, mirrored: true }, 'ko', 10)
+  assert.equal(copy.optionValue, Math.round((mirror + MIRROR_FEE * priceOf('Divine Orb')) * copy.boom))
+  // One tier-2 option, or no special option: not mirror tier, under half a mirror.
+  const t2 = quote({ ...amulet, explicits: amulet.explicits.map((m) => (m.id === 'IncreasedLife8' ? rollMod('IncreasedLife7', { s: 2 }) : m)) }, 'ko', 10)
+  const plain = quote({ ...amulet, explicits: amulet.explicits.map((m) => (m.id === 'CriticalStrikeMultiplierInfluenceMaven__' ? rollMod('CriticalMultiplier6', { s: 2 }) : m)) }, 'ko', 10)
+  for (const x of [t2, plain]) {
+    assert.ok(!x.best?.mirror)
+    assert.ok(x.optionValue <= MIRROR_CAP * mirror * x.boom, `${x.optionValue}`)
+  }
+  // Simplex Amulet (+100% explicit effect, 3 options): once 23 mirrors for a starter build, now bent under the cap.
+  const simplex = quote(withMods('Metadata/Items/Amulets/AmuletE3', ['GlobalDamageOverTimeMultiplier1h5', 'GlobalSkillGemLevel1', 'GlobalLightningGemLevel1']), 'ko', 10)
+  assert.ok(simplex.optionValue <= MIRROR_CAP * mirror * simplex.boom && simplex.optionValue > 0.4 * mirror, `${simplex.optionValue}`)
 })

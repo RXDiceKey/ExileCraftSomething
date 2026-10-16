@@ -8,6 +8,7 @@ idx={}
 for i,e in enumerate(stats):
     for s in e['ids']: idx.setdefault(s,i)
 def text(stat):
+    if stat=='pseudo_total_elemental_resistance_%': return '원소 저항'  # res_wants.py: all elements as one total
     i=idx.get(stat)
     if i is None: return stat
     k=ko['stats'][i]

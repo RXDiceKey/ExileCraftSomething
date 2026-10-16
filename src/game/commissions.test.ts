@@ -4,12 +4,12 @@ import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
 import { baseDefence, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
 import {
-  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, dpsBar, dpsKind, EARLY_DAYS, EARLY_REWARD_MAX, MIN_REWARD, refreshBoard, WANTS_LATE_FROM,
+  canDeliver, COMMISSION_BONUS, decentBase, meetsWant, defenceBars, DEFENCE_TIER, dpsBar, dpsKind, EARLY_DAYS, EARLY_REWARD_MAX, MIN_REWARD, refreshBoard, WANTS_LATE_FROM,
   type Commission,
 } from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, dismissCommission, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
-import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
+import { advanceMeta, BUILDS, ELE_RES, elementalCount, rollMeta, RUMOR_LEAD, saturate, saturation, SINGLE_ELE_RES } from './meta.ts'
 import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
 import { quote, slotOf } from './value.ts'
 
@@ -19,6 +19,8 @@ const RING = Object.keys(names).find((k) => names[k] === 'Two-Stone Ring')!
 
 // Does the build look at defence in that slot (then its defence asks are totals that replace options)?
 const caring = (c: Commission) => Object.entries(BUILDS.find((b) => b.id === c.build)!.slots[c.slot]!.wants).some(([s, w]) => w >= 0.7 && isDefenceStat(s))
+// The stats that fill an ask: the elemental resistance total takes a one-element resistance the build doesn't list itself.
+const fillsAsk = (st: string, ask: string, wants: Record<string, number>) => (ask === ELE_RES ? SINGLE_ELE_RES.test(st) && !(st in wants) : st === ask)
 
 // An item that fills a commission: its base (a defence order: the top base of its kind), the first mod of each wanted
 // option that meets the tier, and for a defence total the defence options its bar is built from, at full quality.
@@ -37,9 +39,9 @@ function fill(c: Commission): Item {
   for (const w of c.wants) {
     if ('defence' in w || 'dps' in w) continue
     // The option giving the most of that stat at item level 84 (the asks sit inside the accepted tiers of its family).
-    const most = (x: string) => Math.max(...MODS[x].stats.filter(([s]) => s === w.stat).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
+    const most = (x: string) => Math.max(...MODS[x].stats.filter(([s]) => fillsAsk(s, w.stat, wants)).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
     const id = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
-      && MODS[x].stats.some(([s]) => s === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0
+      && MODS[x].stats.some(([s]) => fillsAsk(s, w.stat, wants)) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0
       && !ids.some((p) => MODS[p].grp.some((g) => MODS[x].grp.includes(g))))
       .sort((a, b) => most(b) - most(a))[0]
     ids.push(id)
@@ -132,15 +134,19 @@ test('의뢰 보수 = (베이스 상점가 + 조건을 딱 채운 아이템의 �
       const tags = itemTags(item)
       const ids: string[] = []
       const mods: RolledMod[] = []
-      for (const w of c.wants) {
+      const wants = BUILDS.find((b) => b.id === c.build)!.slots[c.slot]!.wants
+      // The elemental resistance total last: it takes what the other asks' resistances leave.
+      const isTotal = (w: (typeof c.wants)[number]) => Number('stat' in w && w.stat === ELE_RES)
+      for (const w of [...c.wants].sort((a, b) => isTotal(a) - isTotal(b))) {
         if ('defence' in w || 'dps' in w) continue
         const fits = Object.keys(MODS).filter((x) => (MODS[x].gen === 'prefix' || MODS[x].gen === 'suffix') && !MODS[x].dom && !MODS[x].essenceOnly
-          && !MODS[x].elev && MODS[x].stats.some(([st]) => st === w.stat) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
+          && !MODS[x].elev && MODS[x].stats.some(([st]) => fillsAsk(st, w.stat, wants)) && MODS[x].lvl <= 84 && spawnWeight(x, tags) > 0 && tierOf(item, x) <= w.maxTier
           && !ids.some((q) => MODS[q].grp.some((g) => MODS[x].grp.includes(g))))
         const id = fits.reduce((a, x) => (tierOf(item, x) > tierOf(item, a) ? x : a))
         ids.push(id)
         // Rolled at the numbers asked, like the order's own item.
-        mods.push({ id, values: MODS[id].stats.map(([st, a, b]) => (st === w.stat ? w.min! : st === w.stat2 ? w.min2! : Math.min(a, b))) })
+        const ele = mods.reduce((s, m) => s + MODS[m.id].stats.reduce((t, [st], i) => t + elementalCount(st) * m.values[i], 0), 0)
+        mods.push({ id, values: MODS[id].stats.map(([st, a, b]) => (w.stat === ELE_RES ? w.min! - ele : st === w.stat ? w.min! : st === w.stat2 ? w.min2! : Math.min(a, b))) })
       }
       const plain: Item = { ...item, rarity: 'rare', explicits: mods }
       const q = quote(plain, 'en', day, meta)
@@ -263,6 +269,39 @@ test('의뢰 옵션은 등급이 아니라 수치로: 1등급 요구는 1등급 
     }
   }
   assert.ok(one > 0 && range > 0)
+})
+
+test('원소 저항은 합계 하나로 (정의의 화염의 화염 저항만 따로): 의뢰는 모든 원소를 더한 값, 견적은 어느 원소든 같음', () => {
+  const ELEMENTAL = /^(base_(fire|cold|lightning)_damage_resistance_%|base_resist_all_elements_%|(fire|cold|lightning)_and_(cold|lightning|chaos)_damage_resistance_%)$/
+  for (const b of BUILDS) {
+    for (const [slot, s] of Object.entries(b.slots)) {
+      const own = Object.keys(s!.wants).filter((st) => ELEMENTAL.test(st))
+      assert.deepEqual(own, b.id === 'righteous-fire' && ELE_RES in s!.wants ? ['base_fire_damage_resistance_%'] : [], `${b.id} ${slot}`)
+    }
+  }
+  const mod = (stat: string) => Object.keys(MODS).find((id) => MODS[id].stats.length === 1 && MODS[id].stats[0][0] === stat && !MODS[id].dom)!
+  let seen = 0
+  for (let seed = 1; seed <= 40 && seen < 5; seed++) {
+    for (const c of refreshBoard([], 3, 14, rollMeta({ s: seed }), { s: seed * 17 })) {
+      const w = c.wants.find((x) => 'stat' in x && x.stat === ELE_RES)
+      if (!w || !('stat' in w) || w.min === undefined) continue
+      seen++
+      const min = w.min
+      const item = (parts: [string, number][]): Item => ({ ...newItem(RING, 84, { s: 1 }), rarity: 'rare', explicits: parts.map(([st, v]) => ({ id: mod(st), values: [v] })) })
+      const half = Math.floor(min / 2)
+      assert.ok(meetsWant(item([['base_fire_damage_resistance_%', half], ['base_cold_damage_resistance_%', min - half]]), w), `화염 + 냉기 합계 ${min}`)
+      assert.ok(!meetsWant(item([['base_fire_damage_resistance_%', half], ['base_lightning_damage_resistance_%', min - half - 1]]), w), '합계 모자람')
+      assert.ok(meetsWant(item([['base_resist_all_elements_%', Math.ceil(min / 3)]]), w), '모든 원소 저항은 3배')
+      assert.ok(meetsWant(item([['fire_and_lightning_damage_resistance_%', Math.ceil(min / 2)]]), w), '두 원소 저항은 2배')
+      assert.ok(!meetsWant(item([['base_chaos_damage_resistance_%', 999]]), w), '카오스 저항은 안 침')
+    }
+  }
+  assert.ok(seen > 0, '원소 저항 의뢰가 나옴')
+  // Quotes: cold and lightning are the same option; fire is worth at least as much (Righteous Fire puts it first).
+  const coral = Object.keys(names).find((k) => names[k] === 'Coral Ring')!
+  const ring = (res: string) => quote({ ...newItem(coral, 84, { s: 1 }), rarity: 'rare', explicits: [{ id: 'IncreasedLife7', values: [110] }, { id: res, values: [47] }] }, 'en', 1).optionValue
+  assert.equal(ring('ColdResist8'), ring('LightningResist8'))
+  assert.ok(ring('FireResist8') > ring('ColdResist8'), `화염 ${ring('FireResist8')} vs 냉기 ${ring('ColdResist8')}`)
 })
 
 test('초반 3일엔 보수 천만 이상 의뢰가 안 뜨고, 그래도 의뢰는 붙음', () => {

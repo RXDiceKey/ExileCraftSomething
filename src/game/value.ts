@@ -6,7 +6,7 @@ import { eldritchTier, EMBERS } from '../engine/eldritch.ts'
 import { isInfluenced, modInfluence } from '../engine/influence.ts'
 import { affixLimits, fractured, itemTags, onBase, rollMod, spawnWeight, type Item } from '../engine/item.ts'
 import { baseKindKeys, effectPct, modName, tierOf, type Lang } from './describe.ts'
-import { boom, BUILDS, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
+import { boom, BUILDS, ELE_RES, elementalCount, isChaosHybrid, popularity, saturation, trend, type Meta, type Slot } from './meta.ts'
 import { expectedCost } from './history.ts'
 import { replay } from './replay.ts'
 import { basePrice, baseResale, GOLD_PER_CHAOS, MIRROR, priceOf } from './shop.ts'
@@ -24,11 +24,8 @@ const JEWELLERY = ['Ring', 'Amulet', 'Belt']
 const ES_TAGS = ['int_armour', 'str_int_armour', 'dex_int_armour']
 const ATTACK_WEAPONS = ['Claw', 'Dagger', 'One Hand Axe', 'One Hand Sword', 'Thrusting One Hand Sword', 'One Hand Mace',
   'Bow', 'Warstaff', 'Two Hand Axe', 'Two Hand Sword', 'Two Hand Mace']
-const RES = {
-  base_fire_damage_resistance_: 0.8, base_cold_damage_resistance_: 0.8, base_lightning_damage_resistance_: 0.8,
-  base_chaos_damage_resistance_: 0.7,
-}
-const resists = (w = 1) => Object.fromEntries(Object.entries(RES).map(([k, v]) => [`${k}%`, v * w]))
+const CHAOS_RES = 'base_chaos_damage_resistance_%'
+const resists = (w = 1) => ({ [ELE_RES]: 0.8 * w, [CHAOS_RES]: 0.7 * w })
 
 export const PROFILES: Profile[] = [
   {
@@ -151,7 +148,9 @@ const PRIORITY: [RegExp, number, ModNote][] = [
   [/^(local_block_chance_\+%|additional_block_%|base_spell_block_%|additional_spell_block_%|maximum_block_%|base_maximum_spell_block_%)$/, 1.5, 'priority'],
   [/^base_spell_suppression_chance_%$|^base_spell_damage_%_suppressed$/, 1.3, 'priority'],
   [/^base_chaos_damage_resistance_%$/, 0.7, 'common'],
-  [/^base_(fire|cold|lightning)_damage_resistance_%$|^base_resist_all_elements_%$|^(fire|cold)_and_(cold|lightning)_damage_resistance_%$/, 0.5, 'common'],
+  [/^pseudo_total_elemental_resistance_%$/, 0.5, 'common'],
+  // One element a build lists on its own beside the total (Righteous Fire's fire, meta.ts) is what it fights for.
+  [/^base_(fire|cold|lightning)_damage_resistance_%$/, 1, 'priority'],
   [/^additional_(strength|dexterity|intelligence|all_attributes)(_and_(dexterity|intelligence))?$/, 0.5, 'common'],
 ]
 const priorityOf = (sid: string) => PRIORITY.find(([re]) => re.test(sid))
@@ -178,18 +177,24 @@ function stackedOf(b: (typeof BUILDS)[number]): Set<string> {
 const STACKS = new Map(BUILDS.map((b) => [b.id, stackedOf(b)]))
 export const stackedAttributes = (buildId: string) => [...(STACKS.get(buildId) ?? [])]
 
+// The wants a stat fills: its own, and for an elemental resistance the total (an element-and-chaos one chaos too).
+const keysOf = (sid: string) => (elementalCount(sid) ? [sid, ELE_RES, ...(isChaosHybrid(sid) ? [CHAOS_RES] : [])] : [sid])
+const rawWant = (p: Pick<Buyer, 'wants'>, sid: string) => Math.max(0, ...keysOf(sid).map((k) => p.wants[k] ?? 0))
+
 // How much a buyer wants a mod: its best stat. A hybrid mod (two stats, e.g. minimum frenzy charges + frenzy charge on
 // kill) is still one option, so it never counts twice. `steep`: only high tiers count (stacked attributes).
 function wantOf(p: Pick<Buyer, 'wants' | 'stacks'>, stats: string[]): { w: number; note?: ModNote; steep: boolean } {
   let best: { w: number; note?: ModNote; steep: boolean } = { w: 0, steep: false }
   for (const sid of stats) {
-    let want = p.wants[sid] ?? 0
-    // +all skill gems does whatever "+all <element> skill gems" does, for every build: same value, wider market.
-    if (sid === ALL_GEMS) want = Math.max(want, ...Object.keys(p.wants).filter((s) => GLOBAL_GEMS.test(s)).map((s) => p.wants[s]))
-    const stack = attrsOf(sid).some((a) => p.stacks.has(a))
-    const pr = priorityOf(sid)
-    const w = want * (stack ? STACKER : (pr?.[1] ?? 1))
-    if (w > best.w) best = { w, note: stack ? 'stacked' : pr?.[2], steep: stack }
+    for (const key of keysOf(sid)) {
+      let want = p.wants[key] ?? 0
+      // +all skill gems does whatever "+all <element> skill gems" does, for every build: same value, wider market.
+      if (key === ALL_GEMS) want = Math.max(want, ...Object.keys(p.wants).filter((s) => GLOBAL_GEMS.test(s)).map((s) => p.wants[s]))
+      const stack = attrsOf(key).some((a) => p.stacks.has(a))
+      const pr = priorityOf(key)
+      const w = want * (stack ? STACKER : (pr?.[1] ?? 1))
+      if (w > best.w) best = { w, note: stack ? 'stacked' : pr?.[2], steep: stack }
+    }
   }
   return best
 }
@@ -415,7 +420,7 @@ export function corruptionFactor(item: Item, p: Buyer): number {
   if (!item.corrupted) return 1
   const traits = traitsOf(p)
   const good = item.implicits.some((m) => MODS[m.id].gen === 'corrupted' && MODS[m.id].stats.some(([sid]) =>
-    (p.wants[sid] ?? 0) >= 0.5 || CORRUPT_WANTS.some(([re, trait]) => re.test(sid) && traits.has(trait))))
+    rawWant(p, sid) >= 0.5 || CORRUPT_WANTS.some(([re, trait]) => re.test(sid) && traits.has(trait))))
   return good ? CORRUPT_GOOD : CORRUPT_PLAIN
 }
 

@@ -67,7 +67,8 @@ test('분열된 아이템: 되팔기 최저선과 기대 비용의 베이스 값
 
 test('고효율 유효 옵션: 흔한 옵션(저항)은 세지 않고, 2개 이상일 때만 셈', () => {
   assert.equal(highEffCount(make(RING, ['FireResist8', 'ColdResist8', 'LightningResist8'])), 0)
-  assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'FireResist8'])), 0, '좋은 옵션 하나뿐이면 운으로 치지 않음 (변화 스팸 영역)')
+  assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'ColdResist8'])), 0, '좋은 옵션 하나뿐이면 운으로 치지 않음 (변화 스팸 영역)')
+  assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'FireResist8'])), 2, '정의의 화염은 화염 저항을 따로 우선')
   assert.equal(highEffCount(make(RING, ['IncreasedLife7', 'AddedPhysicalDamage5', 'FireResist8'])), 2)
 })
 

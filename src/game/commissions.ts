@@ -8,7 +8,8 @@
 // Base + options is never below Faustus's price, so an order always pays more than selling the same item.
 // Option asks are numbers, not tiers (user): a tier-1 ask wants the lowest tier-1 roll, a "tier 1-3" ask a value inside
 // tier 3's range (30-90% up it, per order), so a good tier 3 passes, a poor one doesn't, tier 2 always does. Paired stats
-// (added damage "a to b") ask both. Judged on the item's explicit options added up.
+// (added damage "a to b") ask both. Judged on the item's explicit options added up; elemental resistance as the total of
+// every element (meta.ts ELE_RES), so any mix of fire, cold, lightning and all-elements options gets there.
 // Defence orders (user): an armour order where the build wants defence options asks, for each defence of the base, a
 // total instead of options for it, and takes any base of that class and defence. The bar is the top ordinary base of that
 // kind with a flat and an increased local option of that defence at DEFENCE_TIER (starter 4, advanced 3, uber 2; lowest
@@ -27,7 +28,7 @@ import {
 } from '../engine/item.ts'
 import { int, next, pickWeighted, type Rng } from '../engine/rng.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
-import { BUILDS, popularity, type Meta, type Slot } from './meta.ts'
+import { BUILDS, ELE_RES, elementalCount, popularity, SINGLE_ELE_RES, type Meta, type Slot } from './meta.ts'
 import { baseGroup, basePrice, buyableBases, isSpecialBase } from './shop.ts'
 import { baseAppeal, quote, slotOf } from './value.ts'
 
@@ -67,8 +68,10 @@ const ILVL = 84
 
 const classesOf = (slot: Slot) => [...new Set(buyableBases().map((b) => BASES[b].cls))].filter((c) => slotOf(c) === slot)
 const hasStat = (id: string, stat: string) => MODS[id].stats.some(([s]) => s === stat)
+// How much of the asked stat a stat gives: the elemental resistance total adds every element up (meta.ts).
+const share = (stat: string, sid: string) => (stat === ELE_RES ? elementalCount(sid) : sid === stat ? 1 : 0)
 const total = (item: Item, stat: string) =>
-  item.explicits.reduce((s, m) => s + MODS[m.id].stats.reduce((t, [sid], i) => t + (sid === stat ? m.values[i] : 0), 0), 0)
+  item.explicits.reduce((s, m) => s + MODS[m.id].stats.reduce((t, [sid], i) => t + share(stat, sid) * m.values[i], 0), 0)
 // A negative ask ("-7 to Total Mana Cost") is met by going lower.
 const reaches = (v: number, ask: number) => (ask < 0 ? v <= ask : v >= ask)
 export const meetsWant = (item: Item, w: Want) => {
@@ -211,23 +214,32 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   // The reference item's options: defence ones at their lowest roll (that's how the bars are set), asked ones at the asks.
   const rolled: RolledMod[] = picked.map((id) => ({ id, values: MODS[id].stats.map(([, x, y]) => Math.min(x, y)) }))
   const wants: Want[] = [...defs.map((d) => ({ defence: d, min: bars!.mins[d] ?? 0 })), ...(dps ? [{ dps: dps.kind, min: dps.min }] : [])]
+  // The elemental resistance total puts a one-element resistance on the reference item, of an element the build doesn't
+  // list on its own (Righteous Fire's fire is its own ask).
+  const fills = (id: string, stat: string) => stat === ELE_RES
+    ? MODS[id].stats.some(([s]) => SINGLE_ELE_RES.test(s) && !(s in want.wants))
+    : hasStat(id, stat)
   for (const stat of stats) {
     if (wants.length === need) break
     const fits = Object.keys(MODS).filter((id) => {
       const m = MODS[id]
-      return (m.gen === 'prefix' || m.gen === 'suffix') && !m.dom && !m.essenceOnly && !m.elev && hasStat(id, stat)
+      return (m.gen === 'prefix' || m.gen === 'suffix') && !m.dom && !m.essenceOnly && !m.elev && fills(id, stat)
         && m.lvl <= ILVL && spawnWeight(id, tags) > 0 && tierOf(ref, id) <= maxTier
         && !picked.some((p) => MODS[p].grp.some((g) => m.grp.includes(g)))
         && picked.filter((p) => MODS[p].gen === m.gen).length < (m.gen === 'prefix' ? room.prefix : room.suffix)
     })
     if (!fits.length) continue
     // The stat's main family (the one giving the most of it, not a hybrid carrying a little), its worst accepted tier.
-    const most = (id: string) => Math.max(...MODS[id].stats.filter(([s]) => s === stat).map(([, a, b]) => Math.max(Math.abs(a), Math.abs(b))))
+    const most = (id: string) => Math.max(...MODS[id].stats.filter(([s]) => share(stat, s) > 0).map(([s, a, b]) => share(stat, s) * Math.max(Math.abs(a), Math.abs(b))))
     const main = MODS[fits.reduce((a, x) => (most(x) > most(a) ? x : a))].type
     const worst = fits.filter((x) => MODS[x].type === main).reduce((a, x) => (tierOf(ref, x) > tierOf(ref, a) ? x : a))
     picked.push(worst)
     const at = maxTier === 1 ? 0 : 0.3 + 0.6 * next(rng)
     rolled.push({ id: worst, values: MODS[worst].stats.map(([s]) => ask(worst, s, at)) })
+    if (stat === ELE_RES) {
+      wants.push({ stat, maxTier, min: 0 }) // set below, from the whole reference item
+      continue
+    }
     const pair = partner(stat)
     const two = pair && hasStat(worst, pair) ? pair : undefined
     // Ask the pair as minimum then maximum, so the line reads "a to b".
@@ -237,6 +249,8 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
   if (wants.length < need) return undefined
   if (armour && !caring) wants.push(...decentBase(base, kinds))
   const plainest: Item = { ...ref, rarity: 'rare', explicits: rolled }
+  // The total asks all the elemental resistance on the reference item, an element asked on its own included.
+  for (const w of wants) if ('stat' in w && w.stat === ELE_RES) w.min = total(plainest, ELE_RES)
   const c: Commission = {
     id, build: b.id, slot, wants,
     ...(armour ? { classes: [BASES[base].cls], defence: kinds }

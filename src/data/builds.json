@@ -34,15 +34,14 @@
      "base_critical_strike_multiplier_+": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "cold_skill_gem_level_+": 0.7,
-     "fire_and_chaos_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     }
    },
    "helmet": {
     "wants": {
      "base_maximum_life": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "local_socketed_area_of_effect_gem_level_+": 0.7,
      "base_skill_area_of_effect_+%": 0.7
@@ -74,7 +73,7 @@
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_armour_and_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_additional_physical_damage_reduction_%": 1.0,
      "monster_base_block_%": 1.0
     },
@@ -101,19 +100,16 @@
      "additional_dexterity": 1.0,
      "base_maximum_life": 1.0,
      "base_cast_speed_+%": 0.7,
-     "cold_and_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_maximum_energy_shield": 0.7,
-     "base_chaos_damage_resistance_%": 0.7,
-     "cold_and_chaos_damage_resistance_%": 0.7
+     "base_chaos_damage_resistance_%": 0.7
     }
    },
    "gloves": {
     "wants": {
      "base_maximum_life": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_skill_area_of_effect_+%": 0.7,
      "area_damage_+%": 0.7
     },
@@ -126,8 +122,7 @@
     "wants": {
      "additional_strength": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "fire_and_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_physical_damage_reduction_rating": 1.0,
      "base_maximum_energy_shield": 1.0
     }
@@ -170,7 +165,7 @@
      "local_energy_shield": 0.7,
      "local_energy_shield_+%": 0.7,
      "local_base_evasion_rating": 0.6,
-     "base_lightning_damage_resistance_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.6,
      "base_chance_to_ignite_%": 0.6,
      "faster_burn_%": 0.6,
      "local_display_nearby_enemy_fire_damage_resistance_%": 0.6
@@ -184,12 +179,11 @@
    "gloves": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 0.93,
+     "pseudo_total_elemental_resistance_%": 0.93,
      "base_chaos_damage_resistance_%": 0.85,
      "base_physical_damage_%_to_convert_to_cold": 0.85,
      "base_projectile_speed_+%": 0.78,
      "projectile_damage_+%": 0.78,
-     "base_cold_damage_resistance_%": 0.7,
      "damage_+%_vs_chilled_enemies": 0.7
     },
     "defence": [
@@ -202,9 +196,8 @@
     "wants": {
      "base_maximum_life": 1.0,
      "base_movement_velocity_+%": 1.0,
-     "base_fire_damage_resistance_%": 0.78,
+     "pseudo_total_elemental_resistance_%": 0.78,
      "base_avoid_shock_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.62,
      "base_chaos_damage_resistance_%": 0.62,
      "additional_dexterity": 0.55,
      "base_avoid_chill_%": 0.55
@@ -255,10 +248,10 @@
     "wants": {
      "base_maximum_life": 1.0,
      "base_life_regeneration_rate_per_minute": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
      "base_skill_area_of_effect_+%": 1.0,
-     "explode_enemies_for_10%_life_as_physical_on_kill_chance_%": 1.0,
-     "cold_and_lightning_damage_resistance_%": 1.0
+     "explode_enemies_for_10%_life_as_physical_on_kill_chance_%": 1.0
     },
     "defence": [
      "armour",
@@ -270,7 +263,8 @@
     "wants": {
      "life_regeneration_rate_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
      "base_chaos_damage_resistance_%": 1.0,
      "base_skill_area_of_effect_+%": 1.0,
      "area_damage_+%": 1.0,
@@ -285,7 +279,8 @@
     "wants": {
      "base_maximum_life": 1.0,
      "dot_multiplier_+": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_fire_damage_resistance_%": 1.0,
      "base_minimum_frenzy_charges": 1.0,
      "add_frenzy_charge_on_kill_%_chance": 1.0,
      "skill_mana_cost_+_with_non_channelling_skills": 1.0
@@ -346,9 +341,7 @@
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "weapon": {
@@ -368,15 +361,13 @@
    "amulet": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "helmet": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -384,8 +375,7 @@
    },
    "body": {
     "wants": {
-     "base_lightning_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -395,7 +385,7 @@
     "wants": {
      "attack_speed_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -407,9 +397,8 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "attack_minimum_added_cold_damage": 0.7,
      "attack_maximum_added_cold_damage": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_maximum_life": 0.7,
-     "base_resist_all_elements_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7,
+     "base_maximum_life": 0.7
     }
    }
   }
@@ -429,13 +418,11 @@
    "belt": {
     "wants": {
      "base_maximum_mana": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%": 1.0,
      "additional_strength": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
      "additional_intelligence": 0.7,
-     "base_maximum_energy_shield": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "base_maximum_energy_shield": 0.7
     }
    },
    "weapon": {
@@ -458,7 +445,7 @@
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_maximum_mana": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_item_found_rarity_+%": 0.7,
      "rare_or_unique_monster_dropped_item_rarity_+%": 0.7
     },
@@ -472,7 +459,7 @@
      "spell_damage_+%": 1.0,
      "additional_intelligence": 0.7,
      "base_maximum_mana": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_spell_block_%": 0.7,
      "base_life_regeneration_rate_per_minute": 0.7,
      "energy_shield_%_gained_on_block": 0.7
@@ -490,10 +477,9 @@
      "local_energy_shield": 1.0,
      "base_maximum_mana": 0.8,
      "local_energy_shield_+%": 0.8,
-     "base_fire_damage_resistance_%": 0.8,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "additional_dexterity": 0.6,
-     "accuracy_rating": 0.6,
-     "base_cold_damage_resistance_%": 0.6
+     "accuracy_rating": 0.6
     },
     "defence": [
      "es"
@@ -506,9 +492,7 @@
      "local_energy_shield": 0.8,
      "base_maximum_mana": 0.8,
      "local_energy_shield_+%": 0.8,
-     "base_lightning_damage_resistance_%": 0.8,
-     "base_fire_damage_resistance_%": 0.6,
-     "base_cold_damage_resistance_%": 0.6
+     "pseudo_total_elemental_resistance_%": 0.8
     },
     "defence": [
      "es"
@@ -519,7 +503,7 @@
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.85,
      "additional_intelligence": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "all_attributes_+%": 0.7,
      "base_maximum_mana": 0.55,
      "base_additional_physical_damage_reduction_%": 0.55
@@ -533,11 +517,9 @@
      "additional_intelligence": 1.0,
      "additional_strength": 0.8,
      "base_maximum_mana": 0.8,
-     "base_cold_damage_resistance_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.6,
      "base_item_found_rarity_+%": 0.6,
-     "base_resist_all_elements_%": 0.6,
-     "base_critical_strike_multiplier_+": 0.6,
-     "base_lightning_damage_resistance_%": 0.6
+     "base_critical_strike_multiplier_+": 0.6
     }
    }
   }
@@ -559,9 +541,7 @@
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_armour_and_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_all_attributes": 0.7
     },
     "defence": [
@@ -591,11 +571,9 @@
     "wants": {
      "base_maximum_life": 1.0,
      "base_movement_velocity_+%": 1.0,
-     "base_fire_damage_resistance_%": 0.8,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "base_chaos_damage_resistance_%": 0.8,
      "local_physical_damage_reduction_rating_+%": 0.6,
-     "base_lightning_damage_resistance_%": 0.6,
-     "cold_and_chaos_damage_resistance_%": 0.6,
      "local_armour_and_energy_shield_+%": 0.6
     },
     "defence": [
@@ -609,14 +587,14 @@
      "base_maximum_life": 1.0,
      "attack_minimum_added_lightning_damage": 0.85,
      "attack_maximum_added_lightning_damage": 0.85,
-     "cold_and_chaos_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "attack_minimum_added_cold_damage": 0.7,
      "attack_maximum_added_cold_damage": 0.7,
      "additional_dexterity": 0.55,
-     "base_fire_damage_resistance_%": 0.55,
      "attack_minimum_added_fire_damage": 0.55,
      "attack_maximum_added_fire_damage": 0.55,
-     "base_critical_strike_multiplier_+": 0.55
+     "base_critical_strike_multiplier_+": 0.55,
+     "base_chaos_damage_resistance_%": 0.7
     }
    },
    "weapon": {
@@ -641,12 +619,10 @@
     "wants": {
      "base_maximum_life": 1.0,
      "elemental_damage_with_attack_skills_+%": 1.0,
-     "base_fire_damage_resistance_%": 0.8,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "additional_strength": 0.6,
-     "base_lightning_damage_resistance_%": 0.6,
      "additional_dexterity": 0.6,
-     "base_maximum_energy_shield": 0.6,
-     "base_cold_damage_resistance_%": 0.6
+     "base_maximum_energy_shield": 0.6
     }
    }
   }
@@ -675,9 +651,7 @@
    },
    "amulet": {
     "wants": {
-     "base_resist_all_elements_%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "physical_skill_gem_level_+": 1.0,
      "mine_laying_speed_+%": 1.0
     }
@@ -688,7 +662,7 @@
      "accuracy_rating": 1.0,
      "local_evasion_and_energy_shield_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_strength_and_intelligence": 1.0
     },
     "defence": [
@@ -715,7 +689,7 @@
      "local_evasion_and_energy_shield_+%": 1.0,
      "local_base_evasion_rating": 0.7,
      "local_energy_shield": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     },
     "defence": [
      "es",
@@ -724,7 +698,7 @@
    },
    "boots": {
     "wants": {
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_chaos_damage_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "base_maximum_life": 1.0,
@@ -738,18 +712,16 @@
    "ring": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_chaos_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_chaos_damage_resistance_%": 1.0,
-     "trap_and_mine_throwing_speed_+%": 1.0,
-     "fire_and_lightning_damage_resistance_%": 1.0
+     "trap_and_mine_throwing_speed_+%": 1.0
     }
    }
   }
@@ -785,22 +757,19 @@
     "wants": {
      "base_maximum_life": 1.0,
      "dot_multiplier_+": 0.7,
-     "base_resist_all_elements_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "skill_mana_cost_+_with_non_channelling_skills": 0.7,
-     "additional_all_attributes": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "additional_all_attributes": 0.7
     }
    },
    "helmet": {
     "wants": {
      "local_physical_damage_reduction_rating_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
-     "cold_and_lightning_damage_resistance_%": 0.7,
-     "additional_intelligence": 0.7,
-     "base_lightning_damage_resistance_%": 0.7
+     "additional_intelligence": 0.7
     },
     "defence": [
      "armour"
@@ -812,8 +781,7 @@
      "local_physical_damage_reduction_rating_+%": 1.0,
      "base_additional_physical_damage_reduction_%": 0.7,
      "self_critical_strike_multiplier_-%_per_endurance_charge": 0.7,
-     "cold_and_lightning_damage_resistance_%": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     },
     "defence": [
      "armour"
@@ -822,10 +790,9 @@
    "boots": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
-     "base_chaos_damage_resistance_%": 0.7,
-     "fire_and_cold_damage_resistance_%": 0.7
+     "base_chaos_damage_resistance_%": 0.7
     },
     "defence": [
      "armour"
@@ -834,9 +801,8 @@
    "gloves": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_physical_damage_reduction_rating_+%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "melee_damage_+%": 0.7,
      "melee_range_+": 0.7
@@ -848,7 +814,7 @@
    "offhand": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_dexterity": 1.0
     },
     "classes": [
@@ -866,15 +832,13 @@
      "additional_dexterity": 0.7,
      "attack_minimum_added_physical_damage": 0.7,
      "attack_maximum_added_physical_damage": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    }
   }
@@ -1039,9 +1003,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1056,9 +1018,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1073,9 +1033,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1090,9 +1048,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1107,9 +1063,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1121,9 +1075,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1135,9 +1087,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -1176,7 +1126,7 @@
     "wants": {
      "base_maximum_life": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_dexterity": 0.7,
      "base_maximum_mana": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
@@ -1194,7 +1144,7 @@
      "base_movement_velocity_+%": 1.0,
      "base_maximum_life": 0.7,
      "base_maximum_mana": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     },
     "defence": [
      "armour",
@@ -1206,9 +1156,7 @@
     "wants": {
      "base_maximum_energy_shield": 1.0,
      "additional_strength": 0.8,
-     "base_fire_damage_resistance_%": 0.8,
-     "base_cold_damage_resistance_%": 0.8,
-     "base_resist_all_elements_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "skill_mana_cost_+_with_non_channelling_skills": 0.6,
      "additional_dexterity": 0.6,
      "base_maximum_life": 0.6
@@ -1217,7 +1165,7 @@
    "body": {
     "wants": {
      "local_base_physical_damage_reduction_rating": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
      "local_energy_shield": 0.7,
      "base_additional_physical_damage_reduction_%": 0.7,
@@ -1261,7 +1209,7 @@
      "additional_all_attributes": 1.0,
      "dot_multiplier_+": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%_while_leeching": 1.0
     }
    },
@@ -1270,8 +1218,7 @@
      "base_spell_suppression_chance_%": 1.0,
      "local_base_physical_damage_reduction_rating": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_socketed_area_of_effect_gem_level_+": 1.0,
      "base_skill_area_of_effect_+%": 1.0
     },
@@ -1286,7 +1233,7 @@
      "attack_speed_+%": 1.0,
      "local_base_physical_damage_reduction_rating": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%_while_leeching": 1.0
     },
     "defence": [
@@ -1299,7 +1246,7 @@
      "base_spell_suppression_chance_%": 1.0,
      "local_base_physical_damage_reduction_rating": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "shocked_chilled_effect_on_self_+%": 1.0,
      "base_movement_velocity_+%": 1.0
     },
@@ -1311,10 +1258,9 @@
    "ring": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_chaos_damage_resistance_%": 1.0,
      "skill_mana_cost_+_with_non_channelling_skills": 1.0,
-     "base_resist_all_elements_%": 0.7,
      "additional_dexterity": 0.7
     }
    },
@@ -1324,7 +1270,7 @@
      "local_base_evasion_rating": 1.0,
      "local_armour_and_evasion_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_additional_physical_damage_reduction_%": 1.0,
      "base_spell_suppression_chance_%": 1.0
     },
@@ -1366,7 +1312,7 @@
     "wants": {
      "base_maximum_life": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_dexterity": 0.7,
      "base_maximum_mana": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
@@ -1384,7 +1330,7 @@
      "base_movement_velocity_+%": 1.0,
      "base_maximum_life": 0.7,
      "base_maximum_mana": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     },
     "defence": [
      "armour",
@@ -1396,9 +1342,7 @@
     "wants": {
      "base_maximum_energy_shield": 1.0,
      "additional_strength": 0.8,
-     "base_fire_damage_resistance_%": 0.8,
-     "base_cold_damage_resistance_%": 0.8,
-     "base_resist_all_elements_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "skill_mana_cost_+_with_non_channelling_skills": 0.6,
      "additional_dexterity": 0.6,
      "base_maximum_life": 0.6
@@ -1407,7 +1351,7 @@
    "body": {
     "wants": {
      "local_base_physical_damage_reduction_rating": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
      "local_energy_shield": 0.7,
      "base_additional_physical_damage_reduction_%": 0.7,
@@ -1475,8 +1419,7 @@
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
      "additional_intelligence": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "fire_and_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_spell_suppression_chance_%": 0.7,
      "local_base_evasion_rating": 0.7
     },
@@ -1490,7 +1433,7 @@
      "local_energy_shield_+%": 1.0,
      "additional_dexterity": 0.7,
      "local_energy_shield": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "damage_+%_vs_chilled_enemies": 0.7,
      "additional_strength_and_intelligence": 0.7
     },
@@ -1501,7 +1444,7 @@
    "boots": {
     "wants": {
      "local_energy_shield": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "local_energy_shield_+%": 0.7,
      "base_avoid_chill_%": 0.7,
@@ -1517,9 +1460,7 @@
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    }
   }
@@ -1540,27 +1481,21 @@
     "wants": {
      "base_maximum_life": 1,
      "minion_maximum_life_+%": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "body": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "gloves": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1568,9 +1503,7 @@
     "wants": {
      "base_movement_velocity_+%": 1,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1579,9 +1512,7 @@
      "minion_skill_gem_level_+": 1,
      "minion_damage_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1590,18 +1521,14 @@
      "minion_damage_+%": 0.8,
      "minion_attack_and_cast_speed_+%": 0.8,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1622,9 +1549,7 @@
      "minion_damage_+%": 0.8,
      "minion_maximum_life_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     },
     "classes": [
@@ -1657,8 +1582,7 @@
      "local_energy_shield": 1.0,
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -1671,8 +1595,7 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -1682,8 +1605,7 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "additional_strength_and_dexterity": 1.0
     },
@@ -1709,27 +1631,21 @@
     "wants": {
      "base_maximum_life": 1,
      "minion_maximum_life_+%": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "body": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "gloves": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1737,9 +1653,7 @@
     "wants": {
      "base_movement_velocity_+%": 1,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1748,9 +1662,7 @@
      "minion_skill_gem_level_+": 1,
      "minion_damage_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1759,18 +1671,14 @@
      "minion_damage_+%": 0.8,
      "minion_attack_and_cast_speed_+%": 0.8,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -1791,9 +1699,7 @@
      "minion_damage_+%": 0.8,
      "minion_maximum_life_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     },
     "classes": [
@@ -1831,7 +1737,7 @@
    "amulet": {
     "wants": {
      "base_life_leech_from_cold_damage_permyriad": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "helmet": {
@@ -1962,21 +1868,18 @@
     "wants": {
      "additional_strength": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "elemental_damage_with_attack_skills_+%": 1.0,
      "maximum_life_+%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
-     "base_maximum_mana": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "base_maximum_mana": 0.7
     }
    },
    "ring": {
     "wants": {
      "base_evasion_rating": 1.0,
      "base_maximum_life": 1.0,
-     "base_resist_all_elements_%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_intelligence": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "elemental_damage_with_attack_skills_+%": 0.7
@@ -1984,10 +1887,9 @@
    },
    "boots": {
     "wants": {
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "base_maximum_life": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "local_armour_and_evasion_+%": 0.7,
      "additional_intelligence": 0.7,
@@ -2019,7 +1921,7 @@
    "body": {
     "wants": {
      "local_armour_and_evasion_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_base_evasion_rating": 0.8,
      "base_spell_suppression_chance_%": 0.6,
      "local_base_physical_damage_reduction_rating": 0.6,
@@ -2039,7 +1941,7 @@
      "local_socketed_area_of_effect_gem_level_+": 0.8,
      "base_skill_area_of_effect_+%": 0.8,
      "base_spell_suppression_chance_%": 0.6,
-     "base_cold_damage_resistance_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.6,
      "life_regeneration_rate_+%": 0.6
     },
     "defence": [
@@ -2053,7 +1955,7 @@
      "additional_strength": 1.0,
      "base_maximum_life": 1.0,
      "base_life_regeneration_rate_per_minute": 1.0,
-     "base_resist_all_elements_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_physical_damage_reduction_rating_+%": 1.0
     },
     "classes": [
@@ -2155,10 +2057,10 @@
    "helmet": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "accuracy_rating": 0.7,
-     "lightning_and_chaos_damage_resistance_%": 0.7,
-     "additional_dexterity": 0.7
+     "additional_dexterity": 0.7,
+     "base_chaos_damage_resistance_%": 0.7
     },
     "defence": [
      "armour",
@@ -2169,11 +2071,10 @@
     "wants": {
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_physical_damage_reduction_rating_+%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_additional_physical_damage_reduction_%": 0.7,
      "additional_dexterity_and_intelligence": 0.7,
-     "base_maximum_life": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "base_maximum_life": 0.7
     },
     "defence": [
      "armour"
@@ -2182,13 +2083,12 @@
    "gloves": {
     "wants": {
      "accuracy_rating": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_physical_damage_%_to_convert_to_cold": 1.0,
      "attack_speed_+%": 0.7,
      "base_maximum_life": 0.7,
      "attack_minimum_added_cold_damage": 0.7,
-     "attack_maximum_added_cold_damage": 0.7,
-     "base_lightning_damage_resistance_%": 0.7
+     "attack_maximum_added_cold_damage": 0.7
     },
     "defence": [
      "armour",
@@ -2198,13 +2098,12 @@
    "boots": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
      "base_avoid_shock_%": 0.7,
      "local_base_evasion_rating": 0.7,
      "local_energy_shield": 0.7,
-     "base_maximum_mana": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "base_maximum_mana": 0.7
     },
     "defence": [
      "armour",
@@ -2215,11 +2114,9 @@
    "ring": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
      "additional_dexterity_and_intelligence": 0.55,
-     "lightning_and_chaos_damage_resistance_%": 0.55,
      "additional_strength": 0.55,
      "base_maximum_energy_shield": 0.55
     }
@@ -2228,19 +2125,17 @@
     "wants": {
      "base_maximum_life": 1.0,
      "maximum_life_+%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "additional_dexterity_and_intelligence": 0.7,
      "base_life_regeneration_rate_per_minute": 0.7,
-     "flask_mana_recovery_rate_+%": 0.7,
-     "fire_and_cold_damage_resistance_%": 0.7
+     "flask_mana_recovery_rate_+%": 0.7
     }
    },
    "amulet": {
     "wants": {
      "attack_minimum_added_physical_damage": 1.0,
      "attack_maximum_added_physical_damage": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_life_gain_per_target": 1.0,
      "base_maximum_life": 1.0
     }
@@ -2250,7 +2145,7 @@
      "local_block_chance_+%": 1.0,
      "local_socketed_melee_gem_level_+": 1.0,
      "additional_dexterity": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_chaos_damage_resistance_%": 1.0
     },
     "classes": [
@@ -2281,7 +2176,7 @@
      "local_base_physical_damage_reduction_rating": 0.7,
      "base_life_regeneration_rate_per_minute": 0.7,
      "life_regeneration_rate_+%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "local_physical_damage_reduction_rating_+%": 0.7
     },
     "defence": [
@@ -2294,8 +2189,9 @@
      "base_life_regeneration_rate_per_minute": 1.0,
      "life_regeneration_rate_+%": 1.0,
      "base_maximum_mana": 1.0,
-     "cold_and_chaos_damage_resistance_%": 1.0,
-     "base_maximum_life": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_maximum_life": 1.0,
+     "base_chaos_damage_resistance_%": 1.0
     },
     "defence": [
      "armour",
@@ -2322,9 +2218,8 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "base_cast_speed_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_item_found_rarity_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
      "base_evasion_rating": 0.7,
      "base_life_regeneration_rate_per_minute": 0.7
     }
@@ -2346,9 +2241,7 @@
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "weapon": {
@@ -2368,15 +2261,13 @@
    "amulet": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "helmet": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -2384,8 +2275,7 @@
    },
    "body": {
     "wants": {
-     "base_lightning_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -2395,7 +2285,7 @@
     "wants": {
      "attack_speed_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -2407,9 +2297,8 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "attack_minimum_added_cold_damage": 0.7,
      "attack_maximum_added_cold_damage": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_maximum_life": 0.7,
-     "base_resist_all_elements_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7,
+     "base_maximum_life": 0.7
     }
    }
   }
@@ -2438,8 +2327,7 @@
      "local_energy_shield": 1.0,
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -2452,8 +2340,7 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -2463,8 +2350,7 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "additional_strength_and_dexterity": 1.0
     },
@@ -2510,7 +2396,7 @@
     "wants": {
      "additional_strength": 1.0,
      "additional_dexterity": 1.0,
-     "base_resist_all_elements_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_maximum_life": 1.0
     }
    }
@@ -2532,27 +2418,21 @@
     "wants": {
      "base_maximum_life": 1,
      "minion_maximum_life_+%": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "body": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "gloves": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -2560,9 +2440,7 @@
     "wants": {
      "base_movement_velocity_+%": 1,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -2571,9 +2449,7 @@
      "minion_skill_gem_level_+": 1,
      "minion_damage_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -2582,18 +2458,14 @@
      "minion_damage_+%": 0.8,
      "minion_attack_and_cast_speed_+%": 0.8,
      "base_maximum_life": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     }
    },
@@ -2614,9 +2486,7 @@
      "minion_damage_+%": 0.8,
      "minion_maximum_life_+%": 0.8,
      "base_maximum_life": 0.8,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6
     },
     "classes": [
@@ -2658,7 +2528,7 @@
      "base_maximum_life": 1.0,
      "lightning_skill_gem_level_+": 1.0,
      "additional_dexterity": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "skill_mana_cost_+_with_non_channelling_skills": 0.7,
      "cold_damage_+%": 0.7,
      "accuracy_rating": 0.7,
@@ -2670,11 +2540,9 @@
      "base_maximum_life": 1.0,
      "base_spell_suppression_chance_%": 0.7,
      "local_armour_and_evasion_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "cold_and_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "local_base_physical_damage_reduction_rating": 0.7,
-     "local_base_evasion_rating": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "local_base_evasion_rating": 0.7
     },
     "defence": [
      "armour",
@@ -2686,11 +2554,9 @@
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_base_evasion_rating": 1.0,
      "local_armour_and_evasion_+%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_spell_suppression_chance_%": 0.7,
-     "fire_and_cold_damage_resistance_%": 0.7,
-     "additional_dexterity": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "additional_dexterity": 0.7
     },
     "defence": [
      "armour",
@@ -2703,10 +2569,9 @@
      "base_movement_velocity_+%": 1.0,
      "base_spell_suppression_chance_%": 0.7,
      "non_damaging_ailment_effect_+%": 0.7,
-     "lightning_and_chaos_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "local_armour_and_evasion_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "base_chaos_damage_resistance_%": 0.7
     },
     "defence": [
      "armour",
@@ -2717,24 +2582,20 @@
     "wants": {
      "base_maximum_life": 1.0,
      "base_chaos_damage_resistance_%": 1.0,
-     "base_resist_all_elements_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "skill_mana_cost_+_with_non_channelling_skills": 0.7,
      "attack_minimum_added_fire_damage": 0.7,
      "attack_maximum_added_fire_damage": 0.7,
-     "base_cast_speed_+%": 0.7,
-     "fire_and_chaos_damage_resistance_%": 0.7
+     "base_cast_speed_+%": 0.7
     }
    },
    "belt": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_physical_damage_reduction_rating": 0.7,
      "maximum_life_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
      "additional_strength_and_dexterity": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.7
     }
    },
@@ -2743,10 +2604,10 @@
      "additional_dexterity": 1.0,
      "local_armour_and_evasion_+%": 1.0,
      "base_maximum_life": 1.0,
-     "fire_and_chaos_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_spell_suppression_chance_%": 0.7,
      "base_item_found_rarity_+%": 0.7,
-     "base_fire_damage_resistance_%": 0.7
+     "base_chaos_damage_resistance_%": 1.0
     },
     "defence": [
      "armour",
@@ -2760,7 +2621,8 @@
      "spell_critical_strike_chance_+%": 1.0,
      "base_maximum_mana": 1.0,
      "lightning_spell_skill_gem_level_+": 1.0,
-     "fire_and_chaos_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "base_chaos_damage_resistance_%": 1.0
     },
     "classes": [
      "Shield"
@@ -2822,7 +2684,7 @@
      "local_base_evasion_rating": 1.0,
      "local_evasion_and_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es",
@@ -2831,7 +2693,7 @@
    },
    "gloves": {
     "wants": {
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%_vs_chilled_enemies": 1.0,
      "attack_speed_+%": 1.0,
      "base_maximum_life": 1.0,
@@ -2848,7 +2710,7 @@
     "wants": {
      "additional_intelligence": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "local_evasion_and_energy_shield_+%": 1.0
     },
@@ -2884,8 +2746,7 @@
     "wants": {
      "additional_dexterity": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "base_life_regeneration_rate_per_minute": 1.0,
      "base_maximum_mana": 1.0
@@ -2898,8 +2759,7 @@
     "wants": {
      "additional_dexterity": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%_vs_chilled_enemies": 1.0
     },
     "defence": [
@@ -2924,8 +2784,7 @@
      "attack_maximum_added_fire_damage": 1.0,
      "base_cast_speed_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_life_regeneration_rate_per_minute": 1.0,
      "base_maximum_mana": 1.0
     }
@@ -2948,7 +2807,7 @@
    "weapon": {
     "wants": {
      "base_maximum_mana": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "elemental_damage_%_to_add_as_chaos": 1.0,
      "base_reduce_enemy_lightning_resistance_%": 1.0
     },
@@ -3024,7 +2883,7 @@
    },
    "body": {
     "wants": {
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_mana_reservation_efficiency_+%": 1.0,
      "physical_damage_taken_%_as_fire": 1.0,
      "physical_damage_taken_%_as_lightning": 1.0
@@ -3088,7 +2947,7 @@
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3097,12 +2956,10 @@
    "gloves": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 0.8,
-     "base_lightning_damage_resistance_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.8,
      "base_chaos_damage_resistance_%": 0.6,
      "local_armour_and_energy_shield_+%": 0.6,
-     "local_energy_shield_+%": 0.6,
-     "base_fire_damage_resistance_%": 0.6
+     "local_energy_shield_+%": 0.6
     },
     "defence": [
      "armour",
@@ -3111,7 +2968,7 @@
    },
    "boots": {
     "wants": {
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "gain_elusive_on_crit_%_chance": 1.0,
      "attack_cast_and_movement_speed_+%_during_onslaught": 1.0,
@@ -3156,9 +3013,7 @@
     "wants": {
      "chaos_damage_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%": 1.0
     }
    },
@@ -3248,7 +3103,7 @@
      "local_energy_shield": 0.7,
      "local_energy_shield_+%": 0.7,
      "local_base_evasion_rating": 0.6,
-     "base_lightning_damage_resistance_%": 0.6,
+     "pseudo_total_elemental_resistance_%": 0.6,
      "base_chance_to_ignite_%": 0.6,
      "faster_burn_%": 0.6,
      "local_display_nearby_enemy_fire_damage_resistance_%": 0.6
@@ -3262,12 +3117,11 @@
    "gloves": {
     "wants": {
      "base_maximum_life": 1.0,
-     "base_fire_damage_resistance_%": 0.93,
+     "pseudo_total_elemental_resistance_%": 0.93,
      "base_chaos_damage_resistance_%": 0.85,
      "base_physical_damage_%_to_convert_to_cold": 0.85,
      "base_projectile_speed_+%": 0.78,
      "projectile_damage_+%": 0.78,
-     "base_cold_damage_resistance_%": 0.7,
      "damage_+%_vs_chilled_enemies": 0.7
     },
     "defence": [
@@ -3280,9 +3134,8 @@
     "wants": {
      "base_maximum_life": 1.0,
      "base_movement_velocity_+%": 1.0,
-     "base_fire_damage_resistance_%": 0.78,
+     "pseudo_total_elemental_resistance_%": 0.78,
      "base_avoid_shock_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.62,
      "base_chaos_damage_resistance_%": 0.62,
      "additional_dexterity": 0.55,
      "base_avoid_chill_%": 0.55
@@ -3314,9 +3167,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3331,9 +3182,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3348,9 +3197,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3365,9 +3212,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3382,9 +3227,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3396,9 +3239,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3410,9 +3251,7 @@
      "local_energy_shield_+%": 1,
      "base_maximum_energy_shield": 1,
      "maximum_energy_shield_+%": 0.9,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "base_chaos_damage_resistance_%": 0.6,
      "base_mana_reservation_efficiency_+%": 1,
      "non_curse_aura_effect_+%": 1
@@ -3445,8 +3284,7 @@
      "local_energy_shield": 1.0,
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3459,8 +3297,7 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3470,8 +3307,7 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "additional_strength_and_dexterity": 1.0
     },
@@ -3499,8 +3335,7 @@
      "additional_intelligence": 1.0,
      "base_maximum_energy_shield": 1.0,
      "base_maximum_mana": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%": 1.0
     }
    },
@@ -3524,8 +3359,7 @@
      "physical_damage_reduction_rating_+%": 1.0,
      "maximum_energy_shield_+%": 1.0,
      "base_maximum_mana": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     }
    },
    "helmet": {
@@ -3560,10 +3394,8 @@
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.8,
      "all_attributes_+%": 0.8,
-     "base_fire_damage_resistance_%": 0.6,
-     "base_lightning_damage_resistance_%": 0.6,
-     "additional_intelligence": 0.6,
-     "base_cold_damage_resistance_%": 0.6
+     "pseudo_total_elemental_resistance_%": 0.6,
+     "additional_intelligence": 0.6
     },
     "defence": [
      "es"
@@ -3573,10 +3405,9 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "additional_intelligence": 1.0,
      "base_maximum_mana": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
      "attack_speed_+%": 0.7,
      "base_physical_damage_%_to_convert_to_lightning": 0.7
     },
@@ -3588,9 +3419,8 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "base_movement_velocity_+%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "local_energy_shield": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
      "additional_intelligence": 0.7,
      "base_maximum_mana": 0.7
     },
@@ -3602,10 +3432,9 @@
     "wants": {
      "additional_intelligence": 1.0,
      "base_item_found_rarity_+%": 0.7,
-     "base_resist_all_elements_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "additional_strength": 0.7,
      "base_critical_strike_multiplier_+": 0.7,
-     "base_lightning_damage_resistance_%": 0.7,
      "base_maximum_mana": 0.7
     }
    }
@@ -3643,7 +3472,7 @@
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.7,
      "base_mana_reservation_efficiency_+%": 0.7,
-     "base_cold_damage_resistance_%": 0.7
+     "pseudo_total_elemental_resistance_%": 0.7
     },
     "defence": [
      "es"
@@ -3654,7 +3483,7 @@
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.7,
      "base_mana_reservation_efficiency_+%": 0.7,
-     "base_cold_damage_resistance_%": 0.7,
+     "pseudo_total_elemental_resistance_%": 0.7,
      "additional_intelligence": 0.7
     },
     "defence": [
@@ -3675,7 +3504,7 @@
      "local_evasion_and_energy_shield_+%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "base_avoid_shock_%": 1.0,
-     "base_fire_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es",
@@ -3687,10 +3516,8 @@
      "local_evasion_and_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
      "base_physical_damage_%_to_convert_to_cold": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "damage_+%_vs_chilled_enemies": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0,
+     "damage_+%_vs_chilled_enemies": 1.0
     },
     "defence": [
      "es",
@@ -3714,12 +3541,11 @@
   "slots": {
    "gloves": {
     "wants": {
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "damage_+%_vs_chilled_enemies": 1.0,
      "local_display_socketed_gems_attack_and_cast_speed_+%_final": 1.0,
      "local_ward": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
      "damage_+%_while_leeching": 1.0
     },
     "defence": [
@@ -3745,7 +3571,7 @@
     "wants": {
      "additional_dexterity": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "evasion"
@@ -3756,7 +3582,7 @@
      "base_spell_suppression_chance_%": 1.0,
      "additional_dexterity": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0
     },
     "defence": [
@@ -3819,8 +3645,7 @@
      "local_energy_shield": 1.0,
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3833,8 +3658,7 @@
      "attack_maximum_added_lightning_damage": 1.0,
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3844,8 +3668,7 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0,
+     "pseudo_total_elemental_resistance_%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "additional_strength_and_dexterity": 1.0
     },
@@ -3893,7 +3716,7 @@
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3916,8 +3739,7 @@
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_lightning_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"
@@ -3939,8 +3761,7 @@
     "wants": {
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0
+     "pseudo_total_elemental_resistance_%": 1.0
     },
     "defence": [
      "es"

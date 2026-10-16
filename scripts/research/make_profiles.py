@@ -1,4 +1,6 @@
-import json, collections, re
+import json, collections, re, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from res_wants import merge_res
 R='D:/gsrepo/craftingisfun/'
 top=json.load(open('yt/top_builds.json',encoding='utf-8'))
 pob=json.load(open('pob/summary.json',encoding='utf-8'))
@@ -102,6 +104,8 @@ for b in builds:
         'pobs': n, 'source': src,
         'slots': slots,
     })
+for x in out:
+    for v in x['slots'].values(): v['wants']=merge_res(v['wants'], x['id'])
 out.sort(key=lambda x: -x['share'])
 json.dump(out, open(R+'src/data/builds.json','w',encoding='utf-8'), ensure_ascii=False, indent=1)
 for x in out: print(f"{x['name']['ko']:<22} share {x['share']:.3f} pobs {x['pobs']} {x['source']:<16} slots {sorted(x['slots'])}")

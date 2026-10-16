@@ -5,6 +5,7 @@ import textKoJson from '../data/text.ko.json' with { type: 'json' }
 import { BASES, MODS, type Influence } from '../engine/data.ts'
 import { modInfluence } from '../engine/influence.ts'
 import { baseDefence, baseDps, itemTags, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
+import { ELE_RES } from './meta.ts'
 
 export type Lang = 'ko' | 'en'
 
@@ -68,8 +69,15 @@ function render(entryIdx: number, values: number[], lang: Lang): string {
   })
 }
 
+// The elemental resistance total (meta.ts ELE_RES) has no game line: the codex says "원소 저항" (user), an ask adds the number.
+const ELE_RES_TEXT: Record<Lang, [label: string, line: string]> = {
+  ko: ['원소 저항', '원소 저항 +{0}%'],
+  en: ['Elemental Resistance', '+{0}% total Elemental Resistance'],
+}
+
 // A stat's wording with "#" for its numbers, keyed by its line (stats sharing a line give the same key). Build codex.
 export function statLabel(sid: string, lang: Lang): [number, string] | undefined {
+  if (sid === ELE_RES) return [-1, ELE_RES_TEXT[lang][0]]
   const idx = entriesByStat.get(sid)?.[0]
   if (idx === undefined) return undefined
   const text = render(idx, STATS[idx].ids.map(() => 10), lang)
@@ -79,6 +87,7 @@ export function statLabel(sid: string, lang: Lang): [number, string] | undefined
 // The game's line for some stats at given values (commission asks: "화염 저항 +40%"); stats sharing a line go together.
 export function statLine(values: Record<string, number>, lang: Lang): string {
   const first = Object.keys(values)[0]
+  if (first === ELE_RES) return ELE_RES_TEXT[lang][1].replace('{0}', String(values[first]))
   const idx = entriesByStat.get(first)?.[0]
   if (idx === undefined) return first
   return render(idx, STATS[idx].ids.map((id) => values[id] ?? 0), lang).replace(/\n/g, ' / ')

@@ -1,6 +1,8 @@
 # High-end builds: same PoB -> slot wants pipeline as the starters (make_profiles.py), tagged 'advanced' or 'uber'.
 # Inputs (scratch folder): yt_hi/picks.json (chosen videos), pob_hi/<videoId>.xml (decoded PoBs).
-import json, re, os, collections, xml.etree.ElementTree as ET
+import json, re, os, sys, collections, xml.etree.ElementTree as ET
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from res_wants import merge_res
 
 R = 'D:/gsrepo/craftingisfun/'
 picks = json.load(open('yt_hi/picks.json', encoding='utf-8'))
@@ -181,6 +183,9 @@ for p in picks:
                  'ko': f"{gem_ko[gid]} {asc_ko.get(asc, '')} ({TIER_KO[p['tier']]})".replace('  ', ' ')},
         'tier': p['tier'], 'views': p['views'], 'pobs': n, 'source': src, 'slots': res, 'video': p['titles'][0],
     })
+for x in out:
+    for v in x['slots'].values():
+        v['wants'] = merge_res(v['wants'], x['id'])
 json.dump(out, open('yt_hi/profiles.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 # Merge with the starters and recompute popularity shares over all builds (by video views).
 merged = starters + out

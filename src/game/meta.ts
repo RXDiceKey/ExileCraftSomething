@@ -13,6 +13,21 @@ export interface BuildProfile {
 }
 export const BUILDS = buildsJson as BuildProfile[]
 
+// Elemental resistances are one want (user, 2026-10-16: a build asking for one element in particular is a data error):
+// builds list ELE_RES, filled by any fire, cold or lightning resistance and added up like the trade site's "total
+// Elemental Resistance" (all elements x3, two elements x2, an element and chaos x1). Chaos resistance stays its own want.
+// The one exception is Righteous Fire, which lists fire resistance on its own too and puts it first (value.ts).
+export const ELE_RES = 'pseudo_total_elemental_resistance_%'
+export const SINGLE_ELE_RES = /^base_(fire|cold|lightning)_damage_resistance_%$/
+// How many elemental resistances a stat gives (0 for anything else).
+export function elementalCount(sid: string): number {
+  if (sid === 'base_resist_all_elements_%') return 3
+  if (SINGLE_ELE_RES.test(sid)) return 1
+  const pair = /^(fire|cold|lightning)_and_(cold|lightning|chaos)_damage_resistance_%$/.exec(sid)
+  return pair ? (pair[2] === 'chaos' ? 1 : 2) : 0
+}
+export const isChaosHybrid = (sid: string) => /^(fire|cold|lightning)_and_chaos_damage_resistance_%$/.test(sid)
+
 export interface PatchNote { day: number; build: string; factor: number }
 export interface Rumor { day: number; note: PatchNote } // heard on `day` about a coming patch change (always true)
 export interface Meta {

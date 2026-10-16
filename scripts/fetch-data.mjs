@@ -75,3 +75,5 @@ await save('ninja/Beast.json', await get(
 ))
 
 await save('meta.json', { fetchedAt: new Date().toISOString(), patch, league })
+// Two weeks of essence prices (see the script)
+execFileSync(process.execPath, ['scripts/fetch-essence-history.mjs', league], { stdio: 'inherit' })

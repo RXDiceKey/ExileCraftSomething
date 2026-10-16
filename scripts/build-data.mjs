@@ -308,10 +308,22 @@ for (const type of ['Currency', 'Essence', 'Fossil', 'Resonator', 'Oil']) {
     volume.set(nameOf.get(l.id), l.volumePrimaryValue ?? 0)
   }
 }
+// Two weeks of trades where poe.ninja has them (fetch-essence-history.mjs): an essence's price is the volume-weighted
+// median of its daily rates and its volume their sum, not one day's (user: the snapshot day had Deafening Essence of
+// Greed at 1.29c against a two-week median of 3.07c, and Deafening Essence of Doubt barely traded that day though it
+// usually does 100-500 a day).
+const essenceHistory = await raw('ninja/EssenceHistory.json').catch(() => ({}))
+for (const [name, days] of Object.entries(essenceHistory)) {
+  const traded = days.filter(([rate, vol]) => rate > 0 && vol > 0).sort((a, b) => a[0] - b[0])
+  if (!traded.length) continue
+  const total = traded.reduce((s, [, v]) => s + v, 0)
+  let acc = 0
+  chaos.set(name, traded.find(([, v]) => (acc += v) >= total / 2)[0])
+  volume.set(name, total)
+}
 // Essence ladders (user): three essences of a tier make one of the next, so each tier costs a bit under three times the
-// one below (ESSENCE_STEP). poe.ninja's thinly traded tiers are noise (Shrieking Essence of Greed 5c on 4 trades a day
-// against Deafening 1.29c on 119; Deafening Essence of Doubt 1c on 0.17), so every tier of a family comes from its most
-// traded tier.
+// one below (ESSENCE_STEP). Thinly traded tiers are noise (Shrieking Essence of Greed: a few trades a day at prices
+// above Deafening's), so every tier of a family comes from its most traded tier.
 const ESSENCE_TIERS = ['Whispering', 'Muttering', 'Weeping', 'Wailing', 'Screaming', 'Shrieking', 'Deafening']
 const ESSENCE_STEP = 2.8
 const essenceTier = (n) => ESSENCE_TIERS.findIndex((t) => n.startsWith(t + ' '))

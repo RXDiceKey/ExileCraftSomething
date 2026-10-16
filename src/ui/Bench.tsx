@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { sfx } from '../audio.ts'
-import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor, swapsCrafted } from '../engine/crafting.ts'
+import { benchOptions, canEssence, canFossils, CRAFTING, MATRON, matronOptions, removable, resonatorFor } from '../engine/crafting.ts'
 import { CURRENCIES, type CurrencyId } from '../engine/currency.ts'
 import { BASES, MODS } from '../engine/data.ts'
 import { BEAST_RECIPES, canImprint, canRestore, IMPRINT, IMPRINT_BEAST, IMPRINT_RECIPE } from '../engine/beasts.ts'
@@ -44,7 +44,9 @@ interface Props {
   stash: StashItem[]
   gold: number
   day: number // lifeforce prices move with the day
-  canSpam: boolean // a search is typed in
+  canSpam: boolean // the spam machine's regex is typed in
+  spamSearch: string
+  onSpamSearch: (q: string) => void
   lit: boolean | null // does the item match the search (null: no search)
   onCurrency: (c: CurrencyId) => void
   onBench: (index: number) => void
@@ -105,7 +107,7 @@ export function Bench(p: Props) {
   )
   const donors = p.stash.filter((d) => d.uid !== entry!.uid && canAwaken(d.item, item))
   const pane = (
-    <div className="bench-item">
+    <div className="bench-item fixed">
       {p.header}
       {item.explicits.some(isVeiled) && <p className="boom">{t(lang, 'veiledBlocked')}</p>}
       <Tooltip item={item} lang={lang} lit={p.lit} />
@@ -162,6 +164,7 @@ export function Bench(p: Props) {
 
           <fieldset className="spam">
             <legend>{t(lang, 'spam')}</legend>
+            <input className="spam-search" value={p.spamSearch} placeholder={t(lang, 'spamSearchPlaceholder')} onChange={(e) => p.onSpamSearch(e.target.value)} />
             <label><input type="checkbox" checked={opts.augPrefix} onChange={(e) => setOpts({ ...opts, augPrefix: e.target.checked })} /> {t(lang, 'augPrefix')}</label>
             <label><input type="checkbox" checked={opts.augSuffix} onChange={(e) => setOpts({ ...opts, augSuffix: e.target.checked })} /> {t(lang, 'augSuffix')}</label>
             <label>{t(lang, 'maxTries')} <input type="number" min={1} value={opts.maxTries} onChange={(e) => setOpts({ ...opts, maxTries: Math.max(1, +e.target.value) })} /></label>
@@ -178,13 +181,12 @@ export function Bench(p: Props) {
 
       {tab === 'bench' && (
         <>
-          {removable(item) && (
-            <button disabled={currencyPrice('scouring') > gold} onClick={() => { sfx('button'); p.onRemoveCrafted() }}>
-              {t(lang, 'removeCrafted')} — {fmtGold(currencyPrice('scouring'))}
-            </button>
-          )}
+          {/* Always in place (greyed when there's nothing to remove), so the list below doesn't jump after a craft (user). */}
+          <button disabled={!removable(item) || currencyPrice('scouring') > gold} onClick={() => { sfx('button'); p.onRemoveCrafted() }}>
+            {t(lang, 'removeCrafted')} — {fmtGold(currencyPrice('scouring'))}
+          </button>
           {bench.length === 0 && <p className="hint">{t(lang, 'benchNone')}</p>}
-          {bench.length > 0 && swapsCrafted(item) && <p className="hint">{t(lang, 'benchSwaps', fmtGold(currencyPrice('scouring')))}</p>}
+          {bench.length > 0 && <p className="hint">{t(lang, 'benchSwaps', fmtGold(currencyPrice('scouring')))}</p>}
           <div className="bench-groups">
             {bench.map((ids) => {
               const rows = (

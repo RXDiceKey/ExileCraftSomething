@@ -163,6 +163,9 @@ input[type='number'] { width: 90px; }
   background: var(--panel); border-bottom: 1px solid var(--accent); padding-bottom: 6px;
 }
 .bench-item .tt-art { max-height: 100px; }
+/* A fixed height (user): the buttons below stay where they are whatever the item's option count; a longer item
+   scrolls inside. */
+.bench-item.fixed { height: min(50vh, 460px); box-sizing: border-box; }
 .bench .craft-list { max-height: none; } /* the page scrolls under the pinned item, not a box inside it */
 
 /* Phones: one column (stash, then the work area, rivals last), tabs wrap, shorter lists. */
@@ -215,3 +218,4 @@ input[type='number'] { width: 90px; }
 .debt-mode small { color: var(--dim); }
 .debt { color: #e06060; font-weight: bold; }
 .commission-foot .fit { color: #9fdc9f; }
+.spam .spam-search { width: 100%; box-sizing: border-box; }

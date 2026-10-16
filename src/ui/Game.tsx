@@ -49,6 +49,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
 
   const entry = state.stash.find((x) => x.uid === selected)
   const match = useMemo(() => compileSearch(settings.search), [settings.search])
+  // The spam machine has its own regex (user), apart from the stash search.
+  const spamMatch = useMemo(() => compileSearch(settings.spamSearch ?? ''), [settings.spamSearch])
   // The search lights up (or dims) the item shown in the middle, not the stash list (user).
   const lit = match && entry ? match(searchText(entry.item, lang)) : null
   const actionsLeft = ACTIONS_PER_DAY - state.used
@@ -103,8 +105,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
   const onReveal = () => selected !== null && run(doReveal(state, selected))
   const onUnveil = (id: string) => selected !== null && run(doUnveil(state, selected, id))
   const onSpam = (o: SpamOptions) => {
-    if (!match || selected === null) return null
-    const r = spamAlteration(state, selected, (item) => match(searchText(item, lang)), o)
+    if (!spamMatch || selected === null) return null
+    const r = spamAlteration(state, selected, (item) => spamMatch(searchText(item, lang)), o)
     setState(r.state)
     return r
   }
@@ -241,7 +243,8 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
           {/* Tabs only hide when another one is open (user: going to the shop and back mustn't reset the bench's tab,
               fossils, spam settings, open groups...). Faustus is drawn only when open: its quote is the costly part. */}
           <div hidden={view !== 'bench'}>
-            <Bench lang={lang} entry={entry} gold={spendable(state)} day={state.day} canSpam={!!match} lit={lit}
+            <Bench lang={lang} entry={entry} gold={spendable(state)} day={state.day} canSpam={!!spamMatch} lit={lit}
+              spamSearch={settings.spamSearch ?? ''} onSpamSearch={(q) => setSettings({ ...settings, spamSearch: q })}
               onCurrency={onCurrency} onBench={onBench} onRemoveCrafted={onRemoveCrafted} onMatron={onMatron} onEssence={onEssence}
               onFossils={onFossils} onMirror={onMirror} onSpam={onSpam} onFaustus={openFaustus}
               stash={state.stash} onInfluenceExalt={onInfluenceExalt} onDominance={onDominance} onAwaken={onAwaken}

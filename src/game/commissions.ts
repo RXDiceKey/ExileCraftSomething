@@ -23,7 +23,7 @@
 // critical strike chance, say) gets a plain option order, and a DPS ask replacing k options counts as k of the order's.
 import { BASES, MODS } from '../engine/data.ts'
 import {
-  affixLimits, baseDefence, baseDps, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, spawnWeight, weaponStats,
+  affixLimits, baseDefence, baseDps, defenceFlat, defenceInc, defences, DPS_STATS, isDefenceStat, itemTags, newItem, noCasterBase, spawnWeight, weaponStats,
   type Defence, type DpsKind, type Item, type RolledMod,
 } from '../engine/item.ts'
 import { int, next, pickWeighted, type Rng } from '../engine/rng.ts'
@@ -142,8 +142,10 @@ export function dpsKind(wants: Record<string, number>): DpsKind | undefined {
   const ele = has(/^local_(minimum|maximum)_added_(fire|cold|lightning)_damage$/)
   return phys && !ele ? 'phys' : ele && !phys ? 'ele' : 'total'
 }
+// Bases of the class that can roll what the order's base can: an attack wand ("Cannot roll Caster Modifiers") only sets
+// the bar for attack wands, else an order also asking spell damage would be measured against a base that can't have it.
 export function dpsBar(base: string, kind: DpsKind, stats: string[], tier: number): { top: string; mods: string[]; min: number } {
-  const kin = buyableBases().filter((b) => BASES[b].cls === BASES[base].cls && !isSpecialBase(b))
+  const kin = buyableBases().filter((b) => BASES[b].cls === BASES[base].cls && !isSpecialBase(b) && noCasterBase(b) === noCasterBase(base))
   const top = kin.reduce((x, y) => (baseDps(y) > baseDps(x) ? y : x), base)
   const ref: Item = { ...newItem(top, ILVL, { s: 1 }), rarity: 'rare' }
   const mods = barMods(ref, stats.map((s) => [s]), tier)

@@ -175,14 +175,25 @@ export function itemTags(item: Item): Set<string> {
   const tags = new Set(base.tags)
   for (const i of item.influences) tags.add(CLASS_INFLUENCE_TAGS[base.cls][i])
   for (const m of item.explicits) for (const t of MODS[m.id].adds ?? []) tags.add(t)
+  if (item.implicits.some((m) => MODS[m.id].stats.some(([s]) => s === NO_CASTER_IMPLICIT))) tags.add(NO_CASTER)
   return tags
 }
+
+// Attack wands (Somatic, Blasting, Kinetic) have the implicit "Cannot roll Caster Modifiers" (poedb: Kinetic Wand). The
+// mod data has no tag for it, so itemTags marks those items and no caster-tagged prefix or suffix ever rolls on them,
+// whatever the craft (user-reported: a Harvest speed reforge gave a Kinetic Wand cast speed). Unlike the bench
+// meta-craft, beasts don't get around it: it's the base. ponytail: bench crafts and essence mods aren't rolled and stay
+// allowed; unverified either way.
+const NO_CASTER_IMPLICIT = 'kinetic_wand_implicit_cannot_roll_caster_modifiers'
+const NO_CASTER = 'cannot_roll_caster_modifiers'
+export const noCasterBase = (base: string) => BASES[base].imp.some((id) => MODS[id].stats.some(([s]) => s === NO_CASTER_IMPLICIT))
 
 // PoE rule: the first listed tag the item has decides the weight.
 const firstMatch = (list: [string, number][], tags: Set<string>) => list.find(([t]) => tags.has(t))?.[1]
 
 export function spawnWeight(id: string, tags: Set<string>): number {
   const m = MODS[id]
+  if (tags.has(NO_CASTER) && (m.gen === 'prefix' || m.gen === 'suffix') && m.tags?.includes('caster')) return 0
   const gw = m.gw ? (firstMatch(m.gw, tags) ?? 100) : 100
   return ((firstMatch(m.spawn, tags) ?? 0) * gw) / 100
 }

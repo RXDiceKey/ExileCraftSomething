@@ -23,6 +23,22 @@ const legal = (i: Item) => {
 }
 const tagged = (tag: string) => (id: string) => (MODS[id].tags ?? []).includes(tag)
 
+test('역학 마법봉 계열(시전 속성 부여 불가): 속도 재련·카오스로 시전 옵션이 안 붙고, 주문 재련은 못 씀', () => {
+  for (const name of ['Somatic Wand', 'Blasting Wand', 'Kinetic Wand']) {
+    const item = make(baseId(name), ['LocalIncreasedPhysicalDamagePercent5'])
+    const speed = harvestCraft('ReforgeSpeed')
+    assert.ok(speed.can(item), `${name}: 공격 속도로 속도 재련은 됨`)
+    for (let s = 0; s < 300; s++) {
+      const r = speed.apply(item, { s })
+      assert.ok(!r.explicits.some((m) => tagged('caster')(m.id)), `${name}: ${r.explicits.map((m) => m.id).join(', ')}`)
+      assert.ok(r.explicits.some((m) => tagged('speed')(m.id)), '속도 옵션 보장')
+    }
+    assert.equal(harvestCraft('ReforgeSpell').can(item), false, `${name}: 주문 옵션이 없으니 주문 재련 불가`)
+  }
+  const opal = make(baseId('Opal Wand'), ['LocalIncreasedPhysicalDamagePercent5'])
+  assert.ok(harvestCraft('ReforgeSpell').can(opal), '일반 마법봉은 주문 재련 됨')
+})
+
 test('수확 [태그] 포함 재련: 그 태그 옵션이 반드시 하나, 접두어 변경 불가는 지킴', () => {
   const lock = lockOf('item_generation_cannot_change_prefixes')
   const item = make(HELMET, ['IncreasedLife10', 'LocalIncreasedPhysicalDamageReductionRating5', 'FireResist7'])

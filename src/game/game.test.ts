@@ -290,8 +290,8 @@ test('쓸모 있는 옵션 3개부터 제값: 2개면 ×0.1, 1개면 ×0.01 (변
   assert.equal(one.best?.usefulCount, 1)
   assert.ok(two.top[0].value > one.top[0].value * 6, `${two.top[0].value} vs ${one.top[0].value}`)
   assert.equal(three.best?.usefulCount, 3)
-  // 2개짜리는 예산 큰 우버 빌드가 ×0.1로 사고, 3개짜리는 스타터 빌드가 제값에 삼
-  assert.ok(three.top[0].value > two.top[0].value * 3, `세 번째 좋은 옵션에서 크게 오름: ${three.top[0].value} vs ${two.top[0].value}`)
+  // 2개짜리는 예산 큰 우버 빌드가 ×0.1로 사고, 3개짜리는 스타터 빌드가 제값에 삼 (구매자가 바뀌어 10배까진 아님)
+  assert.ok(three.top[0].value > two.top[0].value * 2.5, `세 번째 좋은 옵션에서 크게 오름: ${three.top[0].value} vs ${two.top[0].value}`)
 })
 
 test('토요일 시작, 다음 주말(8·9일차)에 붐, 월요일에 거품 꺼짐', () => {

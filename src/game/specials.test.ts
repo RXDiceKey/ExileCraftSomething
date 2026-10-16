@@ -82,10 +82,14 @@ test('미확인 가격: 베이스 값 ×1.5 이상, 쓸모 있는 옵션이 나�
   assert.equal(unidentifiedPrice('delve', baseId('Fugitive Boots'), 7) >= 0, true)
 })
 
-test('상점: 무기는 종류별, 방어구는 부위·능력치별 최고 등급 2개와 특수 베이스만 먼저 보임', () => {
+test('상점: 방어구는 부위·능력치별 최고 등급 2개, 무기는 종류별 최고 2개 + 계열마다 하나, 특수 베이스는 따로 보임', () => {
   const shown = buyableBases().filter(isTopBase)
   const normal = (cls: string, tag?: string) => shown.filter((b) => BASES[b].cls === cls && !isSpecialBase(b) && (!tag || BASES[b].tags.includes(tag)))
-  assert.equal(normal('Wand').length, 2)
+  // Weapons: the top base of each family (same kind of fixed option, crit and attack speed) shows too.
+  assert.ok(shown.includes(baseId('Spine Bow')), '척추 활: 상아색 활 계열의 최고 등급')
+  assert.ok(!shown.includes(baseId('Ivory Bow')), '같은 계열의 낮은 베이스는 숨김')
+  assert.ok(shown.includes(baseId('Kinetic Wand')) && shown.includes(baseId('Imbued Wand')))
+  assert.ok(!shown.includes(baseId('Engraved Wand')), '부여된 마법봉 계열의 낮은 베이스')
   assert.equal(normal('Body Armour', 'int_armour').length, 2)
   assert.ok(shown.includes(baseId('Twilight Regalia')), '지능 몸통 갑옷 최고 등급')
   assert.ok(!shown.includes(baseId('Vaal Regalia')) && !shown.includes(baseId('Simple Robe')), '하급 베이스는 숨김')

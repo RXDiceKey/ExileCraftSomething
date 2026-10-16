@@ -1,7 +1,7 @@
 import basePricesJson from '../data/basePrices.json' with { type: 'json' }
 import pricesJson from '../data/prices.json' with { type: 'json' }
 import { CRAFTING } from '../engine/crafting.ts'
-import { BASES } from '../engine/data.ts'
+import { BASES, MODS } from '../engine/data.ts'
 import type { CurrencyId } from '../engine/currency.ts'
 import { LIFEFORCE, type Lifeforce } from '../engine/harvest.ts'
 import type { Lang } from './describe.ts'
@@ -59,12 +59,21 @@ export const buyableBases = () => Object.keys(BASE_PRICES)
 
 // What the shop shows first (user): the top TOP_PER_GROUP bases (by level) of each weapon class and of each armour class
 // per attribute mix, plus the special bases (atlas / experimental ones, each its own thing). Jewellery and quivers differ
-// by their fixed option, so they all show. The rest waits behind "lower bases".
+// by their fixed option, so they all show. Weapons also show the top base of each family (user: Spine Bow, the bow most
+// builds use, was hidden behind two higher-level bows): bases with the same kind of fixed option, critical strike chance
+// and attack speed are one line of upgrades (Ivory Bow -> Spine Bow). Only families that reach endgame levels (within
+// FAMILY_LEVELS of the class's top base): a lone level-1 Crude Bow isn't worth a row. The rest waits behind "lower bases".
 export const TOP_PER_GROUP = 2
+const FAMILY_LEVELS = 15
 const SPECIAL_TAGS = ['atlas_base_type', 'experimental_base'] // not 'not_for_sale': the newer top bases carry it too
 const ARMOUR = ['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield']
 const OTHER = ['Ring', 'Amulet', 'Belt', 'Quiver']
 export const isSpecialBase = (id: string) => BASES[id].tags.some((t) => SPECIAL_TAGS.includes(t))
+const family = (id: string) => {
+  const b = BASES[id]
+  const p = b.props as Record<string, number>
+  return [b.cls, b.imp.map((m) => MODS[m]?.type ?? m).sort().join('+'), p.critical_strike_chance, p.attack_time].join('|')
+}
 export const baseGroup = (id: string) => {
   const b = BASES[id]
   if (OTHER.includes(b.cls)) return null
@@ -80,6 +89,16 @@ export function isTopBase(id: string): boolean {
       if (g !== null && !isSpecialBase(b)) groups.set(g, [...(groups.get(g) ?? []), b])
     }
     top = new Set([...groups.values()].flatMap((bs) => bs.sort((a, b) => BASES[b].lvl - BASES[a].lvl).slice(0, TOP_PER_GROUP)))
+    const families = new Map<string, string>()
+    for (const b of buyableBases()) {
+      if (ARMOUR.includes(BASES[b].cls) || OTHER.includes(BASES[b].cls) || isSpecialBase(b)) continue
+      const f = family(b)
+      const was = families.get(f)
+      if (!was || BASES[b].lvl > BASES[was].lvl) families.set(f, b)
+    }
+    const classTop = new Map<string, number>()
+    for (const b of buyableBases()) classTop.set(BASES[b].cls, Math.max(classTop.get(BASES[b].cls) ?? 0, BASES[b].lvl))
+    for (const b of families.values()) if (BASES[b].lvl >= classTop.get(BASES[b].cls)! - FAMILY_LEVELS) top.add(b)
   }
   return baseGroup(id) === null || isSpecialBase(id) || top.has(id)
 }

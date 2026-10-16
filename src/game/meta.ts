@@ -27,8 +27,10 @@ export interface Meta {
 const gauss = (rng: Rng) => Math.sqrt(-2 * Math.log(1 - next(rng))) * Math.cos(2 * Math.PI * next(rng))
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
+const RUN_SWING = 0.5
 export function rollMeta(rng: Rng): Meta {
-  const m = Object.fromEntries(BUILDS.map((b) => [b.id, clamp(Math.exp(0.35 * gauss(rng)), 0.4, 2.5)]))
+  // Per-run swing (user, option C): wide enough that the real-world top builds don't sit in the top 5 every run.
+  const m = Object.fromEntries(BUILDS.map((b) => [b.id, clamp(Math.exp(RUN_SWING * gauss(rng)), 0.3, 3)]))
   const patchDays = [int(rng, 4, 6), int(rng, 9, 11)]
   return { m, patchDays, notes: [], plan: patchDays.flatMap((day) => rollPatch(day, rng)), rumors: [], sat: {} }
 }
@@ -96,10 +98,12 @@ export function leaguePhase(tier: BuildTier, day: number): number {
 }
 
 const MEAN_SHARE = 1 / BUILDS.length
-// Popular builds have more buyers and pay more; sqrt keeps the top build from drowning everything else.
+// Popular builds have more buyers and pay more; a damped share (^0.35, was sqrt; user: Winter Orb sat in the
+// top 5 in 84% of runs) keeps the real-world top builds from drowning everything else.
+const SHARE_POWER = 0.35
 export const popularity = (meta: Meta | undefined, id: string, day: number) => {
   const b = BUILDS.find((x) => x.id === id)
-  return Math.sqrt((b?.share ?? MEAN_SHARE) / MEAN_SHARE) * (b ? leaguePhase(b.tier, day) : 1) * (meta?.m[id] ?? 1)
+  return ((b?.share ?? MEAN_SHARE) / MEAN_SHARE) ** SHARE_POWER * (b ? leaguePhase(b.tier, day) : 1) * (meta?.m[id] ?? 1)
 }
 
 // This run's hot or cold builds first; otherwise builds the league is moving to are on the rise.

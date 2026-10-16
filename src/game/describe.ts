@@ -207,6 +207,7 @@ const KIND: Record<Lang, Record<string, string>> = {
 }
 const DEFENCE_OF = { str: 'armour', dex: 'evasion', int: 'es' } as const
 export const defenceName = (d: string, lang: Lang) => KIND[lang][d] ?? d
+export const attrName = (a: string, lang: Lang) => KIND[lang][a] ?? a
 export function baseKindKeys(base: string): { defences: string[]; attrs: string[] } {
   const b = BASES[base]
   const armourTag = b.tags.find((t) => /^(str|dex|int)(_(dex|int))*_armour$/.test(t))

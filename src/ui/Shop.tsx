@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, type Dispatch, type SetStateAction } from 'react'
 import { BASES } from '../engine/data.ts'
 import { newItem } from '../engine/item.ts'
-import { baseArt, baseName, baseStats, className, gameText, rangeText, type Lang } from '../game/describe.ts'
+import { attrName, baseArt, baseKindKeys, baseName, baseStats, className, gameText, rangeText, type Lang } from '../game/describe.ts'
 import { spendable, type GameState } from '../game/game.ts'
 import { basePrice, buyableBases, isTopBase } from '../game/shop.ts'
 import { DROP_SOURCES, dropOptions, SPECIAL_ILVL, unidentifiedPrice, type DropSource } from '../game/specials.ts'
@@ -12,7 +12,10 @@ const CLASSES = [...new Set(Object.values(BASES).map((b) => b.cls))]
 // What the shop shows, kept by the game screen so it survives a trip to another tab (user). The list's scroll is handed
 // back when the shop closes, so scrolling itself doesn't re-render anything.
 // kind: plain bases, or unidentified special bases of one drop source (D42); lower: also the lower bases.
-export interface ShopView { cls: string; query: string; ilvl: number; scroll: number; kind: '' | DropSource; lower: boolean }
+// attr: armour by attribute mix (user), '' for all.
+export interface ShopView { cls: string; query: string; ilvl: number; scroll: number; kind: '' | DropSource; lower: boolean; attr?: string }
+const ARMOUR = ['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield']
+const ATTRS = ['str', 'dex', 'int', 'str_dex', 'str_int', 'dex_int']
 
 interface Props {
   lang: Lang
@@ -25,6 +28,9 @@ interface Props {
 
 export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Props) {
   const { cls, query, ilvl, kind, lower } = view
+  // Only armour has an attribute mix to pick; for another class the filter is off.
+  const attrOn = cls === '' || ARMOUR.includes(cls)
+  const attr = attrOn ? view.attr ?? '' : ''
   const list = useRef<HTMLUListElement>(null)
   // Back where the player left the list, and remember the spot on the way out. A new filter starts from the top.
   const top = useRef(view.scroll)
@@ -41,9 +47,10 @@ export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Pr
 
   const rows = useMemo(() => buyableBases()
     .filter((id) => (cls === '' || BASES[id].cls === cls) && (lower || isTopBase(id))
-      && (!kind || dropOptions(kind, id).length > 0) && baseName(id, lang).toLowerCase().includes(query.toLowerCase()))
+      && (!kind || dropOptions(kind, id).length > 0) && baseName(id, lang).toLowerCase().includes(query.toLowerCase())
+      && (!attr || (ARMOUR.includes(BASES[id].cls) && baseKindKeys(id).attrs.join('_') === attr)))
     .map((id) => ({ id, price: kind ? unidentifiedPrice(kind, id, state.day) : basePrice(id, ilvl, state.day) }))
-    .sort((a, b) => BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, kind, lower, lang, state.day])
+    .sort((a, b) => BASES[b.id].lvl - BASES[a.id].lvl), [cls, query, ilvl, kind, lower, attr, lang, state.day])
 
   return (
     <section className="panel shop">
@@ -58,6 +65,12 @@ export function Shop({ lang, state, view, onView, onBuy, onBuyUnidentified }: Pr
           <option value="">{t(lang, 'allClasses')}</option>
           {CLASSES.map((c) => <option key={c} value={c}>{className(c, lang)}</option>)}
         </select>
+        {attrOn && (
+          <select value={attr} onChange={(e) => set({ attr: e.target.value })}>
+            <option value="">{t(lang, 'allAttrs')}</option>
+            {ATTRS.map((a) => <option key={a} value={a}>{a.split('_').map((x) => attrName(x, lang)).join('·')}</option>)}
+          </select>
+        )}
         <input value={query} placeholder={t(lang, 'baseSearch')} onChange={(e) => set({ query: e.target.value })} />
         {kind ? <span>{t(lang, 'itemLevel')} {SPECIAL_ILVL}</span> : (
           <label>

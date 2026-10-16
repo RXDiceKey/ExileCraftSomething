@@ -79,7 +79,7 @@ export function Bench(p: Props) {
   const { lang, entry, gold } = p
   const [tab, setTab] = useState<Tab>('orbs')
   const [fossils, setFossils] = useState<string[]>([])
-  const [opts, setOpts] = useState<SpamOptions>({ augPrefix: false, augSuffix: false, maxTries: 500, goldCap: 20_000 })
+  const [opts, setOpts] = useState<SpamOptions>({ augPrefix: false, augSuffix: false, maxTries: 500 })
   const [report, setReport] = useState<SpamReport | null>(null)
   const item = entry?.item
   // Bench crafts grouped by option family (user), tiers together, in the bench's order.
@@ -168,7 +168,6 @@ export function Bench(p: Props) {
             <label><input type="checkbox" checked={opts.augPrefix} onChange={(e) => setOpts({ ...opts, augPrefix: e.target.checked })} /> {t(lang, 'augPrefix')}</label>
             <label><input type="checkbox" checked={opts.augSuffix} onChange={(e) => setOpts({ ...opts, augSuffix: e.target.checked })} /> {t(lang, 'augSuffix')}</label>
             <label>{t(lang, 'maxTries')} <input type="number" min={1} value={opts.maxTries} onChange={(e) => setOpts({ ...opts, maxTries: Math.max(1, +e.target.value) })} /></label>
-            <label>{t(lang, 'goldCap')} <input type="number" min={0} step={1000} value={opts.goldCap} onChange={(e) => setOpts({ ...opts, goldCap: Math.max(0, +e.target.value) })} /></label>
             <button disabled={!p.canSpam || item.rarity !== 'magic'}
               data-tip={!p.canSpam ? t(lang, 'spamNeedSearch') : item.rarity !== 'magic' ? t(lang, 'spamNeedMagic') : ''}
               onClick={() => { sfx('button'); setReport(p.onSpam(opts)) }}>

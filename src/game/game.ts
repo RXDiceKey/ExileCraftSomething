@@ -244,13 +244,13 @@ export function doMirror(s: GameState, uid: number): Result {
   return { ok: true, state: addItem(s, copy, s.gold - price, s.rng) }
 }
 
-export interface SpamOptions { augPrefix: boolean; augSuffix: boolean; maxTries: number; goldCap: number }
+export interface SpamOptions { augPrefix: boolean; augSuffix: boolean; maxTries: number } // no gold cap (user): max tries bounds it
 export interface SpamReport {
   state: GameState
   alts: number
   augs: number
   spent: number
-  stop: 'matched' | 'maxTries' | 'goldCap' | 'noGold' | 'notMagic'
+  stop: 'matched' | 'maxTries' | 'noGold' | 'notMagic'
 }
 
 // "변옵 스팸머신": Alteration until the item matches the search (optionally Augmenting an empty side).
@@ -271,7 +271,6 @@ export function spamAlteration(s: GameState, uid: number, matches: (item: Item) 
     return record(i, made, { key: `cur:${c}`, cost: currencyPrice(c) }, highEffCount)
   }
   const pay = (price: number): SpamReport['stop'] | null => {
-    if (spent + price > o.goldCap) return 'goldCap'
     if (price > spendable({ gold, debt: s.debt })) return 'noGold'
     gold -= price
     spent += price

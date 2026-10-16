@@ -122,7 +122,7 @@ test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같
     s = ok(doCurrency(s, uid, 'transmutation'))
     if (!wantsLife(s.stash[0].item)) break
   }
-  const r = spamAlteration(s, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000, goldCap: 1e9 })
+  const r = spamAlteration(s, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000 })
   assert.equal(r.stop, 'matched')
   assert.ok(wantsLife(r.state.stash[0].item))
   assert.equal(r.state.gold, s.gold - r.spent)
@@ -138,12 +138,12 @@ test('변옵 스팸머신: 일치하면 멈추고 손으로 누른 결과와 같
   assert.deepEqual(snapshot(item), snapshot(r.state.stash[0].item)) // 이력 제외하고 같은 아이템
   assert.equal(r.state.stash[0].item.log!.at(-1)!.key.startsWith('cur:'), true, '스팸머신도 이력을 남김')
 
-  const capped = spamAlteration(s, uid, () => false, { augPrefix: false, augSuffix: false, maxTries: 10, goldCap: 1e9 })
+  const capped = spamAlteration(s, uid, () => false, { augPrefix: false, augSuffix: false, maxTries: 10 })
   assert.equal(capped.stop, 'maxTries')
   assert.equal(capped.alts, 10)
 
   // 이미 맞는 아이템에서 다시 누르면 다시 돌림 (사용자)
-  const again = spamAlteration(r.state, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000, goldCap: 1e9 })
+  const again = spamAlteration(r.state, uid, wantsLife, { augPrefix: true, augSuffix: true, maxTries: 5000 })
   assert.ok(again.alts >= 1, '적어도 한 번은 굴림')
   assert.equal(again.stop, 'matched')
 })

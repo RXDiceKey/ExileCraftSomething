@@ -255,7 +255,13 @@ export const eldritchItemLines = (item: Item, lang: Lang) =>
   [...new Set(item.implicits.map((m) => ELDRITCH_GEN[MODS[m.id].gen]).filter(Boolean))].map((side) => gameText(lang, `${side}Item`))
 
 // What the regex search runs against: name, rarity, every option line and option name.
+// What the stash search and the spam machine match: the item's text in the game's language, plus the English text in
+// Korean (user: in the Korean client an English regex still finds items). The English is only searched, never shown.
 export function searchText(item: Item, lang: Lang): string {
+  return lang === 'ko' ? `${shownText(item, 'ko')}
+${shownText(item, 'en')}` : shownText(item, lang)
+}
+function shownText(item: Item, lang: Lang): string {
   const lines = modLines(item, lang)
   return [
     itemName(item, lang),

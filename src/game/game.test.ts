@@ -51,6 +51,11 @@ test('검색: AND, 따옴표, 부정, 옵션명, 잘못된 정규식', () => {
   const item = withMods(REGALIA, ['IncreasedLife10'])
   assert.ok(compileSearch('정력적인')!(searchText(item, 'ko')), 'option name is searchable')
   assert.ok(compileSearch('vigorous')!(searchText(item, 'en')))
+  // Korean mode also matches the English text (as the game's Korean client does), without showing it.
+  assert.ok(compileSearch('vigorous')!(searchText(item, 'ko')), '한글 모드에서도 영어 옵션 이름')
+  assert.ok(compileSearch('"maximum Life"')!(searchText(item, 'ko')), '한글 모드에서도 영어 옵션 문구')
+  assert.ok(!modLines(item, 'ko').some((l) => /maximum Life/i.test(l.text.join(' '))), '화면엔 영어가 안 나옴')
+  assert.equal(compileSearch('정력적인')!(searchText(item, 'en')), false, '영어 모드는 영어만')
 })
 
 test('고레벨 프리미엄은 7일차에 사라짐', () => {

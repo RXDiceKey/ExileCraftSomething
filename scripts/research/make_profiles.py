@@ -49,7 +49,9 @@ def from_pob(keys):
         mx=top_stats[0][1]
         wants={}
         for st,cnt in top_stats:
-            for x in st.split(','): wants[x]=max(wants.get(x,0), round(0.4+0.6*cnt/mx,2))
+            # Stun and block recovery rides along on hybrid defence mods; alone it's junk (user), so it's never a want.
+            for x in st.split(','):
+                if x != 'base_stun_recovery_+%': wants[x]=max(wants.get(x,0), round(0.4+0.6*cnt/mx,2))
         entry={'wants':wants}
         bs=[base_by_name[nm] for nm in slot_bases.get(s,{}) if nm in base_by_name]
         if s in('weapon','offhand'):

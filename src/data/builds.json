@@ -311,7 +311,6 @@
      "accuracy_rating": 1.0,
      "local_physical_damage_reduction_rating_+%": 1.0,
      "base_maximum_life": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "melee_range_+": 1.0,
      "damage_+%_while_leeching": 1.0
     },
@@ -461,7 +460,6 @@
      "base_maximum_mana": 0.7,
      "base_cold_damage_resistance_%": 0.7,
      "base_item_found_rarity_+%": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "rare_or_unique_monster_dropped_item_rarity_+%": 0.7
     },
     "defence": [
@@ -522,7 +520,6 @@
      "local_energy_shield": 0.85,
      "additional_intelligence": 0.7,
      "base_lightning_damage_resistance_%": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "all_attributes_+%": 0.7,
      "base_maximum_mana": 0.55,
      "base_additional_physical_damage_reduction_%": 0.55
@@ -563,7 +560,6 @@
      "local_armour_and_energy_shield_+%": 1.0,
      "local_energy_shield": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_cold_damage_resistance_%": 0.7,
      "base_lightning_damage_resistance_%": 0.7,
      "additional_all_attributes": 0.7
@@ -719,8 +715,7 @@
      "local_evasion_and_energy_shield_+%": 1.0,
      "local_base_evasion_rating": 0.7,
      "local_energy_shield": 0.7,
-     "base_fire_damage_resistance_%": 0.7,
-     "base_stun_recovery_+%": 0.7
+     "base_fire_damage_resistance_%": 0.7
     },
     "defence": [
      "es",
@@ -912,8 +907,7 @@
    "body": {
     "wants": {
      "base_spell_suppression_chance_%": 1.0,
-     "local_evasion_and_energy_shield_+%": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "local_evasion_and_energy_shield_+%": 1.0
     },
     "defence": [
      "es",
@@ -970,8 +964,7 @@
    "body": {
     "wants": {
      "local_energy_shield": 1.0,
-     "local_energy_shield_+%": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "local_energy_shield_+%": 1.0
     },
     "defence": [
      "es"
@@ -982,8 +975,7 @@
      "additional_strength": 1.0,
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_armour_and_energy_shield_+%": 1.0,
-     "local_energy_shield": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "local_energy_shield": 1.0
     },
     "defence": [
      "armour",
@@ -1020,8 +1012,7 @@
     "wants": {
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_armour_and_energy_shield_+%": 1.0,
-     "local_energy_shield": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "local_energy_shield": 1.0
     },
     "defence": [
      "armour",
@@ -1229,7 +1220,6 @@
      "base_lightning_damage_resistance_%": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
      "local_energy_shield": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "base_additional_physical_damage_reduction_%": 0.7,
      "energy_shield_regeneration_rate_per_minute_if_rare_or_unique_enemy_nearby": 0.7,
      "base_maximum_life": 0.7
@@ -1420,7 +1410,6 @@
      "base_lightning_damage_resistance_%": 1.0,
      "local_armour_and_energy_shield_+%": 0.7,
      "local_energy_shield": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "base_additional_physical_damage_reduction_%": 0.7,
      "energy_shield_regeneration_rate_per_minute_if_rare_or_unique_enemy_nearby": 0.7,
      "base_maximum_life": 0.7
@@ -1484,7 +1473,6 @@
    "body": {
     "wants": {
      "local_energy_shield_+%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "local_energy_shield": 1.0,
      "additional_intelligence": 0.7,
      "base_cold_damage_resistance_%": 0.7,
@@ -1503,7 +1491,6 @@
      "additional_dexterity": 0.7,
      "local_energy_shield": 0.7,
      "base_cold_damage_resistance_%": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "damage_+%_vs_chilled_enemies": 0.7,
      "additional_strength_and_intelligence": 0.7
     },
@@ -1671,7 +1658,6 @@
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_lightning_damage_resistance_%": 1.0
     },
     "defence": [
@@ -1951,8 +1937,7 @@
      "base_spell_suppression_chance_%": 1.0,
      "local_base_evasion_rating": 1.0,
      "local_evasion_and_energy_shield_+%": 1.0,
-     "local_energy_shield": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "local_energy_shield": 1.0
     },
     "defence": [
      "es",
@@ -2038,7 +2023,6 @@
      "local_base_evasion_rating": 0.8,
      "base_spell_suppression_chance_%": 0.6,
      "local_base_physical_damage_reduction_rating": 0.6,
-     "base_stun_recovery_+%": 0.6,
      "base_additional_physical_damage_reduction_%": 0.6
     },
     "defence": [
@@ -2174,8 +2158,7 @@
      "base_lightning_damage_resistance_%": 1.0,
      "accuracy_rating": 0.7,
      "lightning_and_chaos_damage_resistance_%": 0.7,
-     "additional_dexterity": 0.7,
-     "base_stun_recovery_+%": 0.7
+     "additional_dexterity": 0.7
     },
     "defence": [
      "armour",
@@ -2187,7 +2170,6 @@
      "local_base_physical_damage_reduction_rating": 1.0,
      "local_physical_damage_reduction_rating_+%": 1.0,
      "base_lightning_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 0.7,
      "base_additional_physical_damage_reduction_%": 0.7,
      "additional_dexterity_and_intelligence": 0.7,
      "base_maximum_life": 0.7,
@@ -2326,7 +2308,6 @@
      "additional_intelligence": 1.0,
      "local_armour_and_energy_shield_+%": 1.0,
      "life_regeneration_rate_+%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_movement_velocity_+%": 1.0,
      "base_maximum_life": 1.0
     },
@@ -2458,7 +2439,6 @@
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_lightning_damage_resistance_%": 1.0
     },
     "defence": [
@@ -3187,7 +3167,6 @@
      "accuracy_rating": 1.0,
      "base_critical_strike_multiplier_+": 1.0,
      "local_physical_damage_reduction_rating_+%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "critical_strike_chance_+%_per_10_strength": 1.0,
      "base_maximum_life": 1.0
     },
@@ -3467,7 +3446,6 @@
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_lightning_damage_resistance_%": 1.0
     },
     "defence": [
@@ -3555,8 +3533,7 @@
      "additional_intelligence": 1.0,
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
-     "base_item_found_rarity_+%": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "base_item_found_rarity_+%": 1.0
     },
     "defence": [
      "es"
@@ -3582,7 +3559,6 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.8,
-     "base_stun_recovery_+%": 0.8,
      "all_attributes_+%": 0.8,
      "base_fire_damage_resistance_%": 0.6,
      "base_lightning_damage_resistance_%": 0.6,
@@ -3666,7 +3642,6 @@
     "wants": {
      "local_energy_shield_+%": 1.0,
      "local_energy_shield": 0.7,
-     "base_stun_recovery_+%": 0.7,
      "base_mana_reservation_efficiency_+%": 0.7,
      "base_cold_damage_resistance_%": 0.7
     },
@@ -3677,7 +3652,6 @@
    "body": {
     "wants": {
      "local_energy_shield_+%": 1.0,
-     "base_stun_recovery_+%": 0.7,
      "local_energy_shield": 0.7,
      "base_mana_reservation_efficiency_+%": 0.7,
      "base_cold_damage_resistance_%": 0.7,
@@ -3846,7 +3820,6 @@
      "additional_intelligence": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0,
      "base_lightning_damage_resistance_%": 1.0
     },
     "defence": [
@@ -3967,8 +3940,7 @@
      "local_energy_shield": 1.0,
      "local_energy_shield_+%": 1.0,
      "base_fire_damage_resistance_%": 1.0,
-     "base_cold_damage_resistance_%": 1.0,
-     "base_stun_recovery_+%": 1.0
+     "base_cold_damage_resistance_%": 1.0
     },
     "defence": [
      "es"

@@ -154,8 +154,10 @@ for p in picks:
         mx = top[0][1]
         wants = {}
         for st, c in top:
+            # Stun and block recovery rides along on hybrid defence mods; alone it's junk (user), so it's never a want.
             for x in st.split(','):
-                wants[x] = max(wants.get(x, 0), round(0.4 + 0.6 * c / mx, 2))
+                if x != 'base_stun_recovery_+%':
+                    wants[x] = max(wants.get(x, 0), round(0.4 + 0.6 * c / mx, 2))
         e = {'wants': wants}
         bs = [base_by_name[nm] for nm in v['bases'] if nm in base_by_name]
         if slot in ('weapon', 'offhand'):

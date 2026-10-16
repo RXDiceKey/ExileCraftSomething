@@ -73,12 +73,12 @@ export function Game({ lang, state, setState, settings, setSettings, onMenu, cod
     const uid = state.nextUid
     const r = buyBase(state, base, ilvl)
     if (!r.ok && r.error === 'ilvlTooLow') return setNotice(t(lang, 'err_ilvlTooLow', BASES[base].lvl))
-    if (run(r)) { setSelected(uid); setView('bench') }
+    if (run(r)) setSelected(uid)
   }
   const onBuyUnidentified = (source: DropSource, base: string) => {
     sfx('button')
     const uid = state.nextUid
-    if (run(buyUnidentified(state, source, base))) { setSelected(uid); setView('bench') }
+    if (run(buyUnidentified(state, source, base))) setSelected(uid)
   }
   const onCurrency = (c: CurrencyId) => selected !== null && run(doCurrency(state, selected, c))
   const onBench = (i: number) => selected !== null && run(doBench(state, selected, i))

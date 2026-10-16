@@ -636,7 +636,7 @@ craftingisfun/
 - [x] (사용자) 리포 Public 전환 (2026-10-16, 공개 전 점검: 파일·커밋 기록에 이름·회사 계정·이메일·비밀 값 없음)
 - [x] GitHub Actions 배포 워크플로 (`.github/workflows/deploy.yml`: main에 push → 테스트 → 빌드 → Pages)
 - [x] (사용자) Settings → Pages → Source: GitHub Actions
-- [ ] push → 자동 배포 확인, 플레이 URL 공유
+- [x] push → 자동 배포 확인 (2026-10-16 첫 배포 성공: 테스트·빌드·배포 통과, PC·폰에서 새 게임·상점·제작대·한글 이름 아이콘 정상). 플레이 URL: https://rxdicekey.github.io/ExileCraftSomething/
 
 ### P5. 빌드 메타 + 확정 제작
 - [x] 인기 빌드 30개 목록 (poe.ninja 웹페이지 + 3.27–3.29 유튜브) — poe.ninja 웹페이지는 상위 4개만 보여서(겨울 보주 7%, 정의의 화염 5%, 수호자 기동 5%, 망령 소환 4%) 유튜브 9개 검색어·438개 영상의 조회수를 스킬별로 합산해 보충. 목록은 `docs/builds.md`

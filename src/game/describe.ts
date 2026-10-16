@@ -18,6 +18,7 @@ interface Text {
   game: Record<string, string> // the game's own UI strings (ClientStrings), see build-data GAME_STRINGS
   harvest: Record<string, string> // harvest craft wording by the game's craft id
   bestiary: Record<string, string> // beastcraft wording by the game's recipe id
+  fossils: Record<string, string[]> // fossil effects as the game words them, by fossil name
 }
 
 const STATS = statsJson as StatEntry[]
@@ -108,6 +109,7 @@ const PRESENCE: Record<string, string> = {
 }
 export const bestiaryText = (id: string, lang: Lang) => TEXT[lang].bestiary[id] ?? TEXT.en.bestiary[id] ?? id
 export const harvestText = (id: string, lang: Lang) => TEXT[lang].harvest[id] ?? TEXT.en.harvest[id] ?? id
+export const fossilText = (name: string, lang: Lang) => TEXT[lang].fossils?.[name] ?? TEXT.en.fossils?.[name] ?? []
 export const gameText = (lang: Lang, key: string, arg = '') => (TEXT[lang].game[key] ?? TEXT.en.game[key] ?? key).replace('{0}', arg)
 
 export function modText(item: Item, m: RolledMod, explicit: boolean, lang: Lang): string[] {

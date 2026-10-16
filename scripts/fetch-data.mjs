@@ -45,6 +45,9 @@ await save('dat/config.json', {
     { name: 'MonsterVarieties', columns: ['Id', 'Name'] }, // beast names for beastcrafting
     { name: 'HarvestCraftOptions', columns: ['Id', 'Text'] }, // harvest craft wording
     { name: 'BestiaryRecipes', columns: ['Id', 'Description', 'Notes'] }, // beastcraft wording
+    // Fossil effects as the game words them ("화염 속성 부여 증가"), and which fossil has which
+    { name: 'DelveCraftingModifierDescriptions', columns: ['Id', 'Description'] },
+    { name: 'DelveCraftingModifiers', columns: ['BaseItemTypesKey', 'DelveCraftingModifierDescriptionsKeys'] },
   ],
   files: [
     ...letters(13).map((l) => `${FAUSTUS}faustus_greeting_${l}.ogg`),

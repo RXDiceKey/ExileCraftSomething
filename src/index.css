@@ -219,3 +219,5 @@ input[type='number'] { width: 90px; }
 .debt { color: #e06060; font-weight: bold; }
 .commission-foot .fit { color: #9fdc9f; }
 .spam .spam-search { width: 100%; box-sizing: border-box; }
+.fossil-effects { list-style: none; padding: 0; margin: 4px 0; font-size: 13px; color: var(--mod); }
+.fossil-effects b { color: var(--text); }

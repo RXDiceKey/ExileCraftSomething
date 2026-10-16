@@ -270,7 +270,17 @@ const names = (lang) => ({
   game: Object.fromEntries(Object.entries(GAME_STRINGS).map(([k, id]) => [k, clientStrings[lang].get(id)])),
   harvest: harvestText[lang],
   bestiary: bestiaryText[lang],
+  fossils: fossilText[lang],
 })
+// Fossil effects as the game words them, by fossil name ("Scorched Fossil": ["화염 속성 부여 증가", "냉기 속성 부여 없음"]).
+const delveBases = await raw('dat/tables/English/BaseItemTypes.json')
+const fossilText = Object.fromEntries(await Promise.all(['en', 'ko'].map(async (l) => {
+  const dir = l === 'en' ? 'English' : 'Korean'
+  const descs = await raw(`dat/tables/${dir}/DelveCraftingModifierDescriptions.json`)
+  const rows = await raw(`dat/tables/${dir}/DelveCraftingModifiers.json`)
+  return [l, Object.fromEntries(rows.map((r) => [delveBases[r.BaseItemTypesKey]?.Name, r.DelveCraftingModifierDescriptionsKeys
+    .flatMap((k) => descs[k].Description.split(/\r?\n/))]).filter(([n]) => fossils.some(([, f]) => f.name === n)))]
+})))
 // Beastcraft wording by the game's recipe id ("Add a Prefix, Remove a Random Suffix" / "접두어 추가, 무작위 접미어 제거").
 const bestiaryText = Object.fromEntries(await Promise.all(['en', 'ko'].map(async (l) => [l, Object.fromEntries(
   (await raw(`dat/tables/${l === 'en' ? 'English' : 'Korean'}/BestiaryRecipes.json`))

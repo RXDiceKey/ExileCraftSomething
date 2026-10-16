@@ -10,7 +10,7 @@ import { canReveal, canUnveil, isVeiled } from '../engine/veiled.ts'
 import { canEldritchImplicit, conflictChance, dominance, eldritchTier, EMBERS, ICHORS } from '../engine/eldritch.ts'
 import { AWAKENER, canAwaken, canDominance, canInfluenceExalt, DOMINANCE, INFLUENCE_EXALTS, isInfluenced } from '../engine/influence.ts'
 import type { Item } from '../engine/item.ts'
-import { bestiaryText, gameText, harvestText, influenceName, itemName, modLines, rangeText, statLabel, type Lang } from '../game/describe.ts'
+import { bestiaryText, fossilText, gameText, harvestText, influenceName, itemName, modLines, rangeText, statLabel, type Lang } from '../game/describe.ts'
 import {
   beastCost, benchCost, ELDRITCH_ORBS, fossilCost, harvestCost, recombineCost, VEILED_ORBS, type SpamOptions, type SpamReport, type StashItem,
 } from '../game/game.ts'
@@ -406,6 +406,12 @@ export function Bench(p: Props) {
               <button className="primary" disabled={!canFossils(item, fossils) || cost > gold}
                 onClick={() => { sfx('currencyApply'); p.onFossils(fossils) }}>{t(lang, 'applyFossils')}</button>
             </p>
+          )}
+          {/* What each picked fossil does, in the game's words (user). */}
+          {fossils.length > 0 && (
+            <ul className="fossil-effects">
+              {fossils.map((n) => <li key={n}><b>{nameOf(n, lang)}</b> — {fossilText(n, lang).join(' · ')}</li>)}
+            </ul>
           )}
         </>
       )}

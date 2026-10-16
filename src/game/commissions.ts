@@ -46,6 +46,10 @@ export const WANTS_EARLY = 3
 export const WANTS_LATE = 4
 export const WANTS_LATE_FROM = 7 // mid-run
 export const wantsOn = (day: number) => (day >= WANTS_LATE_FROM ? WANTS_LATE : WANTS_EARLY)
+// The first days post no order worth tens of millions (user): nobody has that kind of gold yet. Such an order is
+// dropped and the board draws another.
+export const EARLY_DAYS = 3
+export const EARLY_REWARD_MAX = 10_000_000
 const BASE_TIE = 0.95 // bases within 5% of the build's favourite are just as good: one is picked at random
 const MAX_TIER: Record<string, number> = { starter: 3, advanced: 2, uber: 1 }
 export const DEFENCE_TIER: Record<string, number> = { starter: 4, advanced: 3, uber: 2 }
@@ -200,7 +204,8 @@ function makeCommission(id: number, day: number, lastDay: number, meta: Meta, rn
     ...(armour ? { classes: [BASES[base].cls], defence: kinds } : { classes, ...(want.defence && { defence: want.defence }), base }),
     until: Math.min(lastDay, day + COMMISSION_DAYS - 1), reward: 0,
   }
-  return { ...c, reward: Math.round(COMMISSION_BONUS * (basePrice(base, ILVL, day) + quote(plainest, 'en', day, meta).optionValue)) }
+  const reward = Math.round(COMMISSION_BONUS * (basePrice(base, ILVL, day) + quote(plainest, 'en', day, meta).optionValue))
+  return day <= EARLY_DAYS && reward >= EARLY_REWARD_MAX ? undefined : { ...c, reward }
 }
 
 // Start of a day: expired orders go, one to three new ones come (up to BOARD_MAX).

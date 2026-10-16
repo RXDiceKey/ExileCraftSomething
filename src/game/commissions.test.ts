@@ -3,7 +3,9 @@ import { test } from 'node:test'
 import textEn from '../data/text.en.json' with { type: 'json' }
 import { BASES, MODS } from '../engine/data.ts'
 import { baseDefence, defenceFlat, defenceInc, defences, isDefenceStat, itemTags, newItem, spawnWeight, type Defence, type Item, type RolledMod } from '../engine/item.ts'
-import { canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, refreshBoard, WANTS_LATE_FROM, type Commission } from './commissions.ts'
+import {
+  canDeliver, COMMISSION_BONUS, decentBase, defenceBars, DEFENCE_TIER, EARLY_DAYS, EARLY_REWARD_MAX, refreshBoard, WANTS_LATE_FROM, type Commission,
+} from './commissions.ts'
 import { baseKindKeys, tierOf } from './describe.ts'
 import { buyBase, closeDay, deliver, newGame, sell, doCurrency, type GameState, type Result } from './game.ts'
 import { advanceMeta, BUILDS, rollMeta, RUMOR_LEAD, saturate, saturation } from './meta.ts'
@@ -252,4 +254,14 @@ test('의뢰 옵션은 등급이 아니라 수치로: 1등급 요구는 1등급 
     }
   }
   assert.ok(one > 0 && range > 0)
+})
+
+test('초반 3일엔 보수 천만 이상 의뢰가 안 뜨고, 그래도 의뢰는 붙음', () => {
+  for (let day = 1; day <= EARLY_DAYS; day++) {
+    for (let seed = 1; seed <= 15; seed++) {
+      const board = refreshBoard([], day, 14, rollMeta({ s: seed }), { s: seed * 7 + day })
+      assert.ok(board.length > 0, `${day}일차 seed ${seed}: 의뢰 없음`)
+      for (const c of board) assert.ok(c.reward < EARLY_REWARD_MAX, `${day}일차 ${c.build}: 보수 ${c.reward}`)
+    }
+  }
 })
